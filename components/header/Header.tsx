@@ -1,9 +1,10 @@
+import { ReactElement } from 'react'
 import NavBar, { Menu } from '../nav-bar/NavBar'
 import styles from './Header.module.scss'
 
 export interface SocialIcon {
   href: string
-  icon: JSX.Element
+  icon: ReactElement
   label: string
 }
 

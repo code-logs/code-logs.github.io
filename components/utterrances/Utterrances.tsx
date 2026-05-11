@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { ReactElement, useEffect, useRef } from 'react'
 import styles from './Utterrances.module.scss'
 
 type UtterancesIssueTerms = 'pathname' | 'url' | 'title' | 'og:title'
@@ -20,7 +20,7 @@ export interface UtterancesProps {
   issueLabel?: string
 }
 
-const Utterances = (props: UtterancesProps): JSX.Element => {
+const Utterances = (props: UtterancesProps): ReactElement => {
   const repo: string = props.repo
   const issueTerm: UtterancesIssueTerms = props.issueTerm
   const theme: UtterancesThemes = props.theme

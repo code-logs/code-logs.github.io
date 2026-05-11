@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { ReactElement } from 'react'
 import blogConfig from '../../config/blog.config'
 import useAdsense from '../../hooks/useAdsense'
 
@@ -8,7 +9,7 @@ export interface CommonMetaProps {
   keywords?: string[]
   url: string
   imageURL: string
-  customMeta?: JSX.Element
+  customMeta?: ReactElement
 }
 
 const CommonMeta = (props: CommonMetaProps) => {
