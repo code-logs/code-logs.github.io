@@ -11,30 +11,33 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Yarn install
-        run: yarn install
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
 
-      - name: Generate Latest Licenses
-        run: yarn run licenses
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate latest licenses
+        run: pnpm run licenses
 
       - name: Build docs
-        run: yarn docs
+        run: pnpm run docs
 
       - name: Add & commit
-        uses: EndBug/add-and-commit@v7.4.0
-        with: 
+        uses: EndBug/add-and-commit@v9
+        with:
           add: -f ./docs
-          
+
       - name: Notify via Slack
-        # You may pin to the exact commit or the version.
-        # uses: joshmgross/send-slack-message@772aa20c5110adf514d599997db952be6d5731b1
         uses: joshmgross/send-slack-message@v1.0.1
         with:
-          # The Slack message to send
           message: "\n<!here> Code Logs built successfully. :+1:\n\n <http://code-logs.github.io|바로가기 :black_cat:>"
-          # A bot user access token, see https://api.slack.com/bot-users
           slack-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          # The Slack channel ID
           channel: ${{ secrets.SLACK_CHANNEL }}

@@ -17,10 +17,10 @@ const Licenses = () => {
               <summary>{depName}</summary>
               <ul>
                 <li>{(licenses as any)[depName].licenses}</li>
-                {(licenses as any)[depName].licenseUrl && (
+                {(licenses as any)[depName].repository && (
                   <li>
-                    <a target="_blank" rel="noreferrer" href={(licenses as any)[depName].licenseUrl}>
-                      Link
+                    <a target="_blank" rel="noreferrer" href={(licenses as any)[depName].repository}>
+                      Repository
                     </a>
                   </li>
                 )}
