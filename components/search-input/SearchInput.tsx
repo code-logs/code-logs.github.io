@@ -1,4 +1,4 @@
-import { SearchRounded } from '@mui/icons-material'
+import { Search } from 'lucide-react'
 import styles from './SearchInput.module.scss'
 
 export interface SearchInputProps extends Omit<React.HTMLProps<HTMLInputElement>, 'type'> {}
@@ -6,7 +6,7 @@ export interface SearchInputProps extends Omit<React.HTMLProps<HTMLInputElement>
 const SearchInput = (props: SearchInputProps) => {
   return (
     <label className={styles.label}>
-      <SearchRounded className={styles.icon} />
+      <Search className={styles.icon} />
       <input className={styles.input} {...props} spellCheck={false} />
     </label>
   )
