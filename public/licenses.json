@@ -1,69 +1,42 @@
 {
     "@emotion/react@11.14.0": {
         "licenses": "MIT",
-        "repository": "https://github.com/emotion-js/emotion.git#main",
-        "publisher": "Emotion Contributors",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@emotion/react",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@emotion/react/LICENSE"
+        "repository": "https://github.com/emotion-js/emotion.git#main"
     },
     "@emotion/styled@11.14.1": {
         "licenses": "MIT",
-        "repository": "https://github.com/emotion-js/emotion.git#main",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@emotion/styled",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@emotion/styled/LICENSE"
+        "repository": "https://github.com/emotion-js/emotion.git#main"
     },
     "@mui/icons-material@7.3.11": {
         "licenses": "MIT",
-        "repository": "https://github.com/mui/material-ui",
-        "publisher": "MUI Team",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@mui/icons-material",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@mui/icons-material/LICENSE"
+        "repository": "https://github.com/mui/material-ui"
     },
     "@mui/material@7.3.11": {
         "licenses": "MIT",
-        "repository": "https://github.com/mui/material-ui",
-        "publisher": "MUI Team",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@mui/material",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/@mui/material/LICENSE"
+        "repository": "https://github.com/mui/material-ui"
     },
     "highlight.js@11.11.1": {
         "licenses": "BSD-3-Clause",
-        "repository": "https://github.com/highlightjs/highlight.js",
-        "publisher": "Josh Goebel",
-        "email": "hello@joshgoebel.com",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/highlight.js",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/highlight.js/LICENSE"
+        "repository": "https://github.com/highlightjs/highlight.js"
     },
     "next@15.5.18": {
         "licenses": "MIT",
-        "repository": "https://github.com/vercel/next.js",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/next",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/next/license.md"
+        "repository": "https://github.com/vercel/next.js"
     },
     "normalize.css@8.0.1": {
         "licenses": "MIT",
-        "repository": "https://github.com/necolas/normalize.css",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/normalize.css",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/normalize.css/LICENSE.md"
+        "repository": "https://github.com/necolas/normalize.css"
     },
     "react-dom@19.2.6": {
         "licenses": "MIT",
-        "repository": "https://github.com/facebook/react",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/react-dom",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/react-dom/LICENSE"
+        "repository": "https://github.com/facebook/react"
     },
     "react@19.2.6": {
         "licenses": "MIT",
-        "repository": "https://github.com/facebook/react",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/react",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/react/LICENSE"
+        "repository": "https://github.com/facebook/react"
     },
     "sass@1.99.0": {
         "licenses": "MIT",
-        "repository": "https://github.com/sass/dart-sass",
-        "publisher": "Natalie Weizenbaum",
-        "email": "nweiz@google.com",
-        "path": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/sass",
-        "licenseFile": "/Users/magi-mini/dev/github/code-logs.github.io/node_modules/sass/LICENSE"
+        "repository": "https://github.com/sass/dart-sass"
     }
 }
