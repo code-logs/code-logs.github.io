@@ -22,7 +22,7 @@ Always invoke scripts as `pnpm run <script>` — bare `pnpm <script>` collides w
 - `pnpm run docs` — full static export pipeline used by CI: cleans, builds, moves `./out` → `./docs`, drops `.nojekyll`, then runs `pnpm run sitemap`. The `./docs` directory is what GitHub Pages serves, so it is committed to `main` (by CI, not by hand — see Deployment).
 - `pnpm run sitemap` — runs `bin/generate-sitemap.ts` against the just-built `./docs` directory; will fail if `./docs` is empty.
 - `pnpm run licenses` — regenerates `public/licenses.json` (consumed by `/licenses` page) using `license-checker-rseidelsohn`.
-- `pnpm run lint` — `next lint` (extends `next/core-web-vitals`; `@next/next/no-img-element` is intentionally disabled — native `<img>` is allowed).
+- `pnpm run lint` — ESLint CLI (`eslint .`) configured via `eslint.config.mjs` (flat config). Uses `FlatCompat` to bring in `next/core-web-vitals` since `eslint-config-next@15` still ships as legacy eslintrc; `@next/next/no-img-element` is intentionally disabled — native `<img>` is allowed. Build outputs (`.next/`, `out/`, `docs/`, `public/`) are ignored.
 
 There are no tests. The Husky `pre-commit` hook exists but is a no-op (the `ts-node precommit.ts` line is commented out).
 
