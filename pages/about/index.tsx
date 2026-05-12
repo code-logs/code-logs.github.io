@@ -3,10 +3,17 @@ import CommonMeta from '../../components/common-meta/CommonMeta'
 import RaiseSection from '../../components/raise-section/RaiseSection'
 import blogConfig from '../../config/blog.config'
 import { META_CONTENTS } from '../../config/meta-contents'
+import { CATEGORIES } from '../../config/posts.config'
 import TitleUtil from '../../utils/TitleUtil'
 
 const standardTimeout = 300
 const ratio = 1.5
+
+const CAREER_START_YEAR = 2015
+const CAREER_YEARS = new Date().getFullYear() - CAREER_START_YEAR
+const STACK = ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Web Component']
+const INTERESTS = ['DX', '웹 표준', 'Web Component', 'AI']
+const TOPICS = Object.values(CATEGORIES).join(', ')
 
 const About = () => {
   return (
@@ -30,6 +37,24 @@ const About = () => {
           <p>
             <strong>정보 공유를 통해 저와 참여자 분들의 긍정적인 발전을 기원합니다.</strong>
           </p>
+        </RaiseSection>
+
+        <RaiseSection timeout={standardTimeout * ratio}>
+          <h2>About me</h2>
+          <p>
+            <strong>Frontend Engineer</strong>입니다.
+          </p>
+          <p>
+            {CAREER_START_YEAR}년부터 웹을 만들어 왔으며, 현재 {CAREER_YEARS}년차입니다.
+          </p>
+          <p>주력 스택은 {STACK.join(', ')}입니다.</p>
+          <p>주된 관심사는 {INTERESTS.join(', ')}입니다.</p>
+        </RaiseSection>
+
+        <RaiseSection timeout={standardTimeout * ratio * 2}>
+          <h2>About this blog</h2>
+          <p>학습한 내용을 기록하고 공유하기 위해 운영합니다.</p>
+          <p>주로 다루는 주제는 {TOPICS}입니다.</p>
         </RaiseSection>
 
         <RaiseSection timeout={standardTimeout * ratio * 3}>
