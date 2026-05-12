@@ -1,13 +1,16 @@
 import { Search } from 'lucide-react'
-import styles from './SearchInput.module.scss'
 
 export interface SearchInputProps extends Omit<React.HTMLProps<HTMLInputElement>, 'type'> {}
 
 const SearchInput = (props: SearchInputProps) => {
   return (
-    <label className={styles.label}>
-      <Search className={styles.icon} />
-      <input className={styles.input} {...props} spellCheck={false} />
+    <label className="inline-flex w-full">
+      <Search className="text-theme-dark m-auto" />
+      <input
+        className="flex-1 border-none bg-theme-bg outline-none p-narrow text-theme-font"
+        {...props}
+        spellCheck={false}
+      />
     </label>
   )
 }

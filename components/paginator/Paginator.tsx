@@ -1,6 +1,5 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import styles from './Paginator.module.scss'
 
 export interface PaginatorProps {
   page: number
@@ -40,8 +39,8 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
   }
 
   return (
-    <div className={styles.container}>
-      <ul>
+    <div className="grid p-wide border-t border-theme-light [&_svg]:m-auto [&_svg]:w-6 [&_svg]:h-6 [&_svg]:text-theme">
+      <ul className="m-auto p-0 inline-flex gap-wide [&_li]:m-auto [&_li]:inline-grid [&_li>a]:inline-grid [&_li>a]:text-theme">
         {page > 1 && (
           <li>
             <a href={buildURL(page - 1)}>
@@ -61,7 +60,10 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
 
         {pageList.map((pageNum) => (
           <li key={pageNum}>
-            <a href={buildURL(pageNum)} className={page === pageNum ? styles.currentPage : ''}>
+            <a
+              href={buildURL(pageNum)}
+              className={page === pageNum ? 'bg-theme-blue py-narrow px-common rounded-[4px] !text-white' : ''}
+            >
               {pageNum}
             </a>
           </li>

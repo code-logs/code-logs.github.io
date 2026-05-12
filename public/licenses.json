@@ -11,10 +11,6 @@
         "licenses": "MIT",
         "repository": "https://github.com/vercel/next.js"
     },
-    "normalize.css@8.0.1": {
-        "licenses": "MIT",
-        "repository": "https://github.com/necolas/normalize.css"
-    },
     "react-dom@19.2.6": {
         "licenses": "MIT",
         "repository": "https://github.com/facebook/react"
@@ -22,9 +18,5 @@
     "react@19.2.6": {
         "licenses": "MIT",
         "repository": "https://github.com/facebook/react"
-    },
-    "sass@1.99.0": {
-        "licenses": "MIT",
-        "repository": "https://github.com/sass/dart-sass"
     }
 }

@@ -2,10 +2,10 @@ pre code {
   display: block;
   overflow-x: auto;
   padding: 1rem;
-  line-height: var(--wide-spacing);
+  line-height: var(--spacing-wide);
 }
 .hljs {
-  background: var(--code-bg-color);
+  background: var(--color-code-bg);
   color: #fff;
   border-radius: 4px;
   box-shadow: var(--common-shadow);
@@ -80,7 +80,7 @@ pre code {
   font-weight: 700;
 }
 
-// Customized
+/* Customized */
 .hljs.language-bash {
   color: #97a7c8;
 }

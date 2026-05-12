@@ -12,7 +12,6 @@ import { Post } from '../../config/posts.config'
 import postsDatabase from '../../database/post-database'
 import PathUtil from '../../utils/PathUtil'
 import TitleUtil from '../../utils/TitleUtil'
-import styles from './Posts.module.scss'
 
 interface PostsProps {
   page: number
@@ -93,7 +92,7 @@ const Posts: NextPage<PostsProps> = (props) => {
           keywords={posts.map((post) => [...post.tags, post.title, post.description]).flat()}
         />
 
-        <span className={styles.postingCount}>{query ? `Found ${posts.length}` : `Total ${totalCount}`}</span>
+        <span className="text-theme text-[0.8rem] float-right mt-wide">{query ? `Found ${posts.length}` : `Total ${totalCount}`}</span>
         <h1>Posts </h1>
       </>
     ),
