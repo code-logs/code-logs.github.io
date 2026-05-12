@@ -11,7 +11,7 @@
     "docs:clean": "rm -rf ./docs ./out",
     "docs": "pnpm run docs:clean && pnpm run build && mv ./out ./docs && touch ./docs/.nojekyll && pnpm run sitemap",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "prepare": "husky",
     "sitemap": "ts-node bin/generate-sitemap.ts",
     "licenses": "license-checker-rseidelsohn --production --json --limitAttributes licenses,repository --out ./public/licenses.json"
@@ -24,6 +24,7 @@
     "react-dom": "^19.2.6"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/marked": "^4.3.2",
@@ -31,7 +32,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "dotenv": "^16.4.5",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.4",
     "eslint-config-next": "^15.5.18",
     "husky": "^9.1.7",
     "license-checker-rseidelsohn": "^4.4.2",
