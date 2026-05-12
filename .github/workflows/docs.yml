@@ -36,8 +36,10 @@ jobs:
           add: -f ./docs
 
       - name: Notify via Slack
-        uses: joshmgross/send-slack-message@v1.0.1
+        uses: slackapi/slack-github-action@v2.1.1
         with:
-          message: "\n<!here> Code Logs built successfully. :+1:\n\n <http://code-logs.github.io|바로가기 :black_cat:>"
-          slack-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channel: ${{ secrets.SLACK_CHANNEL }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: "${{ secrets.SLACK_CHANNEL }}"
+            text: "\n<!here> Code Logs built successfully. :+1:\n\n <http://code-logs.github.io|바로가기 :black_cat:>"
