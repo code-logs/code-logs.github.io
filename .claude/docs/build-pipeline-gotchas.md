@@ -31,10 +31,10 @@ Read this when: modifying `next.config.js`, `package.json` scripts, `eslint.conf
 - `prepare` script MUST be `husky` (not `husky install`, which is deprecated in v9).
 - The `.husky/_/` directory is generated locally by the `prepare` script; it MUST NOT be committed.
 
-### `pnpm.overrides` are security pins
-- Many entries in `package.json` `pnpm.overrides` exist purely to satisfy Dependabot alerts on transitive deps (lodash, flatted, immutable, etc.).
-- NEVER trim them without confirming via `pnpm why <pkg>` that the parent dependency tree no longer requires the vulnerable range.
-- See issue #87 for the planned cleanup pass.
+### `pnpm.overrides`: when to add a pin
+- `package.json` currently has no `pnpm.overrides` block. Issue #87 audited the 15 security pins inherited from issue #85 and confirmed all were redundant after the Next 15 + React 19 upgrade — every transitive dependency naturally resolves to a version at or above the GHSA-safe floor.
+- If a future Dependabot alert demands a pin, ADD a fresh `pnpm.overrides` entry only after confirming via `pnpm why <pkg>` that the parent dependency tree still pulls a vulnerable range. Verify the floor exists as a published version (a previous pin like `lodash: ">=4.18.0"` was unsatisfiable because lodash 4.x maxes at 4.17.21).
+- When a transitive has multiple major versions live in the tree, pin per affected major. Example from the #87 audit: `semver` runs at both 6.x and 7.x; a single `>=7.5.2` silently fails to apply to a `^6` parent. The audit found 6.3.1 already meets the GHSA-c2qf-rxjj-qqgw safe threshold for the 6.x line, so the pin was unnecessary — but if a future GHSA forces a 6.x bump, write the override as a range that covers each major separately.
 
 ### ESLint CLI: `eslint .` scans everything — explicit ignores required
 
