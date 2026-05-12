@@ -5,17 +5,21 @@ import blogConfig from '../../config/blog.config'
 import { META_CONTENTS } from '../../config/meta-contents'
 import { CATEGORIES } from '../../config/posts.config'
 import TitleUtil from '../../utils/TitleUtil'
+import type { GetStaticProps } from 'next'
 
 const standardTimeout = 300
 const ratio = 1.5
 
 const CAREER_START_YEAR = 2015
-const CAREER_YEARS = new Date().getFullYear() - CAREER_START_YEAR
 const STACK = ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Web Component']
 const INTERESTS = ['DX', '웹 표준', 'Web Component', 'AI']
 const TOPICS = Object.values(CATEGORIES).join(', ')
 
-const About = () => {
+interface AboutProps {
+  careerYears: number
+}
+
+const About = ({ careerYears }: AboutProps) => {
   return (
     <>
       <CommonMeta
@@ -45,7 +49,7 @@ const About = () => {
             <strong>Frontend Engineer</strong>입니다.
           </p>
           <p>
-            {CAREER_START_YEAR}년부터 웹을 만들어 왔으며, 현재 {CAREER_YEARS}년차입니다.
+            {CAREER_START_YEAR}년부터 웹을 만들어 왔으며, 현재 {careerYears}년차입니다.
           </p>
           <p>주력 스택은 {STACK.join(', ')}입니다.</p>
           <p>주된 관심사는 {INTERESTS.join(', ')}입니다.</p>
@@ -68,6 +72,14 @@ const About = () => {
       <MainAdsBanner />
     </>
   )
+}
+
+export const getStaticProps: GetStaticProps<AboutProps> = async () => {
+  return {
+    props: {
+      careerYears: new Date().getFullYear() - CAREER_START_YEAR,
+    },
+  }
 }
 
 export default About
