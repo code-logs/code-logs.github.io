@@ -1,6 +1,5 @@
 import Tag from '../tag/Tag'
 import { TagWithCount } from '../tag-indexer/TagIndexer'
-import styles from './Tags.module.scss'
 
 export interface TagsProps {
   tags: (string | TagWithCount)[]
@@ -8,7 +7,7 @@ export interface TagsProps {
 
 const Tags = (props: TagsProps) => {
   return (
-    <ul className={styles.tags}>
+    <ul className="list-none m-0 p-0 [&>li]:inline-block [&>li]:mt-0 [&>li]:mr-[5px] [&>li]:mb-[5px] [&>li]:ml-0">
       {props.tags.map((tag, idx) => (
         <li key={idx}>
           {typeof tag === 'string' ? (

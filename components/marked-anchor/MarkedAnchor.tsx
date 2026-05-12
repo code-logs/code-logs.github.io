@@ -1,5 +1,3 @@
-import styles from './MarkedAnchor.module.scss'
-
 export interface MarkedAnchorProps {
   display: string
   href: string
@@ -7,7 +5,10 @@ export interface MarkedAnchorProps {
 }
 
 const MarkedAnchor = (props: MarkedAnchorProps) => (
-  <a href={props.href} className={props.matched ? `${styles.matched} ${styles.anchor}` : styles.anchor}>
+  <a
+    href={props.href}
+    className={`active:border-b-2 active:border-solid ${props.matched ? 'border-b-2 border-solid' : ''}`}
+  >
     {props.display}
   </a>
 )

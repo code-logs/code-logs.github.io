@@ -1,5 +1,4 @@
 import { GtagEventName, GTagUtil } from '../../utils/GTagUtil'
-import styles from './style.module.scss'
 
 export interface Banner {
   title: string
@@ -13,7 +12,7 @@ export interface CarouselBannerProps {
 
 export default function CarouselBanner({ banners }: CarouselBannerProps) {
   return (
-    <div className={styles.bannerContainer}>
+    <div className="max-w-[400px] mt-wide mx-auto">
       {banners.map(({ title, bannerSrc, link }) => (
         <a
           key={link}
@@ -27,7 +26,7 @@ export default function CarouselBanner({ banners }: CarouselBannerProps) {
             })
           }}
         >
-          <img src={bannerSrc} alt={title} width={400} height={131} />
+          <img src={bannerSrc} alt={title} width={400} height={131} className="max-w-full" />
         </a>
       ))}
     </div>

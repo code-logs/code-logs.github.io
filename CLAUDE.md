@@ -34,7 +34,7 @@ For the *why* behind these commands and config (`distDir` trap, license JSON sha
 
 ## Architecture
 
-Next.js 15 Pages Router + React 19 + TypeScript, statically exported to GitHub Pages via `output: 'export'`. Styling is a mix of `lucide-react` icons (no MUI/Emotion) and CSS Modules (`*.module.scss`). Note: `lucide-react` removed brand icons (GitHub, etc.) in v1.x for trademark reasons — keep brand marks as inline SVG components rather than re-introducing a brand-icon package. All post content is built at build time — there is no runtime data fetching.
+Next.js 15 Pages Router + React 19 + TypeScript, statically exported to GitHub Pages via `output: 'export'`. Styling is Tailwind CSS v4 (CSS-first config, no `tailwind.config.*`) plus `lucide-react` icons; for Tailwind conventions and styling pitfalls see [.claude/docs/styling-gotchas.md](.claude/docs/styling-gotchas.md). Note: `lucide-react` removed brand icons (GitHub, etc.) in v1.x for trademark reasons — keep brand marks as inline SVG components rather than re-introducing a brand-icon package. All post content is built at build time — there is no runtime data fetching.
 
 ### Post pipeline (the central abstraction)
 

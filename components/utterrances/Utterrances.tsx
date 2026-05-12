@@ -1,5 +1,4 @@
 import { ReactElement, useEffect, useRef } from 'react'
-import styles from './Utterrances.module.scss'
 
 type UtterancesIssueTerms = 'pathname' | 'url' | 'title' | 'og:title'
 
@@ -42,7 +41,12 @@ const Utterances = (props: UtterancesProps): ReactElement => {
     containerRef.current.append(utterrances)
   }, [issueLabel, issueTerm, repo, theme])
 
-  return <div className={styles.utteranceContainer} ref={containerRef}></div>
+  return (
+    <div
+      className="flex flex-col [&>div]:max-w-[inherit]"
+      ref={containerRef}
+    ></div>
+  )
 }
 
 export default Utterances

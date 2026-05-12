@@ -1,9 +1,8 @@
 import blogConfig from '../../config/blog.config'
 import GoogleAdsenseBanner from '../google-adsense/GoogleAdsenseBanner'
-import styles from './AsideAdsBanner.module.scss'
 
 const AsideAdsBanner = () => (
-  <section className={styles.container}>
+  <section className="flex flex-col p-wide gap-wide max-w-[200px] mx-auto">
     <GoogleAdsenseBanner adClient={blogConfig.googleAdsense.adClient} adSlot={blogConfig.googleAdsense.asideBannerAdSlot} />
     <GoogleAdsenseBanner adClient={blogConfig.googleAdsense.adClient} adSlot={blogConfig.googleAdsense.asideBannerAdSlot} />
     <GoogleAdsenseBanner adClient={blogConfig.googleAdsense.adClient} adSlot={blogConfig.googleAdsense.asideBannerAdSlot} />

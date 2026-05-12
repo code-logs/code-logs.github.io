@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Post } from '../../config/posts.config'
 import PostUtil from '../../utils/PostUtil'
-import styles from './CategoryPostGroup.module.scss'
 
 export interface CategoryPostGroupProps {
   posts: Post[]
 }
+
+const containerClass =
+  'ps-[20px] [&>li]:list-disc [&>li]:mb-[20px] [&>li>h3]:italic [&>li>h3]:my-[5px]'
 
 const CategoryPostGroup = ({ posts }: CategoryPostGroupProps) => {
   const [recentPosts, setRecentPosts] = useState<Post[]>([])
@@ -20,7 +22,7 @@ const CategoryPostGroup = ({ posts }: CategoryPostGroupProps) => {
 
   return (
     <>
-      <ul className={styles.container}>
+      <ul className={containerClass}>
         {recentPosts.map((post) => (
           <li key={post.fileName}>
             <h3>{post.title}</h3>
@@ -30,9 +32,9 @@ const CategoryPostGroup = ({ posts }: CategoryPostGroupProps) => {
       </ul>
 
       {!!remainPosts.length && (
-        <details className={styles.details}>
+        <details>
           <summary>더보기</summary>
-          <ul className={styles.container}>
+          <ul className={containerClass}>
             {posts.map((post) => (
               <li key={post.fileName}>
                 <h3>{post.title}</h3>

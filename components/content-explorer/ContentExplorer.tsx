@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
-import useIsMobile from '../../hooks/useIsMobile'
 import useScroll from '../../hooks/useScroll'
-import styles from './ContentExplorer.module.scss'
 
 interface Heading {
   element: HTMLHeadingElement
   parent?: Heading
   children: Heading[]
 }
+
+const activateClass =
+  '-translate-x-[10px] text-theme-light-blue font-semibold italic underline'
 
 const ContentExplorer = () => {
   const [headings, setHeadings] = useState<Heading[]>([])
@@ -84,11 +85,11 @@ const ContentExplorer = () => {
   })
 
   return (
-    <section className={styles.container}>
+    <section className="sticky top-[var(--header-height)] mx-[20px] my-0 py-[20px] text-[0.9rem] z-[2] bg-theme-bg [&>ol]:border-l [&>ol]:border-theme-anchor [&_ol]:ps-[20px] [&_li]:my-[10px] [&_a]:inline-block [&_a]:transition-transform [&_a]:duration-100 [&_a]:ease-in-out [&_a:active]:-translate-x-[10px] [&_a:active]:text-theme-light-blue [&_a:active]:font-semibold [&_a:active]:italic [&_a:active]:underline">
       <ol>
         {headings.map((heading) => (
           <li key={heading.element.id}>
-            <a className={activeElement === heading.element ? styles.activate : ''} href={`#${heading.element.id}`}>
+            <a className={activeElement === heading.element ? activateClass : ''} href={`#${heading.element.id}`}>
               {heading.element.textContent}
             </a>
 
@@ -96,7 +97,7 @@ const ContentExplorer = () => {
               <ol>
                 {heading.children.map((heading) => (
                   <li key={heading.element.id}>
-                    <a className={activeElement === heading.element ? styles.activate : ''} href={`#${heading.element.id}`}>
+                    <a className={activeElement === heading.element ? activateClass : ''} href={`#${heading.element.id}`}>
                       {heading.element.textContent}
                     </a>
 
@@ -104,7 +105,7 @@ const ContentExplorer = () => {
                       <ol>
                         {heading.children.map((heading) => (
                           <li key={heading.element.id}>
-                            <a className={activeElement === heading.element ? styles.activate : ''} href={`#${heading.element.id}`}>
+                            <a className={activeElement === heading.element ? activateClass : ''} href={`#${heading.element.id}`}>
                               {heading.element.textContent}
                             </a>
                           </li>

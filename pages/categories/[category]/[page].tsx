@@ -8,7 +8,6 @@ import { META_CONTENTS } from '../../../config/meta-contents'
 import { CATEGORIES, Post } from '../../../config/posts.config'
 import postsDatabase from '../../../database/post-database'
 import TitleUtil from '../../../utils/TitleUtil'
-import styles from '../../Categories.module.scss'
 
 export async function getStaticPaths() {
   const posts = postsDatabase.find()
@@ -71,7 +70,7 @@ const Category: NextPage<{
         keywords={posts.map((post) => [...post.tags, post.title, post.category, post.description]).flat()}
       />
 
-      <h1 className={styles.title}>{(CATEGORIES as any)[category]}</h1>
+      <h1 className="capitalize">{(CATEGORIES as any)[category]}</h1>
 
       <PostCardList titleLevel={2} posts={posts} />
 

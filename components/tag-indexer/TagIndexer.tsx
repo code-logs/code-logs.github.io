@@ -1,5 +1,4 @@
 import Tags from '../tags/Tags'
-import styles from './TagIndexer.module.scss'
 
 export interface TagWithCount {
   tag: string
@@ -19,12 +18,12 @@ const TagIndexer = (props: TagIndexerProps) => {
     <section>
       <h2>
         Tags
-        <a href="tags" className={styles.seeMore}>
+        <a href="tags" className="float-right">
           <span>See more tags</span>
         </a>
       </h2>
 
-      <div className={styles.container}>
+      <div className="p-common">
         <Tags tags={tagsWithCount.slice(0, limit)} />
       </div>
     </section>

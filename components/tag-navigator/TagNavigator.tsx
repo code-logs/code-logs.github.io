@@ -1,5 +1,3 @@
-import styles from './TagNavigator.module.scss'
-
 export interface TagNavigatorProps {
   indexGroups: string[][]
   activatedIndexes: string[]
@@ -8,13 +6,16 @@ export interface TagNavigatorProps {
 const TagNavigator = (props: TagNavigatorProps) => {
   const indexesSet = new Set(props.activatedIndexes)
   return (
-    <div className={styles.container}>
+    <div className="p-wide [&>ol]:m-0 [&>ol]:p-0 [&>ol_li]:inline-block [&>ol_li]:m-narrow [&>ol_li]:p-0 [&>ol_a]:text-theme-light [&>ol_a]:font-extralight">
       {props.indexGroups.map((indexes, keyIdx) => {
         return (
           <ol key={keyIdx}>
             {indexes.map((index) => (
               <li key={index}>
-                <a href={`#${index}`} className={indexesSet.has(index) ? styles.active : ''}>
+                <a
+                  href={`#${index}`}
+                  className={indexesSet.has(index) ? '!text-theme-dark !font-medium' : ''}
+                >
                   {index}
                 </a>
               </li>

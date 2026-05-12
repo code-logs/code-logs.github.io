@@ -1,5 +1,4 @@
 import type { AppProps } from 'next/app'
-import 'normalize.css'
 import AsideAdsBanner from '../components/ads-banner/AsideAdsBanner'
 import ContentExplorer from '../components/content-explorer/ContentExplorer'
 import Footer from '../components/footer/Footer'
@@ -11,8 +10,8 @@ import blogConfig from '../config/blog.config'
 import menus from '../config/menu.config'
 import socialIcons from '../config/social.config'
 import useIsMobile from '../hooks/useIsMobile'
-import '../styles/globals.scss'
-import '../styles/highlight.scss'
+import '../styles/globals.css'
+import '../styles/highlight.css'
 
 const MainApp = ({ Component, pageProps }: AppProps) => {
   const isMobile = useIsMobile(true)

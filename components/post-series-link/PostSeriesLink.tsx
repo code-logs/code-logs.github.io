@@ -1,7 +1,6 @@
 import { Post } from '../../config/posts.config'
 import postsDatabase from '../../database/post-database'
 import PostUtil from '../../utils/PostUtil'
-import styles from './PostSeriesLink.module.scss'
 
 export interface PostSeriesLinkProps {
   post: Post
@@ -9,7 +8,7 @@ export interface PostSeriesLinkProps {
 
 const PostSeriesLink = ({ post }: PostSeriesLinkProps) => {
   return (
-    <ol className={styles.container}>
+    <ol className="ps-[20px] [&>li]:list-disc [&>li]:mb-[20px] [&>li>h3]:italic [&>li>h3]:my-[5px]">
       {post.series?.prevPostTitle && (
         <li>
           <h3>

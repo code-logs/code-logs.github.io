@@ -1,0 +1,350 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --breakpoint-tablet: 800px;
+
+  --spacing-narrow: 5px;
+  --spacing-common: 10px;
+  --spacing-wide: 20px;
+
+  --leading-wide: var(--spacing-wide);
+
+  --color-theme-bg: #fff;
+  --color-theme-header-bg: #fff;
+  --color-theme-footer-bg: #fff;
+  --color-theme-dark: #444;
+  --color-theme: #666;
+  --color-theme-light: #ccc;
+  --color-theme-invisible: #eee;
+  --color-theme-light-blue: #3699f9;
+  --color-theme-blue: #0366d6;
+  --color-theme-tag-bg: #000;
+  --color-theme-font: #202145;
+  --color-theme-error: #e26674;
+  --color-theme-anchor: var(--color-theme-blue);
+  --color-code-bg: #212836;
+}
+
+@layer base {
+  :root {
+    --common-shadow: 2px 2px 2px var(--color-theme);
+    --header-height: 140px;
+    --footer-height: 50px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-theme-bg: #222;
+      --color-theme-header-bg: #222;
+      --color-theme-footer-bg: #222;
+      --color-theme-dark: #eee;
+      --color-theme: #ccc;
+      --color-theme-light: #666;
+      --color-theme-invisible: #444;
+      --color-theme-tag-bg: #444;
+      --color-theme-font: #fff;
+      --color-theme-anchor: #c6c6c6;
+    }
+  }
+
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+    font-family:
+      -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+      Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    background-color: var(--color-theme-bg);
+    scroll-margin-top: var(--header-height);
+    scroll-behavior: smooth;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Suppress the mouse-click focus ring (matches the prior site behavior of
+     `* { outline: none }`), but keep a visible outline for keyboard users.
+     This restores accessibility lost when the legacy global suppression was
+     ported as-is. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  a {
+    color: var(--color-theme-anchor);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Restore the user-agent block margins on headings, paragraphs, and lists
+     that Tailwind preflight zeros out. The values are the WHATWG HTML
+     rendering-defaults expressed in em, which is what normalize.css (the
+     prior baseline) preserves. See
+     https://html.spec.whatwg.org/multipage/rendering.html#sections-and-headings */
+  h1 {
+    font-size: 1.2rem;
+    margin: 0.67em 0;
+  }
+
+  h2 {
+    font-size: 1rem;
+    margin: 0.83em 0;
+  }
+
+  h3 {
+    margin: 1em 0;
+  }
+
+  h4 {
+    margin: 1.33em 0;
+  }
+
+  h5 {
+    margin: 1.67em 0;
+  }
+
+  h6 {
+    margin: 2.33em 0;
+  }
+
+  p {
+    margin: 1em 0;
+  }
+
+  ul,
+  ol {
+    margin: 1em 0;
+    padding-left: 40px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  ul,
+  li,
+  table {
+    color: var(--color-theme-font);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    scroll-margin-top: calc(var(--header-height) + 20px);
+  }
+
+  li {
+    list-style: none;
+  }
+
+  #__next {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: 'header header header' '. main aside' 'footer footer footer';
+  }
+
+  header {
+    grid-area: header;
+    height: var(--header-height);
+    position: sticky;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1;
+  }
+
+  main {
+    grid-area: main;
+    width: 768px;
+    padding-top: var(--spacing-wide);
+    padding-bottom: var(--footer-height);
+  }
+
+  aside {
+    grid-area: aside;
+    margin-top: 0;
+    margin-bottom: var(--footer-height);
+  }
+
+  footer {
+    grid-area: footer;
+    height: var(--footer-height);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      font-size: 12px;
+      --header-height: 48px;
+      --footer-height: 38.8px;
+    }
+
+    #__next {
+      display: block;
+    }
+
+    main {
+      margin: 0;
+      width: 100%;
+      padding: var(--spacing-common) var(--spacing-wide) var(--footer-height);
+    }
+
+    aside {
+      display: none;
+    }
+  }
+}
+
+@utility clickable {
+  transition: transform 0.2s ease-in-out 0s;
+  &:active {
+    transform: scale(1.05);
+  }
+}
+
+@layer components {
+  /* Header layout — three-column grid that collapses on tablet width.
+     Pulled out of Header.tsx where the arbitrary-value classes were noisy. */
+  .header-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: '. title socialIcons' '. navBar .';
+
+    @media (max-width: 800px) {
+      grid-template-areas: 'title navBar socialIcons';
+    }
+  }
+
+  /* PostCard layout — area-named grid that reflows on tablet width.
+     Pulled out of PostCard.tsx where the arbitrary-value classes were noisy. */
+  .post-card-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas:
+      'category . publishedAt'
+      'thumbnail title title'
+      'thumbnail description description'
+      'tags tags tags';
+
+    @media (max-width: 800px) {
+      grid-template-rows: auto 1fr auto auto;
+      grid-template-areas:
+        'category . publishedAt'
+        'thumbnail thumbnail thumbnail'
+        'title title title'
+        'description description description'
+        'tags tags tags';
+    }
+  }
+
+  /* Post body typography.
+     Used together with `prose max-w-none` on the post article. `prose`
+     supplies sensible defaults (margins, list indents, link styling, etc.);
+     these rules selectively override prose where the site's prior
+     typography differs. Specificity: `.post-body & h2` resolves to
+     `(0,1,1)`, beating prose's `:where(...)`-scoped `(0,1,0)` selectors. */
+  .post-body {
+    font-size: 0.9rem;
+
+    & ins {
+      margin-top: 20px !important;
+      margin-bottom: 20px !important;
+    }
+
+    & ul,
+    & ol {
+      padding-left: var(--spacing-wide);
+    }
+
+    & ol,
+    & li {
+      margin-top: var(--spacing-narrow);
+    }
+
+    & li {
+      list-style: inherit;
+    }
+
+    & h1,
+    & h2,
+    & h3,
+    & h4 {
+      margin-top: 40px;
+      scroll-margin-top: calc(var(--header-height) + 20px);
+    }
+
+    & h1 {
+      font-size: 2rem;
+    }
+
+    & h2 {
+      font-size: 1.5rem;
+    }
+
+    & h2,
+    & h3,
+    & h4 {
+      padding-bottom: var(--spacing-common);
+      border-bottom: 1px solid var(--color-theme-light);
+    }
+
+    & p {
+      line-height: 25px;
+    }
+
+    & p > code {
+      background-color: #f7f6f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: #eb5757;
+    }
+
+    & blockquote {
+      padding: 0.8rem 1rem;
+      margin: 0;
+      border-left: 0.25rem solid var(--color-theme-light);
+      background-color: #f7f6f3;
+    }
+
+    & blockquote > p {
+      margin: 0;
+    }
+
+    & a {
+      font-style: italic;
+      text-decoration: underline;
+    }
+
+    & figure {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--spacing-wide) 0;
+      color: var(--color-theme-font);
+    }
+
+    & table {
+      display: block;
+      overflow-x: auto;
+    }
+
+    @media (max-width: 800px) {
+      font-size: 1rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      & p > code,
+      & blockquote {
+        background-color: #444;
+      }
+    }
+  }
+}

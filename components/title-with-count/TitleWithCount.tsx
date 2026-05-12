@@ -1,5 +1,3 @@
-import styles from './TitleWithCount.module.scss'
-
 export interface TitleWithCountProps {
   level?: 1 | 2 | 3
   title: string
@@ -9,7 +7,7 @@ export interface TitleWithCountProps {
 const TitleWithCount = (props: TitleWithCountProps) => {
   const innerFragment = (
     <>
-      {props.title} <span className={styles.postCount}>({props.count})</span>
+      {props.title} <span className="text-theme font-medium">({props.count})</span>
     </>
   )
 
