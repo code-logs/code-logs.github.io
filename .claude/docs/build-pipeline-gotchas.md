@@ -12,6 +12,7 @@ Read this when: modifying `next.config.js`, `package.json` scripts, `eslint.conf
 - With `output: 'export'`, Next writes the static export to `out/` regardless of `distDir`. `distDir` only relocates the `.next/` build cache.
 - NEVER set `distDir: 'docs'`. We tried it once: `BUILD_ID` and other cache files leaked into `docs/`, and `docs:clean` then deleted them every build, forcing a full re-build.
 - The `docs` script moves `out/` to `docs/` after `next build` completes (`mv ./out ./docs`).
+- For the rendering-side implications of `output: 'export'` (hydration mismatch when a page depends on `new Date()` or other host-runtime values), see [static-export-rendering-gotchas.md](static-export-rendering-gotchas.md).
 
 ### pnpm 11 blocks build scripts and exotic git subdeps
 - pnpm 11 throws a hard error on first install for packages with native postinstall scripts (`sharp`, `@parcel/watcher`, `unrs-resolver`). Approve them in `pnpm-workspace.yaml` under `allowBuilds` (the legacy `package.json` `pnpm.onlyBuiltDependencies` is removed).
