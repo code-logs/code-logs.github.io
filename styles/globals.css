@@ -252,6 +252,25 @@
      typography differs. Specificity: `.post-body & h2` resolves to
      `(0,1,1)`, beating prose's `:where(...)`-scoped `(0,1,0)` selectors. */
   .post-body {
+    --tw-prose-body: var(--color-theme-font);
+    --tw-prose-headings: var(--color-theme-font);
+    --tw-prose-lead: var(--color-theme);
+    --tw-prose-links: var(--color-theme-anchor);
+    --tw-prose-bold: var(--color-theme-font);
+    --tw-prose-counters: var(--color-theme);
+    --tw-prose-bullets: var(--color-theme-light);
+    --tw-prose-hr: var(--color-theme-invisible);
+    --tw-prose-quotes: var(--color-theme-font);
+    --tw-prose-quote-borders: var(--color-theme-light);
+    --tw-prose-captions: var(--color-theme);
+    --tw-prose-kbd: var(--color-theme-font);
+    --tw-prose-kbd-shadows: rgb(32 33 69 / 10%);
+    --tw-prose-code: var(--color-theme-font);
+    --tw-prose-pre-code: #fff;
+    --tw-prose-pre-bg: var(--color-code-bg);
+    --tw-prose-th-borders: var(--color-theme-light);
+    --tw-prose-td-borders: var(--color-theme-invisible);
+
     font-size: 0.9rem;
 
     & ins {
@@ -341,6 +360,8 @@
     }
 
     @media (prefers-color-scheme: dark) {
+      --tw-prose-kbd-shadows: rgb(255 255 255 / 10%);
+
       & p > code,
       & blockquote {
         background-color: #444;
