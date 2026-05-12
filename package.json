@@ -17,11 +17,8 @@
     "licenses": "license-checker-rseidelsohn --production --json --limitAttributes licenses,repository --out ./public/licenses.json"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.11",
-    "@mui/material": "^7.3.11",
     "highlight.js": "^11.11.1",
+    "lucide-react": "^1.14.0",
     "next": "^15.5.18",
     "normalize.css": "^8.0.1",
     "react": "^19.2.6",

@@ -1,4 +1,4 @@
-import { ChevronLeftRounded, ChevronRightRounded, MoreHorizRounded } from '@mui/icons-material'
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import styles from './Paginator.module.scss'
 
@@ -45,7 +45,7 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
         {page > 1 && (
           <li>
             <a href={buildURL(page - 1)}>
-              <ChevronLeftRounded />
+              <ChevronLeft />
             </a>
           </li>
         )}
@@ -55,7 +55,7 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
             <li>
               <a href={buildURL(1)}>{1}</a>
             </li>
-            <MoreHorizRounded />
+            <MoreHorizontal />
           </>
         )}
 
@@ -69,7 +69,7 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
 
         {page < lastPage && !pageList.includes(lastPage) && (
           <>
-            <MoreHorizRounded />
+            <MoreHorizontal />
             <li>
               <a href={buildURL(lastPage)}>{lastPage}</a>
             </li>
@@ -78,7 +78,7 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
         {page < lastPage && (
           <li>
             <a href={buildURL(page + 1)}>
-              <ChevronRightRounded />
+              <ChevronRight />
             </a>
           </li>
         )}
