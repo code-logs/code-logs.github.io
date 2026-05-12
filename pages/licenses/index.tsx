@@ -4,23 +4,25 @@ import MainAdsBanner from '../../components/ads-banner/MainAdsBanner'
 import RaiseSection from '../../components/raise-section/RaiseSection'
 import blogConfig from '../../config/blog.config'
 import licenses from '../../public/licenses.json'
-import styles from './Licenses.module.scss'
 
 const Licenses = () => {
   return (
     <>
       <h1>Licenses</h1>
-      <RaiseSection className={styles.wrapper}>
+      <RaiseSection className="grid grid-cols-2 overflow-auto">
         {Object.keys(licenses).map((depName) => {
           return (
-            <details className={styles.licenseInfo} key={depName}>
+            <details
+              className="text-theme [&_summary]:py-common [&_summary]:px-0 [&_a]:text-theme-light-blue"
+              key={depName}
+            >
               <summary>{depName}</summary>
               <ul>
                 <li>{(licenses as any)[depName].licenses}</li>
-                {(licenses as any)[depName].licenseUrl && (
+                {(licenses as any)[depName].repository && (
                   <li>
-                    <a target="_blank" rel="noreferrer" href={(licenses as any)[depName].licenseUrl}>
-                      Link
+                    <a target="_blank" rel="noreferrer" href={(licenses as any)[depName].repository}>
+                      Repository
                     </a>
                   </li>
                 )}

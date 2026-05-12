@@ -4,7 +4,6 @@ import RaiseSection from '../../components/raise-section/RaiseSection'
 import blogConfig from '../../config/blog.config'
 import { META_CONTENTS } from '../../config/meta-contents'
 import TitleUtil from '../../utils/TitleUtil'
-import styles from './About.module.scss'
 
 const standardTimeout = 300
 const ratio = 1.5
@@ -19,7 +18,7 @@ const About = () => {
         imageURL={'/icons/icon-512x512.png'}
       />
 
-      <article className={styles.about}>
+      <article className="[&_section]:mb-8 [&_p]:ml-wide [&_p]:text-theme [&_p]:italic">
         <h1>About</h1>
 
         <RaiseSection timeout={standardTimeout}>

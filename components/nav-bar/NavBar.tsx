@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router'
 import MarkedAnchor from '../marked-anchor/MarkedAnchor'
-import styles from './NavBar.module.scss'
 
 export interface Menu {
   display: string
@@ -16,8 +15,8 @@ const NavBar = (props: NavBarProps) => {
   const router = useRouter()
 
   return (
-    <nav className={styles.navBar}>
-      <ul>
+    <nav className="[grid-area:navBar] text-center">
+      <ul className="inline-flex gap-wide m-auto p-0 font-medium">
         {menus.map(({ display, route }, idx) => (
           <li className="clickable" key={idx}>
             <MarkedAnchor href={route} display={display} matched={router.pathname.split('/')[1] === route.split('/')[1]} />

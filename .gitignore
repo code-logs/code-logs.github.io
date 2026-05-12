@@ -36,6 +36,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-docs
+/docs
 
 .vscode
+
+# transient session artifacts produced by mp-plan-issue
+.claude/docs/plan-*.md

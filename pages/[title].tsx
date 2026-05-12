@@ -14,7 +14,6 @@ import { MarkdownUtil } from '../utils/MarkdownUtil'
 import PathUtil from '../utils/PathUtil'
 import PostUtil from '../utils/PostUtil'
 import TitleUtil from '../utils/TitleUtil'
-import styles from './PostDetail.module.scss'
 import CarouselBanner from '../components/carousel-banner'
 import bannerConfig from '../config/banner.config'
 
@@ -45,6 +44,9 @@ export async function getStaticProps(context: { params: { title: string } }) {
   }
 }
 
+const sectionHeadingClass =
+  '[&>h2]:mt-10 [&>h2]:mb-0 [&>h2]:text-[1.5rem] [&>h2]:pb-common [&>h2]:border-b [&>h2]:border-theme-light'
+
 const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCategory }: PostDetailPageProps) => {
   const containerRef = useRef<HTMLElement>(null)
 
@@ -62,11 +64,11 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
         keywords={[...post.tags, post.title, post.description, post.category]}
       />
 
-      <article className={styles.container} ref={containerRef}>
-        <p className={styles.publishedAt}>
+      <article className="prose max-w-none post-body" ref={containerRef}>
+        <p className="text-[0.9rem] text-theme m-0 text-right">
           <span>{PostUtil.readablePublishedAt(post)}</span>
         </p>
-        <section className={styles.thumbnailWrapper}>
+        <section className="relative m-0 [&_img]:object-cover [&_img]:w-full [&_img]:h-[315px] max-tablet:[&_img]:!object-contain max-tablet:[&_img]:h-auto">
           <img src={PathUtil.buildImagePath(post.thumbnailName)} alt={post.description} width="400" height="300" />
         </section>
 
@@ -74,7 +76,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
 
         <section>
           <h1>{post.title}</h1>
-          <p className={styles.description}>{post.description}</p>
+          <p className="italic text-theme text-[1.5rem] whitespace-pre-wrap leading-[2rem]">{post.description}</p>
         </section>
 
         <section id="content" dangerouslySetInnerHTML={{ __html: content }}></section>
@@ -83,23 +85,23 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
       <MainAdsBanner />
 
       {post.series && (
-        <section className={styles.relatedPosting}>
+        <section className={sectionHeadingClass}>
           <h2>연관 포스팅</h2>
           <PostSeriesLink post={post} />
         </section>
       )}
 
       {!!postsByCategory.length && (
-        <section className={styles.categoryGroup}>
+        <section className={sectionHeadingClass}>
           <h2>카테고리 더보기</h2>
           <CategoryPostGroup posts={postsByCategory} />
         </section>
       )}
 
       {!!post.references?.length && (
-        <section className={styles.references}>
+        <section className={`${sectionHeadingClass} [&_li]:list-disc`}>
           <h2>참고</h2>
-          <ul className={styles.references}>
+          <ul>
             {post.references.map((ref, idx) => (
               <li key={idx}>
                 <a href={ref.url} target="_blank" rel="noreferrer">
@@ -111,7 +113,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
         </section>
       )}
 
-      <section className={styles.utterances}>
+      <section className={sectionHeadingClass}>
         <h2>댓글</h2>
         <Utterances repo={'code-logs/code-logs.github.io'} theme={'preferred-color-scheme'} issueTerm={'title'} issueLabel={'Comment'} />
       </section>

@@ -1,42 +1,46 @@
 {
   "name": "code-logs",
   "private": true,
+  "packageManager": "pnpm@11.0.9",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "export": "npm run build && next export",
-    "docs:clean": "rm -rf ./docs",
-    "docs": "npm run docs:clean && npm run build && next export -o ./docs && touch ./docs/.nojekyll && npm run sitemap",
+    "docs:clean": "rm -rf ./docs ./out",
+    "docs": "pnpm run docs:clean && pnpm run build && mv ./out ./docs && touch ./docs/.nojekyll && pnpm run sitemap",
     "start": "next start",
-    "lint": "next lint",
-    "prepare": "husky install",
+    "lint": "eslint .",
+    "prepare": "husky",
     "sitemap": "ts-node bin/generate-sitemap.ts",
-    "licenses": "npm-license-crawler --start ./ --production true --json ./public/licenses.json"
+    "licenses": "ts-node bin/generate-licenses.ts"
   },
   "dependencies": {
-    "@emotion/react": "^11.8.1",
-    "@emotion/styled": "^11.8.1",
-    "@mui/icons-material": "^5.4.2",
-    "@mui/material": "^5.4.2",
-    "highlight.js": "^11.4.0",
-    "next": "12.1.0",
-    "normalize.css": "^8.0.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "sass": "^1.49.7"
+    "highlight.js": "^11.11.1",
+    "lucide-react": "^1.14.0",
+    "next": "^15.5.18",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
-    "@types/marked": "^4.0.2",
-    "@types/node": "17.0.17",
-    "@types/react": "17.0.39",
-    "dotenv": "^16.0.0",
-    "eslint": "8.9.0",
-    "eslint-config-next": "12.0.10",
-    "husky": "^7.0.0",
-    "marked": "^4.0.12",
-    "npm-license-crawler": "^0.2.1",
-    "prettier": "^2.7.1",
-    "ts-node": "^10.5.0",
-    "typescript": "4.5.5"
+    "@eslint/eslintrc": "^3.3.5",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/marked": "^4.3.2",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^15.5.18",
+    "husky": "^9.1.7",
+    "license-checker-rseidelsohn": "^4.4.2",
+    "marked": "^4.3.0",
+    "postcss": "^8.5.14",
+    "prettier": "^3.4.2",
+    "tailwindcss": "^4.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }

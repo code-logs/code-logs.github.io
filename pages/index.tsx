@@ -9,7 +9,6 @@ import { META_CONTENTS } from '../config/meta-contents'
 import { Post } from '../config/posts.config'
 import postsDatabase from '../database/post-database'
 import TitleUtil from '../utils/TitleUtil'
-import styles from './Home.module.scss'
 
 export async function getStaticProps() {
   const posts = postsDatabase.find()
@@ -54,7 +53,7 @@ const Home: NextPage<{
 
       <MainAdsBanner />
 
-      <div className={styles.index}>
+      <div className="grid grid-cols-2 pb-wide max-tablet:grid-cols-1 max-tablet:gap-common">
         <CategoryIndexer categories={props.categories} />
 
         <TagIndexer tagsWithCount={props.tagsWithCount} limit={20} />

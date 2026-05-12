@@ -1,8 +1,7 @@
-import React, { useCallback, useState } from 'react'
+import React from 'react'
 import { Post } from '../../config/posts.config'
 import MainAdsBanner from '../ads-banner/MainAdsBanner'
 import PostCard, { PostCardProps } from '../post-card/PostCard'
-import styles from './PostCardList.module.scss'
 
 export interface PostCardListProps {
   titleLevel?: PostCardProps['titleLevel']
@@ -12,7 +11,7 @@ export interface PostCardListProps {
 
 const PostCardList = ({ titleLevel, posts, adsBlockCycle = 3 }: PostCardListProps) =>
   !!posts.length ? (
-    <ul className={styles.list}>
+    <ul className="m-0 p-0">
       {posts.map((post, idx) => (
         <React.Fragment key={post.title}>
           <li key={post.title}>
