@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getSchemaFilePath } from '../../../utils/dev/AuthoringPrompt'
+import { buildAuthoringPrompt, getSchemaFilePath } from '../../../utils/dev/AuthoringPrompt'
 import { runCodex } from '../../../utils/dev/CodexClient'
 import { CATEGORIES } from '../../../config/posts.config'
 import { GeneratedPost } from '../../../utils/dev/types'
@@ -25,12 +25,20 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { prompt: rawPrompt } = req.body as { prompt?: string }
-  if (!rawPrompt || typeof rawPrompt !== 'string' || rawPrompt.trim().length < 50) {
-    return res.status(400).json({ error: 'prompt must be a non-empty string (min 50 chars)' })
+  const { topic, additionalInstruction } = req.body as {
+    topic?: string
+    additionalInstruction?: string
+  }
+  if (!topic || typeof topic !== 'string' || !topic.trim()) {
+    return res.status(400).json({ error: 'topic is required' })
   }
 
-  const prompt = rawPrompt.trim()
+  const today = new Date().toLocaleDateString('sv-SE')
+  const prompt = buildAuthoringPrompt({
+    today,
+    topic: topic.trim(),
+    additionalInstruction: typeof additionalInstruction === 'string' ? additionalInstruction.trim() : undefined,
+  })
   const schemaPath = getSchemaFilePath()
 
   let rawOutput: string

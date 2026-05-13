@@ -9,8 +9,9 @@ import path from 'path'
 import { GENERATED_POST_JSON_SCHEMA } from './types'
 
 export interface AuthoringPromptOptions {
-  userInstruction?: string
-  today: string               // YYYY-MM-DD — server's local date
+  today: string                      // YYYY-MM-DD — server's local date
+  topic?: string                     // post subject — required at generation time
+  additionalInstruction?: string     // optional extra guidance from the user
 }
 
 /**
@@ -24,15 +25,25 @@ export function getSchemaFilePath(): string {
   return schemaFilePath
 }
 
+const TOPIC_PLACEHOLDER = '(여기에 주제가 들어갑니다)'
+const ADDITIONAL_PLACEHOLDER = '(추가 인스트럭션이 비어 있습니다 — 선택)'
+
 /**
  * Build the full prompt string to pass to codex via stdin.
  *
  * The prompt references workspace paths instead of embedding data dumps so the
  * model reads live state (categories, catalog, thumbnails) on each run. Codex
  * runs with `--sandbox workspace-write` and has read access to the project root.
+ *
+ * `topic` and `additionalInstruction` are the only user-editable slots. When
+ * omitted, placeholder strings render so the read-only preview stays readable.
  */
 export function buildAuthoringPrompt(opts: AuthoringPromptOptions): string {
-  const { userInstruction = '', today } = opts
+  const { today, topic, additionalInstruction } = opts
+  const topicBody = topic && topic.trim() ? topic.trim() : TOPIC_PLACEHOLDER
+  const additionalBody = additionalInstruction && additionalInstruction.trim()
+    ? additionalInstruction.trim()
+    : ADDITIONAL_PLACEHOLDER
 
   return `You are a senior technical writer for a Korean developer blog (code-logs).
 Your task: produce exactly ONE complete blog post in JSON that strictly conforms to the provided JSON Schema.
@@ -47,7 +58,7 @@ Your task: produce exactly ONE complete blog post in JSON that strictly conforms
 === WORKFLOW ===
 1. \`config/posts.config.ts\`를 읽어 사용 가능한 카테고리 key, 기존 fileName, 기존 제목/태그를 파악한다.
 2. \`public/assets/images/\`를 살펴 주제에 어울리는 썸네일 파일이 있는지 확인한다.
-3. 아래 USER INSTRUCTION을 충족하는 새 포스트를 작성한다.
+3. 아래 TOPIC을 충족하는 새 포스트를 작성한다. ADDITIONAL INSTRUCTIONS가 있다면 함께 반영한다.
 
 === Post METADATA 포맷 (자세한 타입은 \`config/posts.config.ts\`의 \`Post\` 참고) ===
 - title: 한국어 제목 (필수)
@@ -78,8 +89,11 @@ Use today's date: ${today}
 - 우선 \`public/assets/images/\`에서 주제에 가장 잘 맞는 기존 파일을 골라 mode="reuse", reuseFileName=<파일명>으로 설정한다.
 - 적합한 파일이 없을 때만 mode="generate"로 두고, 이미지 생성용 prompt를 generatePrompt에 작성한다.
 
-=== USER INSTRUCTION ===
-${userInstruction || '(여기에 작성 지시를 입력하세요)'}
+=== TOPIC ===
+${topicBody}
+
+=== ADDITIONAL INSTRUCTIONS ===
+${additionalBody}
 
 Respond with ONLY valid JSON matching the schema — no markdown fences, no prose outside the JSON.`
 }

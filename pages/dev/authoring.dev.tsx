@@ -15,9 +15,10 @@ export const getStaticProps: GetStaticProps = async () => {
 type Stage = 'input' | 'generating' | 'preview' | 'publishing' | 'done'
 
 const AuthoringPage: NextPage = (): ReactElement => {
-  // ── Prompt editor ─────────────────────────────────────────────────────
-  const [prompt, setPrompt] = useState('')
-  const [promptDirty, setPromptDirty] = useState(false)
+  // ── Inputs ────────────────────────────────────────────────────────────
+  const [topic, setTopic] = useState('')
+  const [additionalInstruction, setAdditionalInstruction] = useState('')
+  const [corePrompt, setCorePrompt] = useState('')
   const [promptLoading, setPromptLoading] = useState(true)
   const [promptLoadError, setPromptLoadError] = useState('')
 
@@ -70,26 +71,25 @@ const AuthoringPage: NextPage = (): ReactElement => {
   }
   useEffect(() => () => stopTimer(), [])
 
-  // ── Fetch default prompt on mount ──────────────────────────────────────
-  async function fetchDefaultPrompt() {
+  // ── Fetch core prompt on mount (read-only reference) ──────────────────
+  async function fetchCorePrompt() {
     setPromptLoading(true)
     setPromptLoadError('')
     try {
       const res = await fetch('/api/dev/default-prompt')
       const data = await res.json()
       if (!res.ok) {
-        setPromptLoadError(data.error ?? '기본 프롬프트를 불러오지 못했습니다.')
+        setPromptLoadError(data.error ?? 'Core 프롬프트를 불러오지 못했습니다.')
         return
       }
-      setPrompt(data.prompt as string)
-      setPromptDirty(false)
+      setCorePrompt(data.prompt as string)
     } catch (err) {
       setPromptLoadError(err instanceof Error ? err.message : String(err))
     } finally {
       setPromptLoading(false)
     }
   }
-  useEffect(() => { fetchDefaultPrompt() }, [])
+  useEffect(() => { fetchCorePrompt() }, [])
 
   // ── Sync markdown preview ──────────────────────────────────────────────
   useEffect(() => {
@@ -122,7 +122,7 @@ const AuthoringPage: NextPage = (): ReactElement => {
 
   // ── Generate handler ───────────────────────────────────────────────────
   async function handleGenerate() {
-    if (prompt.trim().length < 50) return
+    if (!topic.trim()) return
     setGenerateError('')
     setPublishError('')
     setPublishedUrl('')
@@ -133,7 +133,7 @@ const AuthoringPage: NextPage = (): ReactElement => {
       const res = await fetch('/api/dev/generate-post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ topic, additionalInstruction }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -245,48 +245,67 @@ const AuthoringPage: NextPage = (): ReactElement => {
 
       {/* Section A — Input */}
       {(stage === 'input' || stage === 'generating') && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <label className="block font-semibold" htmlFor="prompt">
-              Codex 프롬프트
+        <div className="space-y-6">
+          {/* Core prompt — read-only reference */}
+          <details className="border rounded p-4">
+            <summary className="cursor-pointer text-sm font-semibold">
+              Core 프롬프트 (참조용 · 읽기 전용)
+            </summary>
+            <div className="mt-3 space-y-2">
+              {promptLoadError && (
+                <div className="flex items-center gap-3 bg-red-50 text-red-700 p-3 rounded text-sm">
+                  <span>{promptLoadError}</span>
+                  <button
+                    type="button"
+                    onClick={fetchCorePrompt}
+                    className="underline cursor-pointer shrink-0"
+                  >
+                    다시 시도
+                  </button>
+                </div>
+              )}
+              <textarea
+                readOnly
+                className="w-full border rounded p-3 font-mono text-xs h-72 resize-y bg-gray-50 text-gray-700"
+                placeholder={promptLoading ? 'Core 프롬프트를 불러오는 중...' : ''}
+                value={corePrompt}
+              />
+              <p className="text-xs text-gray-500">
+                이 영역은 수정할 수 없습니다. 주제와 추가 인스트럭션은 아래 필드에 입력하세요.
+              </p>
+            </div>
+          </details>
+
+          {/* Topic — required */}
+          <div className="space-y-2">
+            <label className="block font-semibold" htmlFor="topic">
+              주제 <span className="text-red-500 text-sm">*</span>
             </label>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-400">{prompt.length}자</span>
-              <button
-                type="button"
-                onClick={() => {
-                  if (promptDirty) {
-                    if (!window.confirm('편집 내용을 버리고 기본값으로 되돌릴까요?')) return
-                  }
-                  fetchDefaultPrompt()
-                }}
-                disabled={stage === 'generating' || promptLoading}
-                className="text-xs text-blue-500 underline cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                기본값으로 되돌리기
-              </button>
-            </div>
+            <textarea
+              id="topic"
+              className="w-full border rounded p-3 font-mono text-sm h-28 resize-y"
+              placeholder="예: React 19의 useActionState 사용법 정리"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              disabled={stage === 'generating'}
+            />
           </div>
-          {promptLoadError && (
-            <div className="flex items-center gap-3 bg-red-50 text-red-700 p-3 rounded text-sm">
-              <span>{promptLoadError}</span>
-              <button
-                type="button"
-                onClick={fetchDefaultPrompt}
-                className="underline cursor-pointer shrink-0"
-              >
-                다시 시도
-              </button>
-            </div>
-          )}
-          <textarea
-            id="prompt"
-            className="w-full border rounded p-3 font-mono text-sm h-[60vh] resize-y"
-            placeholder={promptLoading ? '기본 프롬프트를 불러오는 중...' : '프롬프트를 입력하세요 (최소 50자)'}
-            value={prompt}
-            onChange={(e) => { setPrompt(e.target.value); setPromptDirty(true) }}
-            disabled={stage === 'generating' || promptLoading}
-          />
+
+          {/* Additional instruction — optional */}
+          <div className="space-y-2">
+            <label className="block font-semibold" htmlFor="additional-instruction">
+              추가 인스트럭션 <span className="text-xs text-gray-400">(선택)</span>
+            </label>
+            <textarea
+              id="additional-instruction"
+              className="w-full border rounded p-3 font-mono text-sm h-36 resize-y"
+              placeholder="예: 톤은 캐주얼하게, 길이는 500자 내외, 코드 예제 위주로"
+              value={additionalInstruction}
+              onChange={(e) => setAdditionalInstruction(e.target.value)}
+              disabled={stage === 'generating'}
+            />
+          </div>
+
           {generateError && (
             <pre className="bg-red-50 text-red-700 p-3 rounded text-sm whitespace-pre-wrap overflow-auto">
               {generateError}
@@ -294,7 +313,7 @@ const AuthoringPage: NextPage = (): ReactElement => {
           )}
           <button
             onClick={handleGenerate}
-            disabled={stage === 'generating' || promptLoading || prompt.trim().length < 50}
+            disabled={stage === 'generating' || !topic.trim()}
             className="px-6 py-2 bg-blue-600 text-white rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             {stage === 'generating' ? '생성 중...' : '생성'}
