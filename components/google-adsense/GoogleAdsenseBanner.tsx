@@ -25,6 +25,11 @@ const GoogleAdsenseBanner = (props: GoogleAdsenseBannerProps) => {
     window.adsbygoogle.push({})
   }, [])
 
+  // AdSense auto-discovers `<ins class="adsbygoogle" data-ad-client="...">`
+  // elements and fetches ads from doubleclick.net regardless of whether we
+  // call push(). Render nothing in dev so the slot leaves no trace.
+  if (process.env.NODE_ENV !== 'production') return null
+
   return (
     <ins
       ref={insRef}

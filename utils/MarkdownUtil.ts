@@ -1,4 +1,5 @@
 import fs from 'fs'
+import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
 import path from 'path'
 
@@ -6,7 +7,8 @@ export class MarkdownUtil {
   static readonly publicPath: string = './public'
 
   static getMarkdownContent(mdFilePath: string): string {
-    return marked(this.readFileSync(mdFilePath))
+    const html = marked(this.readFileSync(mdFilePath)) as string
+    return DOMPurify.sanitize(html)
   }
 
   static readFileSync(filePath: string): string {
