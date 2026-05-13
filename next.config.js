@@ -25,7 +25,12 @@ const pageExtensions = isDev
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
+  // `output: 'export'` rejects any pages/api/* file at startup — including in
+  // dev mode (Next.js 15 enforces this even before `next build`). The dev-only
+  // API routes under pages/api/dev/*.dev.ts need to run, so apply the static
+  // export only in production. `pnpm run build` / `pnpm run docs` run with
+  // NODE_ENV=production and still produce the static export as before.
+  ...(isDev ? {} : { output: 'export' }),
   pageExtensions,
   webpack(config, { isServer }) {
     if (!isDev) {

@@ -8,6 +8,12 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 
 ## Pitfalls
 
+### `output: 'export'` must be production-only or dev breaks at startup
+
+- **Symptom**: `next dev` crashes immediately with `API Routes cannot be used with "output: export"`, blocking the whole dev server (not just the dev API routes).
+- **Root cause**: Next.js 15 enforces the `output: 'export'` / `pages/api/*` incompatibility at startup, before any build. Even though API routes never run during `next dev`, simply having `output: 'export'` set rejects the presence of any `pages/api/*` file.
+- **Rule**: `next.config.js` MUST set `output: 'export'` only when `NODE_ENV === 'production'` (see the `isDev` ternary at the top of the file). `pnpm run build` and `pnpm run docs` run under `NODE_ENV=production` and still emit the static export. NEVER set `output: 'export'` unconditionally as long as `pages/api/dev/*` exists.
+
 ### `pageExtensions` alone does NOT exclude `.dev.tsx` files from production
 
 - **Symptom**: a route like `/dev/authoring.dev` appears in the static export.
