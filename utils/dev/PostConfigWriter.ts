@@ -64,24 +64,24 @@ export function appendPostConfig(metadata: GeneratedPostMetadata, thumbnailName:
 
 function serializeEntry(meta: GeneratedPostMetadata, thumbnailName: string): string {
   const indent = '  '
-  const tagItems = meta.tags.map((t) => `\`${t}\``).join(', ')
+  const tagItems = meta.tags.map(toTemplateLiteral).join(', ')
 
   let block = `${indent}{\n`
-  block += `${indent}  title: \`${escapeBt(meta.title)}\`,\n`
-  block += `${indent}  description: \`${escapeBt(meta.description)}\`,\n`
+  block += `${indent}  title: ${toTemplateLiteral(meta.title)},\n`
+  block += `${indent}  description: ${toTemplateLiteral(meta.description)},\n`
   block += `${indent}  fileName: '${meta.fileName}',\n`
   block += `${indent}  category: '${meta.category}',\n`
   block += `${indent}  published: true,\n`
-  block += `${indent}  publishedAt: \`${meta.publishedAt}\`,\n`
-  block += `${indent}  thumbnailName: \`${escapeBt(thumbnailName)}\`,\n`
+  block += `${indent}  publishedAt: ${toTemplateLiteral(meta.publishedAt)},\n`
+  block += `${indent}  thumbnailName: ${toTemplateLiteral(thumbnailName)},\n`
   block += `${indent}  tags: [${tagItems}],\n`
 
   if (meta.references && meta.references.length > 0) {
     block += `${indent}  references: [\n`
     for (const ref of meta.references) {
       block += `${indent}    {\n`
-      block += `${indent}      title: \`${escapeBt(ref.title)}\`,\n`
-      block += `${indent}      url: \`${escapeBt(ref.url)}\`,\n`
+      block += `${indent}      title: ${toTemplateLiteral(ref.title)},\n`
+      block += `${indent}      url: ${toTemplateLiteral(ref.url)},\n`
       block += `${indent}    },\n`
     }
     block += `${indent}  ],\n`
@@ -91,9 +91,9 @@ function serializeEntry(meta: GeneratedPostMetadata, thumbnailName: string): str
   return block
 }
 
-/** Escape backtick characters inside a template literal string */
-function escapeBt(s: string): string {
-  return s.replace(/`/g, '\\`').replace(/\$/g, '\\$')
+/** Serialize a string as a TypeScript template literal. */
+function toTemplateLiteral(s: string): string {
+  return `\`${s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\``
 }
 
 /**
