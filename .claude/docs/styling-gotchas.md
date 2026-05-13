@@ -44,6 +44,12 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - **Why:** `styles/highlight.css` is imported in `pages/_app.tsx` AFTER `globals.css` and is plain CSS (not a Tailwind layer). It owns `.hljs`, `.hljs-*`, and the `pre code` reset, and it is loaded last so it overrides preflight on code blocks.
 - **Rule:** Add or change syntax-highlight colors in `highlight.css` only. Add or change layout/typography for code blocks (e.g., border-radius on `<pre>`) also in `highlight.css`. NEVER move hljs rules into `globals.css` — the import order matters.
 
+### Bare element selectors in `globals.css` capture nested semantic tags
+
+- **Symptom:** A page-level `<header>` / `<main>` / `<aside>` / `<footer>` inside a page component starts behaving as if it were the top-level layout slot — e.g. a page's `<header>` becomes `position: sticky` and overlaps with the site header on scroll.
+- **Why:** `@layer base` in `globals.css` defines `header`, `main`, `aside`, `footer` as bare element selectors to slot the top-level layout into the `#__next` CSS grid. These selectors match **every** descendant of those tags, not just the direct children of `#__next`. So nesting another `<header>` inside `<main>` inherits `grid-area: header; position: sticky; height: var(--header-height); z-index: 1` — which collides with the real header.
+- **Rule:** Inside page components and shared components rendered under `<main>`, use `<div>` (or `<section>` / `<article>` for semantics) for page-section headers and footers. NEVER use a second `<header>` / `<main>` / `<aside>` / `<footer>` element inside `<main>`. If you genuinely need the semantic element, scope a new rule that resets the layout properties for that case.
+
 ### Token names must follow Tailwind v4's `--<namespace>-<name>` convention
 
 - **Symptom:** A custom token defined in `@theme` doesn't generate the expected utility.
