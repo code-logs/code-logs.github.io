@@ -46,11 +46,11 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 - **Root cause**: the request body schema changed from `{ userInstruction: string }` to `{ prompt: string }`. Callers that still send `userInstruction` receive a 400 because the field is no longer read.
 - **Rule**: ALWAYS send the full assembled prompt in the `prompt` field. The server does NOT reassemble the prompt — it passes the client-supplied string directly to Codex. The client is responsible for fetching and editing the default prompt via `GET /api/dev/default-prompt` first.
 
-### `GET /api/dev/default-prompt` must return a fresh prompt on every call
+### Default prompt MUST reference workspace paths, NEVER embed data dumps
 
-- **Symptom**: category list, post catalog, or thumbnail list in the prompt textarea is stale after new posts are published or thumbnails added.
-- **Root cause**: the default prompt is assembled at request time from live data (postsDatabase, listThumbnailFiles, today's date). However, the browser will NOT refetch the prompt automatically while the authoring page stays open.
-- **Rule**: the endpoint sets `Cache-Control: no-store` to prevent browser caching. Users who need a fresh catalog MUST click "기본값으로 되돌리기" to trigger a re-fetch, which overwrites the textarea. The `today` timestamp embedded in the prompt reflects the server's clock at the time of the last fetch — edits that span midnight will contain a stale date.
+- **Symptom**: prompt length balloons as more posts and thumbnails are added; every new asset requires reassembling and re-sending the prompt to keep Codex current.
+- **Root cause**: embedding the full CATEGORIES map, every published post's metadata, and every thumbnail filename inline makes the prompt a snapshot that goes stale the moment any of those change.
+- **Rule**: `buildAuthoringPrompt()` MUST reference paths (`config/posts.config.ts`, `public/assets/images/`, `posts/<category-key>/`) and tell Codex to read them itself. Codex runs with `--sandbox workspace-write` and has read access to the project root, so it can resolve live state on every run. NEVER reintroduce inline catalog/thumbnail dumps in the default prompt.
 
 ### Codex output schema — Node-side validation is defense-in-depth, not optional
 
@@ -86,7 +86,7 @@ NEVER import anything from `utils/dev/` in a client component or non-dev page. T
 
 The prompt pipeline has two stages:
 
-1. **Default prompt assembly** (`GET /api/dev/default-prompt`): `buildAuthoringPrompt()` in `utils/dev/AuthoringPrompt.ts` assembles the full prompt from live data (CATEGORIES map, postsDatabase, listThumbnailFiles, today's date). The result is returned as `{ prompt: string }` and displayed in the authoring textarea.
+1. **Default prompt assembly** (`GET /api/dev/default-prompt`): `buildAuthoringPrompt()` in `utils/dev/AuthoringPrompt.ts` returns a path-referenced template plus today's date. It does NOT read postsDatabase or list thumbnails — Codex resolves those at run time by reading `config/posts.config.ts` and `public/assets/images/` directly. The response sets `Cache-Control: no-store` and is displayed in the authoring textarea.
 2. **Generation** (`POST /api/dev/generate-post`): the client sends the edited textarea content as `{ prompt: string }`. The server passes it unchanged to Codex. `buildAuthoringPrompt()` is NOT called at generation time.
 
 The `userInstruction` parameter of `buildAuthoringPrompt` is optional; when omitted, the `=== USER INSTRUCTION ===` block contains a placeholder string. The client is responsible for the user filling in that section before submitting.
