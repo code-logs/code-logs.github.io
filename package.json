@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "docs:clean": "rm -rf ./docs ./out",
-    "docs": "pnpm run docs:clean && pnpm run build && mv ./out ./docs && touch ./docs/.nojekyll && pnpm run sitemap",
+    "docs": "pnpm run docs:clean && pnpm run build && mv ./out ./docs && touch ./docs/.nojekyll && rm -rf ./docs/dev && pnpm run sitemap",
     "start": "next start",
     "lint": "eslint .",
     "prepare": "husky",

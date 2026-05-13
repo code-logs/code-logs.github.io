@@ -19,7 +19,7 @@ Always invoke scripts as `pnpm run <script>` — bare `pnpm <script>` collides w
 
 - `pnpm dev` — Next.js dev server (http://localhost:3000)
 - `pnpm run build` — Next.js production build (writes static export to `./out` because `output: 'export'` is set in `next.config.js`)
-- `pnpm run docs` — full static export pipeline used by CI: cleans, builds, moves `./out` → `./docs`, drops `.nojekyll`, then runs `pnpm run sitemap`. The `./docs` directory is what GitHub Pages serves, so it is committed to `main` (by CI, not by hand — see Deployment).
+- `pnpm run docs` — full static export pipeline used by CI: cleans, builds, moves `./out` → `./docs`, drops `.nojekyll`, removes the empty `./docs/dev/` artifact left by dev-only pages (see Dev-only convention below), then runs `pnpm run sitemap`. The `./docs` directory is what GitHub Pages serves, so it is committed to `main` (by CI, not by hand — see Deployment).
 - `pnpm run sitemap` — runs `bin/generate-sitemap.ts` against the just-built `./docs` directory; will fail if `./docs` is empty.
 - `pnpm run licenses` — regenerates `public/licenses.json` (consumed by `/licenses` page) using `license-checker-rseidelsohn`.
 - `pnpm run lint` — ESLint CLI (`eslint .`) configured via `eslint.config.mjs` (flat config). Uses `FlatCompat` to bring in `next/core-web-vitals` since `eslint-config-next@15` still ships as legacy eslintrc; `@next/next/no-img-element` is intentionally disabled — native `<img>` is allowed. Build outputs (`.next/`, `out/`, `docs/`, `public/`) are ignored.
@@ -68,3 +68,7 @@ Build-time flow:
 ### Assets
 
 Post thumbnails and inline markdown images are served from `public/assets/images/` and referenced by `thumbnailName` (just the filename — `PathUtil.buildImagePath` prefixes the directory).
+
+### Dev-only pages and API routes (`.dev.tsx` / `.dev.ts` convention)
+
+`pages/dev/*.dev.tsx`, `pages/api/dev/*.dev.ts`, and `utils/dev/*` are excluded from the static export via a multi-layer mechanism. The `/dev/authoring` page requires the locally-installed `codex` CLI on `$PATH`. For the full isolation mechanism, file placement rules, and pitfalls, see [.claude/docs/dev-authoring-pipeline.md](.claude/docs/dev-authoring-pipeline.md).
