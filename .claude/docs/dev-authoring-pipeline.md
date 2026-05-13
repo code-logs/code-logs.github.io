@@ -40,6 +40,18 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 - **Root cause**: `CodexClient` calls `child_process.spawn('codex', ...)`. `codex` must be installed globally and on `$PATH` as a system binary. It is deliberately absent from `package.json`.
 - **Rule**: NEVER add `codex` as a project npm dependency. Before using the authoring page, run `codex login` once. Confirm it is reachable with `which codex`.
 
+### `generate-post` request body splits topic from additional instruction
+
+- **Symptom**: `POST /api/dev/generate-post` returns 400 with "topic is required".
+- **Root cause**: the request body is `{ topic: string, additionalInstruction?: string }`. The server reassembles the full prompt with `buildAuthoringPrompt({ today, topic, additionalInstruction })` — the client never sends a full prompt string.
+- **Rule**: NEVER let the client send the full prompt. The Core template (style rules, workspace layout, schema constraints) is server-owned and must not be user-editable. Only `topic` (required) and `additionalInstruction` (optional) come from the client.
+
+### Default prompt MUST reference workspace paths, NEVER embed data dumps
+
+- **Symptom**: prompt length balloons as more posts and thumbnails are added; every new asset requires reassembling and re-sending the prompt to keep Codex current.
+- **Root cause**: embedding the full CATEGORIES map, every published post's metadata, and every thumbnail filename inline makes the prompt a snapshot that goes stale the moment any of those change.
+- **Rule**: `buildAuthoringPrompt()` MUST reference paths (`config/posts.config.ts`, `public/assets/images/`, `posts/<category-key>/`) and tell Codex to read them itself. Codex runs with `--sandbox workspace-write` and has read access to the project root, so it can resolve live state on every run. NEVER reintroduce inline catalog/thumbnail dumps in the default prompt.
+
 ### Codex output schema — Node-side validation is defense-in-depth, not optional
 
 - **Symptom**: downstream code receives a partial or malformed post draft and silently produces a broken `posts.config.ts` entry.
@@ -69,6 +81,15 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 | Server-only Node modules (dev) | `utils/dev/` |
 
 NEVER import anything from `utils/dev/` in a client component or non-dev page. These modules use `child_process` and other Node-only APIs that will break the client bundle.
+
+### Prompt assembly flow
+
+The Core template is server-owned. Only TOPIC and ADDITIONAL INSTRUCTIONS slots are user-editable.
+
+1. **Core preview** (`GET /api/dev/default-prompt`): returns `buildAuthoringPrompt({ today })` with placeholder strings in the TOPIC and ADDITIONAL INSTRUCTIONS slots. Used for the read-only reference panel in the UI. `Cache-Control: no-store`.
+2. **Generation** (`POST /api/dev/generate-post`): client sends `{ topic, additionalInstruction? }`. Server reassembles via `buildAuthoringPrompt({ today, topic, additionalInstruction })` and passes the result to Codex.
+
+The `topic` and `additionalInstruction` parameters are both optional in the function signature so the GET preview path can render placeholders; the POST handler enforces `topic` non-empty at the API layer.
 
 ### Codex CLI invocation
 

@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import postsDatabase from '../../../database/post-database'
 import { buildAuthoringPrompt, getSchemaFilePath } from '../../../utils/dev/AuthoringPrompt'
 import { runCodex } from '../../../utils/dev/CodexClient'
-import { listThumbnailFiles } from '../../../utils/dev/ThumbnailResolver'
 import { CATEGORIES } from '../../../config/posts.config'
 import { GeneratedPost } from '../../../utils/dev/types'
 
@@ -27,24 +25,21 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { userInstruction } = req.body as { userInstruction?: string }
-  if (!userInstruction || typeof userInstruction !== 'string' || !userInstruction.trim()) {
-    return res.status(400).json({ error: 'userInstruction is required' })
+  const { topic, additionalInstruction } = req.body as {
+    topic?: string
+    additionalInstruction?: string
+  }
+  if (!topic || typeof topic !== 'string' || !topic.trim()) {
+    return res.status(400).json({ error: 'topic is required' })
   }
 
-  // Compute today in local time (YYYY-MM-DD)
-  const today = new Date().toLocaleDateString('sv-SE') // 'sv-SE' gives YYYY-MM-DD in local TZ
-
-  const publishedPosts = postsDatabase.find()
-  const thumbnailFileNames = listThumbnailFiles()
-  const schemaPath = getSchemaFilePath()
-
+  const today = new Date().toLocaleDateString('sv-SE')
   const prompt = buildAuthoringPrompt({
-    userInstruction: userInstruction.trim(),
     today,
-    publishedPosts,
-    thumbnailFileNames,
+    topic: topic.trim(),
+    additionalInstruction: typeof additionalInstruction === 'string' ? additionalInstruction.trim() : undefined,
   })
+  const schemaPath = getSchemaFilePath()
 
   let rawOutput: string
   try {
