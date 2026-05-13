@@ -236,7 +236,7 @@ const AuthoringPage: NextPage = (): ReactElement => {
   return (
     <div className="space-y-8 pb-12">
         {/* Header */}
-        <header className="space-y-3">
+        <div className="space-y-3">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
@@ -246,7 +246,7 @@ const AuthoringPage: NextPage = (): ReactElement => {
           </div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Codex 글 작성</h1>
           <Stepper stage={stage} />
-        </header>
+        </div>
 
         {/* Section A — Input */}
         {(stage === 'input' || stage === 'generating') && (
