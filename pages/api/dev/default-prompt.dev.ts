@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import postsDatabase from '../../../database/post-database'
 import { buildAuthoringPrompt } from '../../../utils/dev/AuthoringPrompt'
-import { listThumbnailFiles } from '../../../utils/dev/ThumbnailResolver'
 
 if (process.env.NODE_ENV === 'production') {
   console.warn('default-prompt.dev.ts loaded in production — this should not happen')
@@ -23,10 +21,7 @@ export default function handler(
   }
 
   const today = new Date().toLocaleDateString('sv-SE')
-  const publishedPosts = postsDatabase.find()
-  const thumbnailFileNames = listThumbnailFiles()
-
-  const prompt = buildAuthoringPrompt({ today, publishedPosts, thumbnailFileNames })
+  const prompt = buildAuthoringPrompt({ today })
 
   res.setHeader('Cache-Control', 'no-store')
   return res.status(200).json({ prompt })

@@ -6,14 +6,11 @@ if (typeof window !== 'undefined') {
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { CATEGORIES, Post } from '../../config/posts.config'
 import { GENERATED_POST_JSON_SCHEMA } from './types'
 
 export interface AuthoringPromptOptions {
   userInstruction?: string
   today: string               // YYYY-MM-DD — server's local date
-  publishedPosts: Post[]      // from postsDatabase
-  thumbnailFileNames: string[] // files in public/assets/images/
 }
 
 /**
@@ -29,31 +26,37 @@ export function getSchemaFilePath(): string {
 
 /**
  * Build the full prompt string to pass to codex via stdin.
+ *
+ * The prompt references workspace paths instead of embedding data dumps so the
+ * model reads live state (categories, catalog, thumbnails) on each run. Codex
+ * runs with `--sandbox workspace-write` and has read access to the project root.
  */
 export function buildAuthoringPrompt(opts: AuthoringPromptOptions): string {
-  const { userInstruction = '', today, publishedPosts, thumbnailFileNames } = opts
-
-  const categoriesBlock = Object.entries(CATEGORIES)
-    .map(([key, value]) => `  - key: "${key}"  display: "${value}"`)
-    .join('\n')
-
-  const catalogBlock = publishedPosts
-    .map((p) => `  - title: "${p.title}" | category: "${p.category}" | tags: ${p.tags.join(', ')}`)
-    .join('\n')
-
-  const thumbnailsBlock = thumbnailFileNames.map((f) => `  - ${f}`).join('\n')
+  const { userInstruction = '', today } = opts
 
   return `You are a senior technical writer for a Korean developer blog (code-logs).
 Your task: produce exactly ONE complete blog post in JSON that strictly conforms to the provided JSON Schema.
 
-=== CATEGORIES (use the "key" field for the "category" property) ===
-${categoriesBlock}
+=== WORKSPACE LAYOUT (read these files directly to stay current) ===
+- 카테고리 정의 및 발행 카탈로그: \`config/posts.config.ts\`
+  · \`CATEGORIES\` 객체: 카테고리 key → display 매핑. JSON 응답의 \`category\` 필드에는 **key**를 사용한다.
+  · \`posts\` 배열: 발행된 Post 메타데이터. 중복 주제 회피와 references 작성에 활용한다.
+- 마크다운 본문 위치: \`posts/<category-key>/<fileName>.md\`
+- 썸네일 디렉토리: \`public/assets/images/\` (디렉토리를 직접 살펴 재사용할 파일을 고른다)
 
-=== PUBLISHED POST CATALOG (use for references and to avoid duplicate topics) ===
-${catalogBlock}
+=== WORKFLOW ===
+1. \`config/posts.config.ts\`를 읽어 사용 가능한 카테고리 key, 기존 fileName, 기존 제목/태그를 파악한다.
+2. \`public/assets/images/\`를 살펴 주제에 어울리는 썸네일 파일이 있는지 확인한다.
+3. 아래 USER INSTRUCTION을 충족하는 새 포스트를 작성한다.
 
-=== EXISTING THUMBNAIL FILES (prefer reuse; list exact filename when reusing) ===
-${thumbnailsBlock}
+=== Post METADATA 포맷 (자세한 타입은 \`config/posts.config.ts\`의 \`Post\` 참고) ===
+- title: 한국어 제목 (필수)
+- description: 1-2문장 요약 (필수)
+- category: \`CATEGORIES\` 객체의 **key** 중 하나 (필수)
+- fileName: kebab-case, \`.md\`로 끝나는 파일명 (예: "use-action-state.md") — 기존과 중복 금지
+- publishedAt: YYYY-MM-DD 형식
+- tags: 문자열 배열 (최소 1개)
+- references: \`[{ title, url }]\` 배열 (선택)
 
 === STYLE RULES ===
 1. Language: Korean prose (technical terms may remain in English).
@@ -65,15 +68,15 @@ ${thumbnailsBlock}
 
 === fileName RULES ===
 - kebab-case, ends with .md (e.g. "use-action-state.md").
-- Must NOT match any existing fileName in the catalog above.
-- Must NOT contain spaces or uppercase.
+- 공백/대문자 금지.
+- \`config/posts.config.ts\`의 기존 fileName과 중복되지 않아야 한다.
 
 === publishedAt ===
 Use today's date: ${today}
 
 === THUMBNAIL RULES ===
-- Prefer "reuse": pick the most thematically fitting file from the EXISTING THUMBNAIL FILES list and set mode="reuse", reuseFileName=<that filename>.
-- If absolutely nothing fits, set mode="generate" and provide a concise image-generation prompt in generatePrompt.
+- 우선 \`public/assets/images/\`에서 주제에 가장 잘 맞는 기존 파일을 골라 mode="reuse", reuseFileName=<파일명>으로 설정한다.
+- 적합한 파일이 없을 때만 mode="generate"로 두고, 이미지 생성용 prompt를 generatePrompt에 작성한다.
 
 === USER INSTRUCTION ===
 ${userInstruction || '(여기에 작성 지시를 입력하세요)'}
