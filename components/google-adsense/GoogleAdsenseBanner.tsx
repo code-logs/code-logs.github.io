@@ -20,6 +20,7 @@ const GoogleAdsenseBanner = (props: GoogleAdsenseBannerProps) => {
   const insRef = useRef<HTMLModElement>(null)
 
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return
     if (!insRef.current || insRef.current.offsetWidth < MIN_SLOT_WIDTH) return
     window.adsbygoogle = window.adsbygoogle || []
     window.adsbygoogle.push({})
