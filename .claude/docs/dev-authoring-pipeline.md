@@ -40,11 +40,11 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 - **Root cause**: `CodexClient` calls `child_process.spawn('codex', ...)`. `codex` must be installed globally and on `$PATH` as a system binary. It is deliberately absent from `package.json`.
 - **Rule**: NEVER add `codex` as a project npm dependency. Before using the authoring page, run `codex login` once. Confirm it is reachable with `which codex`.
 
-### `generate-post` accepts a full prompt string, not a `userInstruction` field
+### `generate-post` request body splits topic from additional instruction
 
-- **Symptom**: `POST /api/dev/generate-post` returns 400 with "prompt must be a non-empty string (min 50 chars)".
-- **Root cause**: the request body schema changed from `{ userInstruction: string }` to `{ prompt: string }`. Callers that still send `userInstruction` receive a 400 because the field is no longer read.
-- **Rule**: ALWAYS send the full assembled prompt in the `prompt` field. The server does NOT reassemble the prompt — it passes the client-supplied string directly to Codex. The client is responsible for fetching and editing the default prompt via `GET /api/dev/default-prompt` first.
+- **Symptom**: `POST /api/dev/generate-post` returns 400 with "topic is required".
+- **Root cause**: the request body is `{ topic: string, additionalInstruction?: string }`. The server reassembles the full prompt with `buildAuthoringPrompt({ today, topic, additionalInstruction })` — the client never sends a full prompt string.
+- **Rule**: NEVER let the client send the full prompt. The Core template (style rules, workspace layout, schema constraints) is server-owned and must not be user-editable. Only `topic` (required) and `additionalInstruction` (optional) come from the client.
 
 ### Default prompt MUST reference workspace paths, NEVER embed data dumps
 
@@ -82,14 +82,14 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 
 NEVER import anything from `utils/dev/` in a client component or non-dev page. These modules use `child_process` and other Node-only APIs that will break the client bundle.
 
-### Prompt assembly and editing flow
+### Prompt assembly flow
 
-The prompt pipeline has two stages:
+The Core template is server-owned. Only TOPIC and ADDITIONAL INSTRUCTIONS slots are user-editable.
 
-1. **Default prompt assembly** (`GET /api/dev/default-prompt`): `buildAuthoringPrompt()` in `utils/dev/AuthoringPrompt.ts` returns a path-referenced template plus today's date. It does NOT read postsDatabase or list thumbnails — Codex resolves those at run time by reading `config/posts.config.ts` and `public/assets/images/` directly. The response sets `Cache-Control: no-store` and is displayed in the authoring textarea.
-2. **Generation** (`POST /api/dev/generate-post`): the client sends the edited textarea content as `{ prompt: string }`. The server passes it unchanged to Codex. `buildAuthoringPrompt()` is NOT called at generation time.
+1. **Core preview** (`GET /api/dev/default-prompt`): returns `buildAuthoringPrompt({ today })` with placeholder strings in the TOPIC and ADDITIONAL INSTRUCTIONS slots. Used for the read-only reference panel in the UI. `Cache-Control: no-store`.
+2. **Generation** (`POST /api/dev/generate-post`): client sends `{ topic, additionalInstruction? }`. Server reassembles via `buildAuthoringPrompt({ today, topic, additionalInstruction })` and passes the result to Codex.
 
-The `userInstruction` parameter of `buildAuthoringPrompt` is optional; when omitted, the `=== USER INSTRUCTION ===` block contains a placeholder string. The client is responsible for the user filling in that section before submitting.
+The `topic` and `additionalInstruction` parameters are both optional in the function signature so the GET preview path can render placeholders; the POST handler enforces `topic` non-empty at the API layer.
 
 ### Codex CLI invocation
 
