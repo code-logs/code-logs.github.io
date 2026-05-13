@@ -28,7 +28,16 @@ export interface GeneratedPost {
   thumbnail: GeneratedPostThumbnail
 }
 
-/** JSON Schema for GeneratedPost — used with codex --output-schema */
+/**
+ * JSON Schema for GeneratedPost — used with codex --output-schema.
+ *
+ * OpenAI structured outputs (which Codex uses) require `additionalProperties: false`
+ * AND every property in `properties` to be listed in `required`. To express
+ * "optional" fields, we declare them as nullable via `type: ['X', 'null']`.
+ *
+ * Node-side validation in generate-post.dev.ts treats null/missing equivalently
+ * for these fields and the TypeScript interface marks them optional.
+ */
 export const GENERATED_POST_JSON_SCHEMA = {
   type: 'object',
   required: ['metadata', 'markdown', 'thumbnail'],
@@ -36,7 +45,7 @@ export const GENERATED_POST_JSON_SCHEMA = {
   properties: {
     metadata: {
       type: 'object',
-      required: ['title', 'description', 'category', 'fileName', 'publishedAt', 'tags'],
+      required: ['title', 'description', 'category', 'fileName', 'publishedAt', 'tags', 'references'],
       additionalProperties: false,
       properties: {
         title: { type: 'string', minLength: 1 },
@@ -46,7 +55,7 @@ export const GENERATED_POST_JSON_SCHEMA = {
         publishedAt: { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' },
         tags: { type: 'array', items: { type: 'string' }, minItems: 1 },
         references: {
-          type: 'array',
+          type: ['array', 'null'],
           items: {
             type: 'object',
             required: ['title', 'url'],
@@ -62,12 +71,12 @@ export const GENERATED_POST_JSON_SCHEMA = {
     markdown: { type: 'string', minLength: 1 },
     thumbnail: {
       type: 'object',
-      required: ['mode'],
+      required: ['mode', 'reuseFileName', 'generatePrompt'],
       additionalProperties: false,
       properties: {
         mode: { type: 'string', enum: ['reuse', 'generate'] },
-        reuseFileName: { type: 'string', pattern: '^[\\w.\\-]+$' },
-        generatePrompt: { type: 'string' },
+        reuseFileName: { type: ['string', 'null'], pattern: '^[\\w.\\-]+$' },
+        generatePrompt: { type: ['string', 'null'] },
       },
     },
   },

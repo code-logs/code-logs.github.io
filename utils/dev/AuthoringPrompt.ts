@@ -18,15 +18,13 @@ export interface AuthoringPromptOptions {
 
 /**
  * Write the JSON Schema to a temp file and return its path.
- * The file persists for the lifetime of the process (callers do not need to
- * clean it up; it is tiny and in os.tmpdir()).
+ * Rewritten on every call so HMR-updated schema content always wins over any
+ * stale file left from a prior dev-server run.
  */
-let _schemaFilePath: string | null = null
 export function getSchemaFilePath(): string {
-  if (_schemaFilePath && fs.existsSync(_schemaFilePath)) return _schemaFilePath
-  _schemaFilePath = path.join(os.tmpdir(), 'codex-post-schema.json')
-  fs.writeFileSync(_schemaFilePath, JSON.stringify(GENERATED_POST_JSON_SCHEMA, null, 2), 'utf8')
-  return _schemaFilePath
+  const schemaFilePath = path.join(os.tmpdir(), 'codex-post-schema.json')
+  fs.writeFileSync(schemaFilePath, JSON.stringify(GENERATED_POST_JSON_SCHEMA, null, 2), 'utf8')
+  return schemaFilePath
 }
 
 /**

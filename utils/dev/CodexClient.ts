@@ -51,8 +51,14 @@ export async function runCodex(options: CodexRunOptions): Promise<string> {
     })
 
     let stderrBuf = ''
+    let stdoutBuf = ''
     child.stderr.on('data', (chunk: Buffer) => {
       stderrBuf += chunk.toString()
+    })
+    // With --json, codex emits JSONL events (including failure events) on stdout.
+    // Capture it so non-zero exits surface a useful diagnostic.
+    child.stdout.on('data', (chunk: Buffer) => {
+      stdoutBuf += chunk.toString()
     })
 
     const timer = setTimeout(() => {
@@ -76,7 +82,8 @@ export async function runCodex(options: CodexRunOptions): Promise<string> {
       if (code !== 0) {
         // Clean up the temp file on non-zero exit (it may not exist; ignore errors).
         try { fs.unlinkSync(tmpFile) } catch { /* ignore ENOENT and other errors */ }
-        reject(new Error(`codex exited with code ${code}.\n\nstderr:\n${stderrBuf}`))
+        const tail = stdoutBuf.slice(-2000)
+        reject(new Error(`codex exited with code ${code}.\n\nstderr:\n${stderrBuf}\n\nstdout (last 2KB):\n${tail}`))
         return
       }
 
