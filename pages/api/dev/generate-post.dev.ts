@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import postsDatabase from '../../../database/post-database'
-import { buildAuthoringPrompt, getSchemaFilePath } from '../../../utils/dev/AuthoringPrompt'
+import { getSchemaFilePath } from '../../../utils/dev/AuthoringPrompt'
 import { runCodex } from '../../../utils/dev/CodexClient'
-import { listThumbnailFiles } from '../../../utils/dev/ThumbnailResolver'
 import { CATEGORIES } from '../../../config/posts.config'
 import { GeneratedPost } from '../../../utils/dev/types'
 
@@ -27,24 +25,13 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { userInstruction } = req.body as { userInstruction?: string }
-  if (!userInstruction || typeof userInstruction !== 'string' || !userInstruction.trim()) {
-    return res.status(400).json({ error: 'userInstruction is required' })
+  const { prompt: rawPrompt } = req.body as { prompt?: string }
+  if (!rawPrompt || typeof rawPrompt !== 'string' || rawPrompt.trim().length < 50) {
+    return res.status(400).json({ error: 'prompt must be a non-empty string (min 50 chars)' })
   }
 
-  // Compute today in local time (YYYY-MM-DD)
-  const today = new Date().toLocaleDateString('sv-SE') // 'sv-SE' gives YYYY-MM-DD in local TZ
-
-  const publishedPosts = postsDatabase.find()
-  const thumbnailFileNames = listThumbnailFiles()
+  const prompt = rawPrompt.trim()
   const schemaPath = getSchemaFilePath()
-
-  const prompt = buildAuthoringPrompt({
-    userInstruction: userInstruction.trim(),
-    today,
-    publishedPosts,
-    thumbnailFileNames,
-  })
 
   let rawOutput: string
   try {

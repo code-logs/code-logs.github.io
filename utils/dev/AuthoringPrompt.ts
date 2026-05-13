@@ -10,7 +10,7 @@ import { CATEGORIES, Post } from '../../config/posts.config'
 import { GENERATED_POST_JSON_SCHEMA } from './types'
 
 export interface AuthoringPromptOptions {
-  userInstruction: string
+  userInstruction?: string
   today: string               // YYYY-MM-DD — server's local date
   publishedPosts: Post[]      // from postsDatabase
   thumbnailFileNames: string[] // files in public/assets/images/
@@ -31,7 +31,7 @@ export function getSchemaFilePath(): string {
  * Build the full prompt string to pass to codex via stdin.
  */
 export function buildAuthoringPrompt(opts: AuthoringPromptOptions): string {
-  const { userInstruction, today, publishedPosts, thumbnailFileNames } = opts
+  const { userInstruction = '', today, publishedPosts, thumbnailFileNames } = opts
 
   const categoriesBlock = Object.entries(CATEGORIES)
     .map(([key, value]) => `  - key: "${key}"  display: "${value}"`)
@@ -76,7 +76,7 @@ Use today's date: ${today}
 - If absolutely nothing fits, set mode="generate" and provide a concise image-generation prompt in generatePrompt.
 
 === USER INSTRUCTION ===
-${userInstruction}
+${userInstruction || '(여기에 작성 지시를 입력하세요)'}
 
 Respond with ONLY valid JSON matching the schema — no markdown fences, no prose outside the JSON.`
 }
