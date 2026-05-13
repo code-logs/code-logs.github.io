@@ -57,6 +57,10 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - `normalize.css` MUST NOT be reintroduced. If a preflight reset bites a new component (lists, headings, form controls), restore the affected user-agent default in `globals.css` `@layer base` and document it here.
 - The post-body article element MUST carry `prose max-w-none post-body` together (in that order is fine). `prose` provides the typography baseline; `.post-body` selectively overrides.
 
+## Related
+
+- [ads-adsense-rendering-gotchas.md](ads-adsense-rendering-gotchas.md) — pitfalls when the aside cell becomes too narrow for AdSense (ties into the `repeat(3, 1fr)` + fixed-width main grid behavior documented above).
+
 ## Rationale
 
 The migration to Tailwind v4 (issue #93) collapsed 30 `*.module.scss` files into Tailwind utilities to reduce cognitive overhead and enable token-based theming. CSS-first config was chosen over a JS config because v4's `@theme` directive removes the need for `tailwind.config.ts` and keeps tokens colocated with the rest of the global styles. `@tailwindcss/typography` was adopted to handle the markdown-rendered post body, where the HTML is `dangerouslySetInnerHTML`-injected and cannot receive utility classes element-by-element.
