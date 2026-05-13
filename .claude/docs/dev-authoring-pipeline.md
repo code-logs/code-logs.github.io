@@ -40,6 +40,18 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 - **Root cause**: `CodexClient` calls `child_process.spawn('codex', ...)`. `codex` must be installed globally and on `$PATH` as a system binary. It is deliberately absent from `package.json`.
 - **Rule**: NEVER add `codex` as a project npm dependency. Before using the authoring page, run `codex login` once. Confirm it is reachable with `which codex`.
 
+### `generate-post` accepts a full prompt string, not a `userInstruction` field
+
+- **Symptom**: `POST /api/dev/generate-post` returns 400 with "prompt must be a non-empty string (min 50 chars)".
+- **Root cause**: the request body schema changed from `{ userInstruction: string }` to `{ prompt: string }`. Callers that still send `userInstruction` receive a 400 because the field is no longer read.
+- **Rule**: ALWAYS send the full assembled prompt in the `prompt` field. The server does NOT reassemble the prompt — it passes the client-supplied string directly to Codex. The client is responsible for fetching and editing the default prompt via `GET /api/dev/default-prompt` first.
+
+### `GET /api/dev/default-prompt` must return a fresh prompt on every call
+
+- **Symptom**: category list, post catalog, or thumbnail list in the prompt textarea is stale after new posts are published or thumbnails added.
+- **Root cause**: the default prompt is assembled at request time from live data (postsDatabase, listThumbnailFiles, today's date). However, the browser will NOT refetch the prompt automatically while the authoring page stays open.
+- **Rule**: the endpoint sets `Cache-Control: no-store` to prevent browser caching. Users who need a fresh catalog MUST click "기본값으로 되돌리기" to trigger a re-fetch, which overwrites the textarea. The `today` timestamp embedded in the prompt reflects the server's clock at the time of the last fetch — edits that span midnight will contain a stale date.
+
 ### Codex output schema — Node-side validation is defense-in-depth, not optional
 
 - **Symptom**: downstream code receives a partial or malformed post draft and silently produces a broken `posts.config.ts` entry.
@@ -69,6 +81,15 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 | Server-only Node modules (dev) | `utils/dev/` |
 
 NEVER import anything from `utils/dev/` in a client component or non-dev page. These modules use `child_process` and other Node-only APIs that will break the client bundle.
+
+### Prompt assembly and editing flow
+
+The prompt pipeline has two stages:
+
+1. **Default prompt assembly** (`GET /api/dev/default-prompt`): `buildAuthoringPrompt()` in `utils/dev/AuthoringPrompt.ts` assembles the full prompt from live data (CATEGORIES map, postsDatabase, listThumbnailFiles, today's date). The result is returned as `{ prompt: string }` and displayed in the authoring textarea.
+2. **Generation** (`POST /api/dev/generate-post`): the client sends the edited textarea content as `{ prompt: string }`. The server passes it unchanged to Codex. `buildAuthoringPrompt()` is NOT called at generation time.
+
+The `userInstruction` parameter of `buildAuthoringPrompt` is optional; when omitted, the `=== USER INSTRUCTION ===` block contains a placeholder string. The client is responsible for the user filling in that section before submitting.
 
 ### Codex CLI invocation
 
