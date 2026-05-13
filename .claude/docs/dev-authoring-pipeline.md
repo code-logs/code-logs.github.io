@@ -40,6 +40,12 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 - **Root cause**: `--output-schema` constrains Codex output at the model layer, but schema enforcement is probabilistic, not guaranteed.
 - **Rule**: `generate-post.dev.ts` MUST validate the response against the same JSON Schema defined in `utils/dev/types.ts` before returning data to the client. Do not remove or weaken this validation in the belief that `--output-schema` is sufficient.
 
+### Markdown HTML must be sanitized before `dangerouslySetInnerHTML`
+
+- **Symptom**: a malicious `<script>`, event handler, or `javascript:` URL in markdown body executes when the post renders.
+- **Root cause**: `marked()` passes raw HTML in markdown through unchanged. Codex output and user edits in the authoring page are untrusted inputs that share the same render path as production posts.
+- **Rule**: BOTH `utils/MarkdownUtil.ts` (production post render via `getStaticProps`) AND `pages/dev/authoring.dev.tsx` (dev preview) MUST run `DOMPurify.sanitize(marked(md))` before injecting into `dangerouslySetInnerHTML`. The `isomorphic-dompurify` package handles both Node and browser environments. NEVER inject `marked()` output directly.
+
 ### ThumbnailResolver path-traversal containment
 
 - **Symptom**: a crafted `thumbnailName` value could escape `public/assets/images/` and read or overwrite arbitrary files.

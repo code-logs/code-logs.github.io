@@ -1,4 +1,5 @@
 import type { GetStaticProps, NextPage } from 'next'
+import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react'
@@ -69,7 +70,7 @@ const AuthoringPage: NextPage = (): ReactElement => {
   // ── Sync markdown preview ──────────────────────────────────────────────
   useEffect(() => {
     if (!markdown) { setRenderedHtml(''); return }
-    setRenderedHtml(marked(markdown) as string)
+    setRenderedHtml(DOMPurify.sanitize(marked(markdown) as string))
   }, [markdown])
 
   useEffect(() => {
