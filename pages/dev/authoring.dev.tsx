@@ -234,8 +234,7 @@ const AuthoringPage: NextPage = (): ReactElement => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-10 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="space-y-8 pb-12">
         {/* Header */}
         <header className="space-y-3">
           <div className="flex items-center gap-3">
@@ -535,7 +534,6 @@ const AuthoringPage: NextPage = (): ReactElement => {
             )}
           </div>
         )}
-      </div>
     </div>
   )
 }
