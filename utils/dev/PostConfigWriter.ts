@@ -87,6 +87,17 @@ function serializeEntry(meta: GeneratedPostMetadata, thumbnailName: string): str
     block += `${indent}  ],\n`
   }
 
+  if (meta.series && (meta.series.prevPostTitle || meta.series.nextPostTitle)) {
+    block += `${indent}  series: {\n`
+    if (meta.series.prevPostTitle) {
+      block += `${indent}    prevPostTitle: ${toTemplateLiteral(meta.series.prevPostTitle)},\n`
+    }
+    if (meta.series.nextPostTitle) {
+      block += `${indent}    nextPostTitle: ${toTemplateLiteral(meta.series.nextPostTitle)},\n`
+    }
+    block += `${indent}  },\n`
+  }
+
   block += `${indent}}`
   return block
 }

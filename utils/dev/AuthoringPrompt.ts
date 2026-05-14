@@ -68,6 +68,7 @@ Your task: produce exactly ONE complete blog post in JSON that strictly conforms
 - publishedAt: YYYY-MM-DD 형식
 - tags: 문자열 배열 (최소 1개)
 - references: \`[{ title, url }]\` 배열 (선택)
+- series: \`{ prevPostTitle?, nextPostTitle? }\` (선택) — ADDITIONAL INSTRUCTIONS에서 사용자가 시리즈 위치를 명시한 경우에만 채운다. 그 외에는 null.
 
 === STYLE RULES ===
 1. Language: Korean prose (technical terms may remain in English).

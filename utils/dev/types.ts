@@ -11,6 +11,13 @@ export interface GeneratedPostMetadata {
   publishedAt: string
   tags: string[]
   references?: { title: string; url: string }[]
+  /**
+   * Series membership. Only set when the user explicitly indicates series
+   * placement in the additional instructions. Both endpoints are optional —
+   * a post may have only a prev (last in chain), only a next (first in chain),
+   * or both.
+   */
+  series?: { prevPostTitle?: string; nextPostTitle?: string }
 }
 
 export interface GeneratedPostThumbnail {
@@ -45,7 +52,7 @@ export const GENERATED_POST_JSON_SCHEMA = {
   properties: {
     metadata: {
       type: 'object',
-      required: ['title', 'description', 'category', 'fileName', 'publishedAt', 'tags', 'references'],
+      required: ['title', 'description', 'category', 'fileName', 'publishedAt', 'tags', 'references', 'series'],
       additionalProperties: false,
       properties: {
         title: { type: 'string', minLength: 1 },
@@ -64,6 +71,15 @@ export const GENERATED_POST_JSON_SCHEMA = {
               title: { type: 'string' },
               url: { type: 'string' },
             },
+          },
+        },
+        series: {
+          type: ['object', 'null'],
+          required: ['prevPostTitle', 'nextPostTitle'],
+          additionalProperties: false,
+          properties: {
+            prevPostTitle: { type: ['string', 'null'] },
+            nextPostTitle: { type: ['string', 'null'] },
           },
         },
       },
