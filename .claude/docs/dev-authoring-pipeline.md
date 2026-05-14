@@ -64,11 +64,39 @@ The dev authoring pipeline is a local-only UI (`/dev/authoring`) that calls the 
 - **Root cause**: `marked()` passes raw HTML in markdown through unchanged. Codex output and user edits in the authoring page are untrusted inputs that share the same render path as production posts.
 - **Rule**: BOTH `utils/MarkdownUtil.ts` (production post render via `getStaticProps`) AND `pages/dev/authoring.dev.tsx` (dev preview) MUST run `DOMPurify.sanitize(marked(md))` before injecting into `dangerouslySetInnerHTML`. The `isomorphic-dompurify` package handles both Node and browser environments. NEVER inject `marked()` output directly.
 
-### ThumbnailResolver path-traversal containment
+### Thumbnail path-traversal containment applies to every writer
 
-- **Symptom**: a crafted `thumbnailName` value could escape `public/assets/images/` and read or overwrite arbitrary files.
-- **Root cause**: user-supplied thumbnail names are joined directly to the image directory path.
-- **Rule**: `ThumbnailResolver` MUST check that `path.resolve(imageDir, thumbnailName)` starts with `path.resolve(imageDir)` before accepting any path. NEVER bypass this check.
+- **Symptom**: a crafted filename (whether from a `reuseFileName` field or a Codex-generated output) could escape `public/assets/images/` and read or overwrite arbitrary files.
+- **Root cause**: user- or model-supplied names are joined directly to the image directory path.
+- **Rule**: BOTH `ThumbnailResolver` AND `ImageGenerator` MUST check that `path.resolve(IMAGES_DIR, fileName)` starts with `path.resolve(IMAGES_DIR) + path.sep` before reading or writing. NEVER bypass this check. The deterministic-name rule in the next pitfall reduces but does not eliminate this risk — keep the containment guard regardless.
+
+### `$imagegen` outputs MUST use a deterministic filename owned by the caller
+
+- **Symptom**: Codex saves the generated image to an arbitrary filename or path; the publish step then either misses it or accepts an attacker-controlled name into `posts.config.ts`.
+- **Root cause**: Codex chooses the output filename freely when only given an image description.
+- **Rule**: `ImageGenerator.generateThumbnail()` MUST compute the target filename from `<fileName-without-.md>.png` and inject that exact path into the Codex prompt as the required save location. The output JSON Schema MUST require `savedFileName` to equal that deterministic name; mismatch is a hard error. Additionally, the file MUST exist on disk and be non-empty (`fs.statSync(path).size > 0`) after the call — empty or missing files trigger an error and trigger fallback. NEVER trust an arbitrary `savedFileName` Codex returns.
+
+### `$imagegen` runs in a second Codex call and needs ≥10 minutes
+
+- **Symptom**: the image generation call times out after the default 5 minutes, especially for series-consistent images or first-use cold starts.
+- **Root cause**: `gpt-image-2` with reasoning can take several minutes per image, and the metadata-generation 1st call already consumed time before the 2nd call starts.
+- **Rule**: `ImageGenerator` MUST call `runCodex({ ..., timeoutMs: 600_000 })` (10 minutes). NEVER share `runCodex`'s default 5-minute timeout for image generation. If the call times out, the API route MUST return HTTP 200 with `thumbnailGenerationError` set, NOT a 5xx — the metadata draft is still valid and the client falls back to manual upload.
+
+### Series visual consistency is the only contract that drives image style
+
+- **Symptom**: a new post in an existing series gets a thumbnail with a wildly different visual style than its siblings.
+- **Root cause**: Codex has no awareness of cross-post visual continuity unless explicitly told.
+- **Rule**: When `metadata.series` is set, `SeriesResolver.collectSeriesThumbnails()` MUST walk the prev and next chains separately, collect every existing member's `thumbnailName`, and the resulting list MUST be injected into the `$imagegen` prompt as "match the style/palette/composition/typography/illustration tone of these reference images." A cycle-safe `visited` set prevents infinite loops; missing titles are silently skipped (Codex can fabricate prev/nextPostTitle values that don't resolve).
+
+### `series` field MUST round-trip from generation to `posts.config.ts`
+
+- **Symptom**: a series post is authored and published successfully but `series.prevPostTitle` / `nextPostTitle` is missing from the new entry in `posts.config.ts`, silently breaking prev/next navigation.
+- **Root cause**: the `series` field can be dropped at any of three handoff points — codex JSON Schema, client-side `buildMetadata()`, or `PostConfigWriter.serializeEntry()`.
+- **Rule**: ALL THREE layers MUST preserve `series`:
+  - `GENERATED_POST_JSON_SCHEMA.metadata.series` is nullable but listed in `required` (OpenAI structured-output convention).
+  - The authoring page's `buildMetadata()` MUST include the `series` state in its return.
+  - `PostConfigWriter.serializeEntry()` MUST emit a `series: { ... }` block when at least one endpoint is set.
+  If you add another metadata field with the same shape (optional, nested), thread it through all three layers explicitly.
 
 ## Conventions
 
@@ -101,10 +129,15 @@ codex exec --json --skip-git-repo-check --sandbox workspace-write --output-schem
 
 `--skip-git-repo-check` prevents Codex from failing when run outside a git repo root. `--sandbox workspace-write` restricts filesystem writes to the workspace. `--output-last-message` returns only the final model turn. NEVER omit `--json`; the response parser in `CodexClient` expects NDJSON.
 
-### Thumbnail v1 scope
+### Thumbnail resolution flow
 
-- `reuse`: the authoring page accepts an existing `thumbnailName`. `ThumbnailResolver` validates it exists under `public/assets/images/` (with path-traversal check).
-- `generate`: falls back to a manual file upload. Automatic image generation is deferred — do not add it without a separate design review.
+Three terminal outcomes; the publish endpoint sees only the first two:
+
+1. **`reuse` (auto-generated, downgraded)**: Codex returned `mode: 'generate'`, `ImageGenerator` succeeded, and `generate-post.dev.ts` overwrote the thumbnail with `{ mode: 'reuse', reuseFileName: '<slug>.png' }`. The response also carries `thumbnailAutoGenerated: true` for the UI badge. Publish takes the standard `reuse` path.
+2. **`reuse` (user-picked)**: Codex chose `reuse` in the first place, or the user manually picked a filename in the UI. Publish validates the file exists.
+3. **`generate` (manual upload fallback)**: `ImageGenerator` failed (timeout, permission, etc.); the response carries `thumbnailGenerationError`. The UI surfaces the error and a "수동 업로드로 대체" (Replace with manual upload) button; once the user uploads, publish receives `thumbnailBase64`/`thumbnailMimeType` and writes the file via `ThumbnailResolver`.
+
+`ImageGenerator` lives entirely server-side and writes directly to `public/assets/images/` via Codex's `--sandbox workspace-write` permission — the client never sees the binary.
 
 ## Rationale
 
