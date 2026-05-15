@@ -38,7 +38,11 @@ const sitemapGenerator = async () => {
         .replace(basePath, '')
         .replace(/index.html$/, '')
         .replace(/.html$/, '')
-      return buildUrlSet(encodeURI(htmlPath), yyyymmdd)
+      const encodedPath = htmlPath
+        .split('/')
+        .map((segment) => encodeURIComponent(decodeURIComponent(segment)))
+        .join('/')
+      return buildUrlSet(encodedPath, yyyymmdd)
     }
   })
 

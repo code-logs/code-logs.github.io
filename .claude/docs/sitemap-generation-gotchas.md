@@ -10,9 +10,9 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 
 ### Post URLs and non-post URLs need DIFFERENT encoding paths
 
-- **Symptom**: either raw `+` / `|` / non-ASCII characters appear in `<loc>` (under-encoded), or `%` characters get re-encoded to `%25` (double-encoded).
-- **Why**: `PostUtil.buildLinkURLByTitle(title)` already applies `encodeURIComponent` to the normalized title and returns `/encoded-title`. Non-post HTML paths (e.g. `/categories/foo/1`) come straight from the filesystem walk and are NOT pre-encoded.
-- **Rule**: Post branch MUST pass `PostUtil.buildLinkURLByTitle(post.title)` straight through (no further encoding). Non-post branch MUST apply `encodeURI` (preserves `/`, encodes non-ASCII and reserved chars). NEVER apply `encodeURI` or `encodeURIComponent` to a value that already came from `buildLinkURLByTitle`.
+- **Symptom**: either raw `+` / `|` / non-ASCII characters appear in `<loc>` (under-encoded), or `%` characters get re-encoded to `%25` (double-encoded — happens when a value that already contains percent-escapes is fed through `encodeURI`/`encodeURIComponent` again).
+- **Why**: `PostUtil.buildLinkURLByTitle(title)` already applies `encodeURIComponent` to the normalized title and returns `/encoded-title`. Non-post HTML paths (e.g. `/categories/foo/1`) come from the filesystem walk; macOS/Linux return raw UTF-8 directory names so the segments are usually unencoded, but Next.js export behavior for percent-encoded route params is not guaranteed across versions.
+- **Rule**: Post branch MUST pass `PostUtil.buildLinkURLByTitle(post.title)` straight through (no further encoding). Non-post branch MUST normalize each path segment via `encodeURIComponent(decodeURIComponent(segment))` and rejoin with `/`. This pattern is idempotent: already-encoded segments survive unchanged, raw UTF-8 segments get encoded exactly once. NEVER apply `encodeURI` to a non-post path — `encodeURI` does NOT touch existing `%xx` sequences nor reserved chars like `+`, so it gives the wrong answer in both directions (under-encodes `+`, would double-encode if Next ever ships percent-encoded export paths). NEVER apply `encodeURIComponent` (or the decode/encode pair) to a value that already came from `buildLinkURLByTitle`.
 
 ### Sitemap `<loc>` must match site-internal link encoding
 
@@ -26,11 +26,11 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 - **Why**: a naive `replace` order like `< → &lt;` then `& → &amp;` re-escapes the `&` introduced by earlier rules.
 - **Rule**: ALWAYS replace `&` first, then `<`, `>`, `"`, `'`. The helper `xmlEscape` in `bin/generate-sitemap.ts` enforces this order — do NOT reorder its `replace` chain.
 
-### `encodeURI('+')` does NOT encode `+`
+### `encodeURI` is NOT a substitute for `encodeURIComponent` on path segments
 
-- **Symptom**: a future category/tag slug containing `+` (e.g. `/categories/c++/1`) ships into `<loc>` with the raw `+`. Some crawlers interpret `+` in path position as a space.
-- **Why**: `+` is in RFC 3986's unreserved/sub-delims set for path components, so `encodeURI` leaves it intact. Only `encodeURIComponent` percent-encodes `+` to `%2B`.
-- **Rule**: Current category/tag slugs are ASCII without `+`, so `encodeURI` is sufficient today. If a slug ever contains `+` (or `&`, `?`, `#` in path position), switch the non-post branch to per-segment `encodeURIComponent` joined by `/`. Post URLs are already safe because `buildLinkURLByTitle` uses `encodeURIComponent`.
+- **Symptom**: a slug containing `+`, `&`, `?`, or `#` (e.g. `/categories/c++/1`) ships into `<loc>` with the raw reserved char. Some crawlers interpret `+` in path position as a space, and `&`/`?` will break URL parsing entirely.
+- **Why**: `encodeURI` only encodes characters that are illegal anywhere in a URI. It preserves all reserved chars (`+`, `&`, `?`, `#`, `:`, etc.) because they are legal in *some* URI position — even when they appear inside a path segment where they shouldn't.
+- **Rule**: ALWAYS use per-segment `encodeURIComponent(decodeURIComponent(segment))` for non-post paths. NEVER apply `encodeURI` to a whole path: it under-encodes reserved chars in segments while doing nothing for already-encoded segments. The decode-then-encode pair handles both directions: `encodeURIComponent('개발환경')` produces the correct percent-encoding, and `decodeURIComponent('%EA%B0%9C…')` then `encodeURIComponent(...)` round-trips to the same encoding without double-escaping.
 
 ## Conventions
 
