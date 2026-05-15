@@ -3,15 +3,37 @@ name: Docs
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    tags:
+      - 'v20*-*'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Create release tag (manual dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          TAG="v$(date -u +%Y%m%d-%H%M)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG"
+          git push origin "$TAG"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,16 +52,14 @@ jobs:
       - name: Build docs
         run: pnpm run docs
 
-      - name: Add & commit
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: -f ./docs
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-      - name: Notify via Slack
-        uses: slackapi/slack-github-action@v2.1.1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            channel: "${{ secrets.SLACK_CHANNEL }}"
-            text: "\n<!here> Code Logs built successfully. :+1:\n\n <http://code-logs.github.io|바로가기 :black_cat:>"
+          path: ./docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

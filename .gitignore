@@ -42,3 +42,6 @@ yarn-error.log*
 
 # transient session artifacts produced by mp-plan-issue
 .claude/docs/plan-*.md
+
+# local workspace config produced by mp-setup-workspace
+.claude/mp-workspace-config.json

@@ -19,7 +19,7 @@ Always invoke scripts as `pnpm run <script>` — bare `pnpm <script>` collides w
 
 - `pnpm dev` — Next.js dev server (http://localhost:3000)
 - `pnpm run build` — Next.js production build (writes static export to `./out` because `output: 'export'` is set in `next.config.js`)
-- `pnpm run docs` — full static export pipeline used by CI: cleans, builds, moves `./out` → `./docs`, drops `.nojekyll`, then runs `pnpm run sitemap`. The `./docs` directory is what GitHub Pages serves, so it is committed to `main` (by CI, not by hand — see Deployment).
+- `pnpm run docs` — full static export pipeline used by CI: cleans, builds, moves `./out` → `./docs`, drops `.nojekyll`, then runs `pnpm run sitemap`. The `./docs` directory is the build output uploaded as the GitHub Pages artifact (see Deployment); it is gitignored and not committed.
 - `pnpm run sitemap` — runs `bin/generate-sitemap.ts` against the just-built `./docs` directory; will fail if `./docs` is empty.
 - `pnpm run licenses` — regenerates `public/licenses.json` (consumed by `/licenses` page) using `license-checker-rseidelsohn`.
 - `pnpm run lint` — ESLint CLI (`eslint .`) configured via `eslint.config.mjs` (flat config). Uses `FlatCompat` to bring in `next/core-web-vitals` since `eslint-config-next@15` still ships as legacy eslintrc; `@next/next/no-img-element` is intentionally disabled — native `<img>` is allowed. Build outputs (`.next/`, `out/`, `docs/`, `public/`) are ignored.
@@ -30,7 +30,13 @@ For the *why* behind these commands and config (`distDir` trap, license JSON sha
 
 ## Deployment
 
-`.github/workflows/docs.yml` runs on every push to `main`: it sets up Node from `.nvmrc`, enables Corepack, runs `pnpm install --frozen-lockfile`, then `pnpm run docs`, and force-commits the regenerated `./docs` back to `main` via `EndBug/add-and-commit`. This is why the git log contains commits like `Commit from GitHub Actions (Docs)`. **Do not hand-edit files under `./docs`** — they are build output and will be overwritten on the next push to `main`. Only edit sources; let CI regenerate `./docs`.
+`.github/workflows/docs.yml` is triggered by:
+- A push of a tag matching `v20*-*` (timestamp release tag, e.g. `v20260515-1430`).
+- A manual `workflow_dispatch`, which **creates and pushes a `vYYYYMMDD-HHMM` tag itself** before continuing into the same run's build/deploy steps. This keeps tag format consistent without hand-typing.
+
+The workflow installs deps, runs `pnpm run docs`, then uploads `./docs` as the GitHub Pages artifact and deploys it via `actions/deploy-pages`. GitHub Pages is configured with **Source = "GitHub Actions"** (`build_type: workflow`) — main is no longer used as a Pages branch and `./docs` is no longer committed. The `EndBug/add-and-commit` step and Slack notification step have been removed.
+
+`./docs` is gitignored. **Do not hand-edit files under `./docs`** — they are regenerated on every deploy. Only edit sources; let CI regenerate `./docs`.
 
 ## Architecture
 
