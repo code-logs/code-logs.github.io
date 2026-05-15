@@ -8,9 +8,12 @@ const BASE_URL = 'https://code-logs.github.io'
 const DOCUMENT_PATH = path.join(__dirname, '../docs')
 const EXCLUDE_FILE_PATTERNS = [/^(google760f3a7b88ebe070|naver07d3a889618f31ffdab8dc562554ed65)/]
 
+const xmlEscape = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+
 const buildUrlSet = (loc: string, lastModified: string) => {
   const location = `${BASE_URL.replace(/\/$/, '')}/${loc.replace(/^\//, '')}`
-  return `<url><loc>${location}</loc><lastmod>${lastModified}</lastmod></url>`
+  return `<url><loc>${xmlEscape(location)}</loc><lastmod>${xmlEscape(lastModified)}</lastmod></url>`
 }
 
 const sitemapGenerator = async () => {
@@ -29,13 +32,13 @@ const sitemapGenerator = async () => {
       const foundPostConfig: Post | undefined = posts.find((post: Post) => PostUtil.normalizeTitle(post.title) === htmlFileName)
       if (!foundPostConfig) throw new Error('Failed to find matched posting config')
 
-      return buildUrlSet(htmlFileName, foundPostConfig.publishedAt)
+      return buildUrlSet(PostUtil.buildLinkURLByTitle(foundPostConfig.title), foundPostConfig.publishedAt)
     } else {
-      let htmlPath = htmlFullPath
+      const htmlPath = htmlFullPath
         .replace(basePath, '')
         .replace(/index.html$/, '')
         .replace(/.html$/, '')
-      return buildUrlSet(htmlPath, yyyymmdd)
+      return buildUrlSet(encodeURI(htmlPath), yyyymmdd)
     }
   })
 
