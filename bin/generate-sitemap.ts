@@ -11,6 +11,16 @@ const EXCLUDE_FILE_PATTERNS = [/^(google760f3a7b88ebe070|naver07d3a889618f31ffda
 const xmlEscape = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;')
 
+const encodePathSegment = (segment: string) => {
+  try {
+    return encodeURIComponent(decodeURIComponent(segment))
+  } catch {
+    return encodeURIComponent(segment)
+  }
+}
+
+const encodeSitemapPath = (value: string) => value.split('/').map(encodePathSegment).join('/')
+
 const buildUrlSet = (loc: string, lastModified: string) => {
   const location = `${BASE_URL.replace(/\/$/, '')}/${loc.replace(/^\//, '')}`
   return `<url><loc>${xmlEscape(location)}</loc><lastmod>${xmlEscape(lastModified)}</lastmod></url>`
@@ -38,7 +48,7 @@ const sitemapGenerator = async () => {
         .replace(basePath, '')
         .replace(/index.html$/, '')
         .replace(/.html$/, '')
-      return buildUrlSet(encodeURI(htmlPath), yyyymmdd)
+      return buildUrlSet(encodeSitemapPath(htmlPath), yyyymmdd)
     }
   })
 

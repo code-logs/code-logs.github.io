@@ -11,8 +11,8 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 ### Post URLs and non-post URLs need DIFFERENT encoding paths
 
 - **Symptom**: either raw `+` / `|` / non-ASCII characters appear in `<loc>` (under-encoded), or `%` characters get re-encoded to `%25` (double-encoded).
-- **Why**: `PostUtil.buildLinkURLByTitle(title)` already applies `encodeURIComponent` to the normalized title and returns `/encoded-title`. Non-post HTML paths (e.g. `/categories/foo/1`) come straight from the filesystem walk and are NOT pre-encoded.
-- **Rule**: Post branch MUST pass `PostUtil.buildLinkURLByTitle(post.title)` straight through (no further encoding). Non-post branch MUST apply `encodeURI` (preserves `/`, encodes non-ASCII and reserved chars). NEVER apply `encodeURI` or `encodeURIComponent` to a value that already came from `buildLinkURLByTitle`.
+- **Why**: `PostUtil.buildLinkURLByTitle(title)` already applies `encodeURIComponent` to the normalized title and returns `/encoded-title`. Non-post HTML paths (e.g. `/categories/foo/1`) come from the filesystem walk and may be raw or already percent-encoded depending on the exported route.
+- **Rule**: Post branch MUST pass `PostUtil.buildLinkURLByTitle(post.title)` straight through (no further encoding). Non-post branch MUST normalize each path segment by decoding any existing percent-encoding and then applying `encodeURIComponent`, joined back with `/`. NEVER apply `encodeURI` or `encodeURIComponent` to the full path string.
 
 ### Sitemap `<loc>` must match site-internal link encoding
 
@@ -26,11 +26,11 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 - **Why**: a naive `replace` order like `< → &lt;` then `& → &amp;` re-escapes the `&` introduced by earlier rules.
 - **Rule**: ALWAYS replace `&` first, then `<`, `>`, `"`, `'`. The helper `xmlEscape` in `bin/generate-sitemap.ts` enforces this order — do NOT reorder its `replace` chain.
 
-### `encodeURI('+')` does NOT encode `+`
+### Full-path `encodeURI` double-encodes exported dynamic routes
 
-- **Symptom**: a future category/tag slug containing `+` (e.g. `/categories/c++/1`) ships into `<loc>` with the raw `+`. Some crawlers interpret `+` in path position as a space.
-- **Why**: `+` is in RFC 3986's unreserved/sub-delims set for path components, so `encodeURI` leaves it intact. Only `encodeURIComponent` percent-encodes `+` to `%2B`.
-- **Rule**: Current category/tag slugs are ASCII without `+`, so `encodeURI` is sufficient today. If a slug ever contains `+` (or `&`, `?`, `#` in path position), switch the non-post branch to per-segment `encodeURIComponent` joined by `/`. Post URLs are already safe because `buildLinkURLByTitle` uses `encodeURIComponent`.
+- **Symptom**: `/categories/react%20native/1` becomes `/categories/react%2520native/1`, or a non-ASCII category path starts with `%25EA...`.
+- **Why**: dynamic route exporters can write already percent-encoded path segments. Running `encodeURI` over the whole path treats `%` as a character to encode, while still leaving path separators alone.
+- **Rule**: Non-post paths MUST use the `encodeSitemapPath` helper. It normalizes segment by segment, so raw segments like `개발환경` and already encoded segments like `%EA%B0%9C...` both produce the same sitemap-safe URL.
 
 ## Conventions
 
