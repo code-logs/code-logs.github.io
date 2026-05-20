@@ -22,22 +22,19 @@ const sitemapGenerator = async () => {
   const normalizedPostTiles = new Set(posts.map((post: Post) => `${PostUtil.normalizeTitle(post.title)}`))
 
   const urlSets = htmlFullPathList.map((htmlFullPath) => {
-    const basePath = path.join(__dirname, '../docs')
-    const htmlFileName = htmlFullPath.replace(/.+docs\/|.html$/g, '')
-    const isPostingHtml = normalizedPostTiles.has(htmlFileName)
+    const htmlBaseName = path.basename(htmlFullPath, '.html')
+    const isPostingHtml = normalizedPostTiles.has(htmlBaseName)
     const today = new Date()
     const yyyymmdd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
 
     if (isPostingHtml) {
-      const foundPostConfig: Post | undefined = posts.find((post: Post) => PostUtil.normalizeTitle(post.title) === htmlFileName)
+      const foundPostConfig: Post | undefined = posts.find((post: Post) => PostUtil.normalizeTitle(post.title) === htmlBaseName)
       if (!foundPostConfig) throw new Error('Failed to find matched posting config')
 
       return buildUrlSet(PostUtil.buildLinkURLByTitle(foundPostConfig.title), foundPostConfig.publishedAt)
     } else {
-      const htmlPath = htmlFullPath
-        .replace(basePath, '')
-        .replace(/index.html$/, '')
-        .replace(/.html$/, '')
+      const relativePath = path.relative(DOCUMENT_PATH, htmlFullPath).split(path.sep).join('/')
+      const htmlPath = `/${relativePath}`.replace(/index\.html$/, '').replace(/\.html$/, '')
       const encodedPath = htmlPath
         .split('/')
         .map((segment) => encodeURIComponent(decodeURIComponent(segment)))
