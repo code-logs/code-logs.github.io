@@ -26,6 +26,18 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 - **Why**: a naive `replace` order like `< → &lt;` then `& → &amp;` re-escapes the `&` introduced by earlier rules.
 - **Rule**: ALWAYS replace `&` first, then `<`, `>`, `"`, `'`. The helper `xmlEscape` in `bin/generate-sitemap.ts` enforces this order — do NOT reorder its `replace` chain.
 
+### Post matching MUST key on basename, not on the on-disk relative path
+
+- **Symptom**: a post HTML emitted under a subdirectory (e.g. `docs/posts/some-title.html` instead of `docs/some-title.html`) gets `<lastmod>` set to today instead of its `publishedAt`. Search Console then re-crawls the post on every deploy.
+- **Why**: the match key between the filesystem walk and `posts.config.ts` is the normalized post title (`PostUtil.normalizeTitle`). If the lookup key is derived from the full relative path (e.g. `posts/some-title`), it can never equal the normalized title (`some-title`) and the file falls through to the non-post branch.
+- **Rule**: ALWAYS derive the post-match key with `path.basename(htmlFullPath, '.html')` so the match is independent of which directory the static export drops the HTML into. The post URL itself still comes from `PostUtil.buildLinkURLByTitle(post.title)` — the on-disk directory is never used to build `<loc>`, only to enumerate which HTML files exist.
+
+### Strip `index.html` BEFORE `.html` in the non-post branch
+
+- **Symptom**: a category listing emitted as `docs/categories/foo/index.html` shows up in `sitemap.xml` as `/categories/foo/index` (no trailing slash, with the literal segment `index`) instead of `/categories/foo/`.
+- **Why**: the non-post path is normalized by chaining `.replace(/index\.html$/, '').replace(/\.html$/, '')`. If the order is swapped, `.html` strips first and leaves `/categories/foo/index`, which no longer matches `/index\.html$/`.
+- **Rule**: ALWAYS run the `index.html` strip before the generic `.html` strip. The two `replace` calls are order-dependent — do NOT reorder or merge them into one regex.
+
 ### `encodeURI` is NOT a substitute for `encodeURIComponent` on path segments
 
 - **Symptom**: a slug containing `+`, `&`, `?`, or `#` (e.g. `/categories/c++/1`) ships into `<loc>` with the raw reserved char. Some crawlers interpret `+` in path position as a space, and `&`/`?` will break URL parsing entirely.
