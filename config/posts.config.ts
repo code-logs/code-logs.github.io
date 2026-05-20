@@ -488,16 +488,6 @@ Shadow DOM의 이해`,
       }
     ]
   }
-  {
-    title: `자동 포스트 테스트`,
-    description: `자동 포스트 생성 흐름을 아주 간단하게 확인하는 테스트 글`,
-    fileName: 'auto-post-test.md',
-    category: '개발환경',
-    published: true,
-    publishedAt: `2026-05-20`,
-    thumbnailName: ``,
-    tags: [`auto post`, `test`, `개발환경`],
-  },
 ]
 
 export default posts
