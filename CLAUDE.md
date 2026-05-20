@@ -20,7 +20,7 @@ Always invoke scripts as `pnpm run <script>` — bare `pnpm <script>` collides w
 - `pnpm dev` — Next.js dev server (http://localhost:3000)
 - `pnpm run build` — Next.js production build (writes static export to `./out` because `output: 'export'` is set in `next.config.js`)
 - `pnpm run docs` — full static export pipeline used by CI: cleans, builds, moves `./out` → `./docs`, drops `.nojekyll`, then runs `pnpm run sitemap`. The `./docs` directory is the build output uploaded as the GitHub Pages artifact (see Deployment); it is gitignored and not committed.
-- `pnpm run sitemap` — runs `bin/generate-sitemap.ts` against the just-built `./docs` directory; fails fast with a non-zero exit if `./docs` is missing or contains zero HTML files. `<url>` entries are sorted lexicographically by `<loc>` so consecutive builds emit byte-identical sitemaps.
+- `pnpm run sitemap` — runs `bin/generate-sitemap.ts` against the just-built `./docs` directory to emit `docs/sitemap.xml`. Fails fast on missing/whitespace `NEXT_PUBLIC_BASE_URL`, missing `./docs`, or zero HTML files. See [.claude/docs/sitemap-generation-gotchas.md](.claude/docs/sitemap-generation-gotchas.md) for env loading, base URL sourcing, and determinism rules.
 - `pnpm run licenses` — regenerates `public/licenses.json` (consumed by `/licenses` page) using `license-checker-rseidelsohn`.
 - `pnpm run lint` — ESLint CLI (`eslint .`) configured via `eslint.config.mjs` (flat config). Uses `FlatCompat` to bring in `next/core-web-vitals` since `eslint-config-next@15` still ships as legacy eslintrc; `@next/next/no-img-element` is intentionally disabled — native `<img>` is allowed. Build outputs (`.next/`, `out/`, `docs/`, `public/`) are ignored.
 
