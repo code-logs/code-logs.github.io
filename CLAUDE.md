@@ -30,9 +30,9 @@ For the *why* behind these commands and config (`distDir` trap, license JSON sha
 
 ## Deployment
 
-`.github/workflows/docs.yml` is triggered by:
-- A push of a tag matching `v20*-*` (timestamp release tag, e.g. `v20260515-1430`).
-- A manual `workflow_dispatch`, which **creates and pushes a `vYYYYMMDD-HHMM` tag itself** before continuing into the same run's build/deploy steps. This keeps tag format consistent without hand-typing.
+`.github/workflows/deploy.yml` is triggered by:
+- A push to the `main` branch — typically when a PR is merged.
+- A manual `workflow_dispatch` for ad-hoc redeploys.
 
 The workflow installs deps, runs `pnpm run docs`, then uploads `./docs` as the GitHub Pages artifact and deploys it via `actions/deploy-pages`. GitHub Pages is configured with **Source = "GitHub Actions"** (`build_type: workflow`) — main is no longer used as a Pages branch and `./docs` is no longer committed. The `EndBug/add-and-commit` step and Slack notification step have been removed.
 
