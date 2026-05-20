@@ -488,6 +488,23 @@ Shadow DOM의 이해`,
       }
     ]
   }
+,
+  {
+    title: `Harness engineering 이란?`,
+    description: `제품 코드 바깥에서 테스트, 검증, 실행 환경을 안정적으로 묶어주는 harness engineering의 역할과 적용 지점을 정리한다.`,
+    fileName: 'harness-engineering.md',
+    category: CATEGORIES['개발환경'],
+    published: true,
+    publishedAt: `2026-05-20`,
+    thumbnailName: `harness-engineering.png`,
+    tags: [
+      `harness engineering`,
+      `test harness`,
+      `developer experience`,
+      `testing`,
+      `개발환경`,
+    ],
+  },
 ]
 
 export default posts
