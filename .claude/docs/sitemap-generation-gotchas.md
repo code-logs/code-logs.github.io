@@ -44,9 +44,21 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 - **Why**: `encodeURI` only encodes characters that are illegal anywhere in a URI. It preserves all reserved chars (`+`, `&`, `?`, `#`, `:`, etc.) because they are legal in *some* URI position — even when they appear inside a path segment where they shouldn't.
 - **Rule**: ALWAYS use per-segment `encodeURIComponent(decodeURIComponent(segment))` for non-post paths. NEVER apply `encodeURI` to a whole path: it under-encodes reserved chars in segments while doing nothing for already-encoded segments. The decode-then-encode pair handles both directions: `encodeURIComponent('개발환경')` produces the correct percent-encoding, and `decodeURIComponent('%EA%B0%9C…')` then `encodeURIComponent(...)` round-trips to the same encoding without double-escaping.
 
+### Sitemap output MUST be deterministic across builds
+
+- **Symptom**: two consecutive `pnpm run docs` runs against the same source produce sitemaps that differ in `<url>` ordering. CI deploy diffs become noisy and Search Console may treat the sitemap as "changed" on every push.
+- **Why**: `fs.readdirSync` returns entries in filesystem/OS-dependent order. Mapping that list straight to XML fragments preserves whatever order the FS chose, which is not stable across machines (macOS dev vs. Ubuntu CI) or even across builds on the same machine.
+- **Rule**: ALWAYS build `urlEntries` as `{ loc, lastmod }` objects, sort with `(a, b) => a.loc < b.loc ? -1 : a.loc > b.loc ? 1 : 0`, THEN map to XML fragments via `buildUrlSet`. NEVER call `localeCompare` without an explicit locale — it would re-introduce system-locale-dependent ordering. The byte comparator is case-sensitive (ASCII byte ordering): post URLs are lowercase via `normalizeTitle` so they sort cleanly, but non-post HTML segments preserve filesystem case. If a future build emits mixed-case segments that need to interleave with their lowercase counterparts in `<loc>` order, lowercase the comparison key — do NOT change the sort to a locale-aware variant.
+
+### Empty `./docs` MUST fail fast
+
+- **Symptom**: `pnpm run sitemap` produces a `sitemap.xml` containing an empty `<urlset>` and exits 0. The deploy ships an empty sitemap to GitHub Pages; Search Console drops every previously indexed URL.
+- **Why**: `readDirectoryFiles(DOCUMENT_PATH, 'html')` returns `[]` when `./docs` exists but has no HTML files (e.g. `pnpm run sitemap` invoked without a preceding build, or `./docs` cleaned but not repopulated). Without an explicit guard, the empty list flows through `.map`, `.sort`, and `.join('')` to produce a syntactically valid but semantically destructive sitemap.
+- **Rule**: ALWAYS guard `htmlFullPathList.length === 0` with `throw new Error(...)` immediately after `readDirectoryFiles`. The throw MUST happen BEFORE the dynamic `import('../config/posts.config.ts')` so the failure is fast and config loading is skipped. The call site `sitemapGenerator()` MUST attach `.catch((err) => { console.error(err); process.exit(1) })` so the rejected promise surfaces a non-zero exit code instead of being silently swallowed by Node's default unhandled-rejection handler.
+
 ## Conventions
 
-- Sitemap generation MUST run **after** the Next.js static export — `./docs/` must already exist. The `pnpm run sitemap` script will fail if `./docs/` is empty (see [build-pipeline-gotchas.md](build-pipeline-gotchas.md)).
+- Sitemap generation MUST run **after** the Next.js static export — `./docs/` must already exist and contain HTML files. The fail-fast behavior is enforced and described in the "Empty `./docs` MUST fail fast" pitfall above.
 - The XML envelope (`<?xml version="1.0" encoding="UTF-8"?><urlset ...>`) MUST stay sitemap 0.9 namespace — Search Console and Naver both rely on this exact namespace string.
 - `EXCLUDE_FILE_PATTERNS` MUST continue to skip Google / Naver site-verification HTML files; they are not crawlable site content.
 - `<lastmod>` for post URLs MUST use the post's `publishedAt` (not today). Non-post URLs use today's date because they have no first-class authored timestamp.

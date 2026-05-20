@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import { exit } from 'process'
 import { Post } from '../config/posts.config'
 import PostUtil from '../utils/PostUtil'
 
@@ -18,10 +17,17 @@ const buildUrlSet = (loc: string, lastModified: string) => {
 
 const sitemapGenerator = async () => {
   const htmlFullPathList = readDirectoryFiles(DOCUMENT_PATH, 'html')
+
+  if (htmlFullPathList.length === 0) {
+    throw new Error(
+      'No HTML files found under ./docs. Run `pnpm run build` (or `pnpm run docs`) before generating the sitemap.'
+    )
+  }
+
   const { posts } = await import(path.join(__dirname, '../config/posts.config.ts'))
   const normalizedPostTiles = new Set(posts.map((post: Post) => `${PostUtil.normalizeTitle(post.title)}`))
 
-  const urlSets = htmlFullPathList.map((htmlFullPath) => {
+  const urlEntries = htmlFullPathList.map((htmlFullPath) => {
     const htmlBaseName = path.basename(htmlFullPath, '.html')
     const isPostingHtml = normalizedPostTiles.has(htmlBaseName)
     const today = new Date()
@@ -31,7 +37,7 @@ const sitemapGenerator = async () => {
       const foundPostConfig: Post | undefined = posts.find((post: Post) => PostUtil.normalizeTitle(post.title) === htmlBaseName)
       if (!foundPostConfig) throw new Error('Failed to find matched posting config')
 
-      return buildUrlSet(PostUtil.buildLinkURLByTitle(foundPostConfig.title), foundPostConfig.publishedAt)
+      return { loc: PostUtil.buildLinkURLByTitle(foundPostConfig.title), lastmod: foundPostConfig.publishedAt }
     } else {
       const relativePath = path.relative(DOCUMENT_PATH, htmlFullPath).split(path.sep).join('/')
       const htmlPath = `/${relativePath}`.replace(/index\.html$/, '').replace(/\.html$/, '')
@@ -39,14 +45,16 @@ const sitemapGenerator = async () => {
         .split('/')
         .map((segment) => encodeURIComponent(decodeURIComponent(segment)))
         .join('/')
-      return buildUrlSet(encodedPath, yyyymmdd)
+      return { loc: encodedPath, lastmod: yyyymmdd }
     }
   })
 
+  urlEntries.sort((a, b) => (a.loc < b.loc ? -1 : a.loc > b.loc ? 1 : 0))
+
+  const urlSets = urlEntries.map(({ loc, lastmod }) => buildUrlSet(loc, lastmod))
   const siteMap = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urlSets.join('')}</urlset>`
 
   fs.writeFileSync(path.join(DOCUMENT_PATH, 'sitemap.xml'), siteMap, { encoding: 'utf8' })
-  exit(0)
 }
 
 const readDirectoryFiles = (directoryPath: string, ext: string) => {
@@ -72,4 +80,7 @@ const readDirectoryFiles = (directoryPath: string, ext: string) => {
   return matchedFilePaths
 }
 
-sitemapGenerator()
+sitemapGenerator().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
