@@ -36,11 +36,18 @@ const sitemapGenerator = async () => {
     )
   }
 
+  // Mirror postsDatabase.getStaticPaths: only published posts are emitted as HTML, so the
+  // sitemap lookup and duplicate-slug guard must run over the published subset only.
+  // Including drafts would let an unpublished slug collision block deploys even though no
+  // on-disk collision actually exists.
+  const publishedPosts = posts.filter((post) => post.published)
   const normalizedPostMap = new Map<string, Post>()
-  for (const post of posts) {
+  for (const post of publishedPosts) {
     const key = PostUtil.normalizeTitle(post.title)
     if (normalizedPostMap.has(key)) {
-      throw new Error(`Duplicate normalized post title "${key}" from "${post.title}" — two posts cannot share the same URL slug.`)
+      throw new Error(
+        `Duplicate normalized post title "${key}" from "${post.title}" — two published posts cannot share the same URL slug.`
+      )
     }
     normalizedPostMap.set(key, post)
   }
