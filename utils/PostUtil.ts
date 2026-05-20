@@ -3,7 +3,10 @@ import { Post } from '../config/posts.config'
 
 class PostUtil {
   public static normalizeTitle(title: string) {
-    return title.replace(/\s/g, '-').toLowerCase()
+    return title
+      .replace(/\s/g, '-')
+      .replace(/[?#/\\%]/g, '')
+      .toLowerCase()
   }
 
   public static getMarkdownFilePath(post: Post) {

@@ -30,7 +30,7 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 
 - **Symptom**: a post HTML emitted under a subdirectory (e.g. `docs/posts/some-title.html` instead of `docs/some-title.html`) gets `<lastmod>` set to today instead of its `publishedAt`. Search Console then re-crawls the post on every deploy.
 - **Why**: the match key between the filesystem walk and `posts.config.ts` is the normalized post title (`PostUtil.normalizeTitle`). If the lookup key is derived from the full relative path (e.g. `posts/some-title`), it can never equal the normalized title (`some-title`) and the file falls through to the non-post branch.
-- **Rule**: ALWAYS derive the post-match key with `path.basename(htmlFullPath, '.html')` so the match is independent of which directory the static export drops the HTML into. The post URL itself still comes from `PostUtil.buildLinkURLByTitle(post.title)` — the on-disk directory is never used to build `<loc>`, only to enumerate which HTML files exist.
+- **Rule**: ALWAYS derive the post-match key with `path.basename(htmlFullPath, '.html')` so the match is independent of which directory the static export drops the HTML into. The post URL itself still comes from `PostUtil.buildLinkURLByTitle(post.title)` — the on-disk directory is never used to build `<loc>`, only to enumerate which HTML files exist. The basename match relies on `normalizeTitle` producing a filename-safe slug; see [post-slug-normalization-gotchas.md](post-slug-normalization-gotchas.md) for which characters are stripped and why.
 
 ### Strip `index.html` BEFORE `.html` in the non-post branch
 
