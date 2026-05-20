@@ -36,8 +36,9 @@ const sitemapGenerator = async () => {
     )
   }
 
+  const publishedPosts = posts.filter((post) => post.published)
   const normalizedPostMap = new Map<string, Post>()
-  for (const post of posts) {
+  for (const post of publishedPosts) {
     const key = PostUtil.normalizeTitle(post.title)
     if (normalizedPostMap.has(key)) {
       throw new Error(`Duplicate normalized post title "${key}" from "${post.title}" — two posts cannot share the same URL slug.`)
