@@ -1,6 +1,6 @@
 # Code Logs - v2
 
-[![Docs](https://github.com/code-logs/code-logs.github.io/actions/workflows/docs.yml/badge.svg)](https://github.com/code-logs/code-logs.github.io/actions/workflows/docs.yml)
+[![Deploy](https://github.com/code-logs/code-logs.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/code-logs/code-logs.github.io/actions/workflows/deploy.yml)
 
 개인 기술 블로그. GitHub Pages 정적 export로 운영됩니다.
 
@@ -48,7 +48,7 @@ pnpm run dev       # http://localhost:3000
 
 ## Deployment
 
-`main` 브랜치에 push되면 [`.github/workflows/docs.yml`](.github/workflows/docs.yml)이 자동으로 `pnpm run docs`를 실행하고, 생성된 `./docs` 디렉터리를 `main`에 force-commit합니다. GitHub Pages는 이 `./docs` 디렉터리를 서빙합니다.
+`main` 브랜치에 push되거나 수동으로 `workflow_dispatch`를 실행하면 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)이 `pnpm run docs`를 실행하고, 생성된 `./docs` 디렉터리를 GitHub Pages artifact로 업로드해 배포합니다. GitHub Pages는 **Source = "GitHub Actions"** 설정으로 이 artifact를 서빙합니다.
 
 > **`./docs` 디렉터리는 빌드 산출물입니다. 수동으로 편집하지 마세요** — 다음 `main` push 때 CI가 덮어씁니다. 소스만 수정하고 CI가 재생성하도록 둡니다.
 
