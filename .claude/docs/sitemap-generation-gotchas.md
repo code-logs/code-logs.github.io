@@ -1,12 +1,24 @@
 # Sitemap Generation Gotchas
 
-Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are built (`utils/PostUtil.ts`), or debugging crawler / Search Console errors about malformed `<loc>` values.
+Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are built (`utils/PostUtil.ts`), changing where the site base URL comes from (`config/blog.config.ts` / `NEXT_PUBLIC_BASE_URL`), or debugging crawler / Search Console errors about malformed `<loc>` values or wrong-domain sitemaps.
 
 ## Overview
 
-`bin/generate-sitemap.ts` runs after `next build` and walks `./docs/*.html` to emit `docs/sitemap.xml`. Two encoding layers must be applied to every `<loc>`: RFC 3986 percent-encoding (sitemap 0.9 requirement) and XML entity escaping. The post branch and the non-post branch encode differently — mixing them up causes double-encoding or raw-character regressions.
+`bin/generate-sitemap.ts` runs after `next build` and walks `./docs/*.html` to emit `docs/sitemap.xml`. The base URL prefix MUST come from the same source as site canonical URLs (`blogConfig.baseURL` → `NEXT_PUBLIC_BASE_URL`); sitemap is a separate `ts-node` process and does NOT inherit Next's env loading, so the script loads `.env` files via `dotenv` itself. Two encoding layers then apply to every `<loc>`: RFC 3986 percent-encoding (sitemap 0.9 requirement) and XML entity escaping. The post branch and the non-post branch encode differently — mixing them up causes double-encoding or raw-character regressions.
 
 ## Pitfalls
+
+### Sitemap base URL MUST come from `blogConfig` / env — never hardcode
+
+- **Symptom**: domain changes (custom domain swap, staging→prod cutover) update the site's canonical `<link rel="canonical">` and OG URLs via `NEXT_PUBLIC_BASE_URL`, but `sitemap.xml`'s `<loc>` prefix still points to the old domain. Search Console rejects the sitemap for cross-domain mismatch and previously indexed URLs drop off.
+- **Why**: pages render canonical URLs through `blogConfig.baseURL` (which resolves `process.env.NEXT_PUBLIC_BASE_URL`). If sitemap hardcodes a string literal for the same URL, drift is silent until production indexing breaks — there is no compile-time link between the two sources.
+- **Rule**: ALWAYS read the sitemap base URL through `blogConfig.baseURL`. NEVER define a raw domain string literal in `bin/generate-sitemap.ts`. If a future sitemap variant needs a different base URL (e.g. a CDN host), add a field to `blogConfig` and read it from there — do NOT inline.
+
+### `ts-node` does NOT auto-load `.env.*` — sitemap must load it explicitly
+
+- **Symptom**: `pnpm run docs` succeeds but the generated `sitemap.xml` contains `http://localhost:3000` as the `<loc>` prefix in production. Or `pnpm run sitemap` produces a sitemap whose URLs do not match the deployed site.
+- **Why**: `next build` loads `.env.production` internally, but `pnpm run sitemap` invokes `ts-node bin/generate-sitemap.ts` as a separate Node process that does NOT pass through Next's env loader. Without explicit env loading, `blogConfig.baseURL` evaluates to its localhost fallback (`'http://localhost:3000'`), and Search Console will reject the sitemap.
+- **Rule**: The sitemap script MUST call `dotenv` to load `.env.production` (then `.env` as fallback) BEFORE `blogConfig` is imported — `blogConfig` reads `process.env` at module-eval time, so dotenv calls must execute first. Place the `loadEnv()` calls between the `dotenv` import and the `blogConfig` import; this looks unusual versus standard import grouping but is load-order-critical. ALWAYS validate against the raw `process.env.NEXT_PUBLIC_BASE_URL` (with `.trim()`) — NEVER validate against the resolved `blogConfig.baseURL`, because its localhost fallback would silently pass the guard. Throw and `process.exit(1)` when the raw env is missing or whitespace-only, so CI fails before shipping a broken sitemap.
 
 ### Post URLs and non-post URLs need DIFFERENT encoding paths
 
@@ -59,6 +71,7 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 ## Conventions
 
 - Sitemap generation MUST run **after** the Next.js static export — `./docs/` must already exist and contain HTML files. The fail-fast behavior is enforced and described in the "Empty `./docs` MUST fail fast" pitfall above.
+- Sitemap base URL MUST come from `blogConfig.baseURL`; environment loading MUST happen via `dotenv` before `blogConfig` is imported. See the "Sitemap base URL MUST come from `blogConfig` / env" and "`ts-node` does NOT auto-load `.env.*`" pitfalls above.
 - The XML envelope (`<?xml version="1.0" encoding="UTF-8"?><urlset ...>`) MUST stay sitemap 0.9 namespace — Search Console and Naver both rely on this exact namespace string.
 - `EXCLUDE_FILE_PATTERNS` MUST continue to skip Google / Naver site-verification HTML files; they are not crawlable site content.
 - `<lastmod>` for post URLs MUST use the post's `publishedAt` (not today). Non-post URLs use today's date because they have no first-class authored timestamp.

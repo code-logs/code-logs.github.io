@@ -1,9 +1,15 @@
+import { config as loadEnv } from 'dotenv'
 import fs from 'fs'
 import path from 'path'
+
+// dotenv must run before blogConfig is imported — blogConfig reads process.env at module eval.
+loadEnv({ path: path.join(__dirname, '../.env.production') })
+loadEnv({ path: path.join(__dirname, '../.env') })
+
+import blogConfig from '../config/blog.config'
 import { Post } from '../config/posts.config'
 import PostUtil from '../utils/PostUtil'
 
-const BASE_URL = 'https://code-logs.github.io'
 const DOCUMENT_PATH = path.join(__dirname, '../docs')
 const EXCLUDE_FILE_PATTERNS = [/^(google760f3a7b88ebe070|naver07d3a889618f31ffdab8dc562554ed65)/]
 
@@ -11,11 +17,17 @@ const xmlEscape = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;')
 
 const buildUrlSet = (loc: string, lastModified: string) => {
-  const location = `${BASE_URL.replace(/\/$/, '')}/${loc.replace(/^\//, '')}`
+  const location = `${blogConfig.baseURL.replace(/\/$/, '')}/${loc.replace(/^\//, '')}`
   return `<url><loc>${xmlEscape(location)}</loc><lastmod>${xmlEscape(lastModified)}</lastmod></url>`
 }
 
 const sitemapGenerator = async () => {
+  if (!process.env.NEXT_PUBLIC_BASE_URL?.trim()) {
+    throw new Error(
+      'NEXT_PUBLIC_BASE_URL is not set. Sitemap generation requires the canonical base URL — set it in .env.production or the CI environment.'
+    )
+  }
+
   const htmlFullPathList = readDirectoryFiles(DOCUMENT_PATH, 'html')
 
   if (htmlFullPathList.length === 0) {
