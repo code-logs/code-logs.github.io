@@ -44,6 +44,12 @@ Read this when: modifying `bin/generate-sitemap.ts`, changing how post URLs are 
 - **Why**: the match key between the filesystem walk and `posts.config.ts` is the normalized post title (`PostUtil.normalizeTitle`). If the lookup key is derived from the full relative path (e.g. `posts/some-title`), it can never equal the normalized title (`some-title`) and the file falls through to the non-post branch.
 - **Rule**: ALWAYS derive the post-match key with `path.basename(htmlFullPath, '.html')` so the match is independent of which directory the static export drops the HTML into. The post URL itself still comes from `PostUtil.buildLinkURLByTitle(post.title)` — the on-disk directory is never used to build `<loc>`, only to enumerate which HTML files exist. The basename match relies on `normalizeTitle` producing a filename-safe slug; see [post-slug-normalization-gotchas.md](post-slug-normalization-gotchas.md) for which characters are stripped and why.
 
+### Two posts MUST NOT share the same normalized post slug
+
+- **Symptom**: `pnpm run sitemap` throws a "Duplicate normalized post title" error (the runtime message uses the code-level term `normalized post title` for `PostUtil.normalizeTitle(title)` output) and exits non-zero, blocking the deploy.
+- **Why**: `posts.config.ts` has no compile-time validation that `PostUtil.normalizeTitle(title)` produces a unique normalized post slug across posts. If two entries normalize to the same slug, the static export emits only one `/{slug}.html` (the later one overwrites the earlier on disk), and any sitemap lookup keyed by the slug becomes ambiguous. Before this guard existed, the second post silently won the lookup while the first post became unreachable from the sitemap.
+- **Rule**: `bin/generate-sitemap.ts` MUST build `normalizedPostMap` with an explicit `if (map.has(key)) throw` check during construction — NEVER use `new Map(posts.map(...))` because that silently overwrites duplicates. When this guard fires, fix the colliding post titles in `posts.config.ts` before retrying; do NOT relax the guard. The normalization rules that determine which titles collapse to the same slug are documented in [post-slug-normalization-gotchas.md](post-slug-normalization-gotchas.md).
+
 ### Strip `index.html` BEFORE `.html` in the non-post branch
 
 - **Symptom**: a category listing emitted as `docs/categories/foo/index.html` shows up in `sitemap.xml` as `/categories/foo/index` (no trailing slash, with the literal segment `index`) instead of `/categories/foo/`.
