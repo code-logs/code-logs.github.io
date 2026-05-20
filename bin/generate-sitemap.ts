@@ -7,7 +7,7 @@ loadEnv({ path: path.join(__dirname, '../.env.production') })
 loadEnv({ path: path.join(__dirname, '../.env') })
 
 import blogConfig from '../config/blog.config'
-import { Post } from '../config/posts.config'
+import { Post, posts } from '../config/posts.config'
 import PostUtil from '../utils/PostUtil'
 
 const DOCUMENT_PATH = path.join(__dirname, '../docs')
@@ -36,29 +36,40 @@ const sitemapGenerator = async () => {
     )
   }
 
-  const { posts } = await import(path.join(__dirname, '../config/posts.config.ts'))
-  const normalizedPostTiles = new Set(posts.map((post: Post) => `${PostUtil.normalizeTitle(post.title)}`))
+  // Mirror postsDatabase.getStaticPaths: only published posts are emitted as HTML, so the
+  // sitemap lookup and duplicate-slug guard must run over the published subset only.
+  // Including drafts would let an unpublished slug collision block deploys even though no
+  // on-disk collision actually exists.
+  const publishedPosts = posts.filter((post) => post.published)
+  const normalizedPostMap = new Map<string, Post>()
+  for (const post of publishedPosts) {
+    const key = PostUtil.normalizeTitle(post.title)
+    if (normalizedPostMap.has(key)) {
+      throw new Error(
+        `Duplicate normalized post title "${key}" from "${post.title}" — two published posts cannot share the same URL slug.`
+      )
+    }
+    normalizedPostMap.set(key, post)
+  }
+
+  const today = new Date()
+  const todayYyyymmdd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
 
   const urlEntries = htmlFullPathList.map((htmlFullPath) => {
     const htmlBaseName = path.basename(htmlFullPath, '.html')
-    const isPostingHtml = normalizedPostTiles.has(htmlBaseName)
-    const today = new Date()
-    const yyyymmdd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    const foundPostConfig = normalizedPostMap.get(htmlBaseName)
 
-    if (isPostingHtml) {
-      const foundPostConfig: Post | undefined = posts.find((post: Post) => PostUtil.normalizeTitle(post.title) === htmlBaseName)
-      if (!foundPostConfig) throw new Error('Failed to find matched posting config')
-
+    if (foundPostConfig) {
       return { loc: PostUtil.buildLinkURLByTitle(foundPostConfig.title), lastmod: foundPostConfig.publishedAt }
-    } else {
-      const relativePath = path.relative(DOCUMENT_PATH, htmlFullPath).split(path.sep).join('/')
-      const htmlPath = `/${relativePath}`.replace(/index\.html$/, '').replace(/\.html$/, '')
-      const encodedPath = htmlPath
-        .split('/')
-        .map((segment) => encodeURIComponent(decodeURIComponent(segment)))
-        .join('/')
-      return { loc: encodedPath, lastmod: yyyymmdd }
     }
+
+    const relativePath = path.relative(DOCUMENT_PATH, htmlFullPath).split(path.sep).join('/')
+    const htmlPath = `/${relativePath}`.replace(/index\.html$/, '').replace(/\.html$/, '')
+    const encodedPath = htmlPath
+      .split('/')
+      .map((segment) => encodeURIComponent(decodeURIComponent(segment)))
+      .join('/')
+    return { loc: encodedPath, lastmod: todayYyyymmdd }
   })
 
   urlEntries.sort((a, b) => (a.loc < b.loc ? -1 : a.loc > b.loc ? 1 : 0))
@@ -70,21 +81,18 @@ const sitemapGenerator = async () => {
 }
 
 const readDirectoryFiles = (directoryPath: string, ext: string) => {
-  let matchedFilePaths: string[] = []
+  const matchedFilePaths: string[] = []
   const files = fs.readdirSync(directoryPath)
 
   files
     .filter((file) => EXCLUDE_FILE_PATTERNS.every((reg) => !reg.test(file)))
     .forEach((target) => {
       const targetPath = path.join(directoryPath, target)
-      const fileStat = fs.lstatSync(path.join(targetPath))
-      const isDirectory = fileStat.isDirectory()
-      if (isDirectory) {
-        matchedFilePaths = [...matchedFilePaths, ...readDirectoryFiles(targetPath, ext)]
-      }
+      const fileStat = fs.lstatSync(targetPath)
 
-      const targetExt = path.extname(targetPath)
-      if (targetExt === ext || targetExt === `.${ext}`) {
+      if (fileStat.isDirectory()) {
+        matchedFilePaths.push(...readDirectoryFiles(targetPath, ext))
+      } else if (path.extname(targetPath) === `.${ext}`) {
         matchedFilePaths.push(targetPath)
       }
     })
