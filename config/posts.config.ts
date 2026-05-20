@@ -505,22 +505,6 @@ Shadow DOM의 이해`,
       `개발환경`,
     ],
   },
-  {
-    title: `방구 냄새가 나는 이유는 무엇일까?`,
-    description: `방귀 냄새의 정체를 장내 가스, 음식, 장내 미생물, 황 화합물 중심으로 가볍지만 사실적으로 정리한다.`,
-    fileName: 'why-farts-smell.md',
-    category: CATEGORIES['개발환경'],
-    published: true,
-    publishedAt: `2026-05-20`,
-    thumbnailName: `why-farts-smell.png`,
-    tags: [
-      `방귀`,
-      `장내가스`,
-      `소화`,
-      `장내미생물`,
-      `황화합물`,
-    ],
-  },
 ]
 
 export default posts
