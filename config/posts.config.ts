@@ -488,24 +488,6 @@ Shadow DOM의 이해`,
       }
     ]
   }
-,
-  {
-    title: `Harness Engineering이 뭐지?`,
-    description: `테스트와 자동화 환경에서 자주 등장하는 Harness Engineering의 의미와 역할을 정리합니다.`,
-    fileName: 'harness-engineering.md',
-    category: CATEGORIES['개발환경'],
-    published: true,
-    publishedAt: `2026-05-20`,
-    thumbnailName: ``,
-    tags: [
-      `harness engineering`,
-      `test harness`,
-      `automation`,
-      `testing`,
-      `developer experience`,
-      `개발환경`,
-    ],
-  },
 ]
 
 export default posts
