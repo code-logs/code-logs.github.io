@@ -488,6 +488,24 @@ Shadow DOM의 이해`,
       }
     ]
   }
+,
+  {
+    title: `Harness Engineering이란?`,
+    description: `테스트, 빌드, 배포와 같은 반복 작업을 안정적으로 실행하기 위한 Harness Engineering의 의미와 구성 요소를 정리한다.`,
+    fileName: 'harness-engineering.md',
+    category: CATEGORIES['개발환경'],
+    published: true,
+    publishedAt: `2026-05-20`,
+    thumbnailName: ``,
+    tags: [
+      `harness engineering`,
+      `test harness`,
+      `ci`,
+      `developer experience`,
+      `개발환경`,
+      `자동화`,
+    ],
+  },
 ]
 
 export default posts
