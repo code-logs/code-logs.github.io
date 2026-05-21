@@ -48,6 +48,7 @@
   --color-warning: #f59e0b;
   /* red-600 (not red-500): white text on this background passes WCAG AA */
   --color-danger:  #dc2626;
+  --color-code-inline-text: #b91c1c;
 
   /* Kept: referenced by .prose.post-body --tw-prose-pre-bg */
   --color-code-bg: #212836;
@@ -78,6 +79,7 @@
       /* Dark-mode links use brighter teal */
       --color-link:       var(--color-accent-400);
       --color-link-hover: var(--color-accent-500);
+      --color-code-inline-text: #f87171;
     }
   }
 
@@ -329,7 +331,7 @@
       background-color: var(--color-bg-subtle);
       padding: 2px 5px;
       border-radius: 4px;
-      color: var(--color-danger);
+      color: var(--color-code-inline-text);
     }
 
     & blockquote {
