@@ -21,15 +21,15 @@ const CategoryIndexer = ({ categories }: CategoryIndexerProps) => {
           <li key={idx}>
             <a
               href={`/categories/${encodeURIComponent(category)}/1`}
-              className="flex gap-narrow border-b border-theme-light p-narrow"
+              className="flex gap-narrow border-b border-divider p-narrow"
             >
               {newCategories.includes(category) && (
-                <span className="bg-[rgb(253,69,74)] py-narrow px-narrow rounded-[50px] text-white font-semibold italic text-[0.7rem] my-auto">
+                <span className="bg-danger py-narrow px-narrow rounded-[50px] text-white font-semibold italic text-[0.7rem] my-auto">
                   New
                 </span>
               )}
               <span className="flex-1 my-auto capitalize">{(CATEGORIES as any)[category]}</span>
-              <span className="rounded-[50px] bg-theme text-white w-[25px] h-[25px] grid">
+              <span className="rounded-[50px] bg-bg-subtle text-text-body w-[25px] h-[25px] grid">
                 <span className="m-auto">{postsDatabase.countByCategory(category)}</span>
               </span>
             </a>

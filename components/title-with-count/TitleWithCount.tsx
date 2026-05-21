@@ -7,7 +7,7 @@ export interface TitleWithCountProps {
 const TitleWithCount = (props: TitleWithCountProps) => {
   const innerFragment = (
     <>
-      {props.title} <span className="text-theme font-medium">({props.count})</span>
+      {props.title} <span className="text-text-muted font-medium">({props.count})</span>
     </>
   )
 

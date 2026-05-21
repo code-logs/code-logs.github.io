@@ -8,7 +8,7 @@ interface Heading {
 }
 
 const activateClass =
-  '-translate-x-[10px] text-theme-light-blue font-semibold italic underline'
+  '-translate-x-[10px] text-link font-semibold italic underline'
 
 const ContentExplorer = () => {
   const [headings, setHeadings] = useState<Heading[]>([])
@@ -85,7 +85,7 @@ const ContentExplorer = () => {
   })
 
   return (
-    <section className="sticky top-[var(--header-height)] mx-[20px] my-0 py-[20px] text-[0.9rem] z-[2] bg-theme-bg [&>ol]:border-l [&>ol]:border-theme-anchor [&_ol]:ps-[20px] [&_li]:my-[10px] [&_a]:inline-block [&_a]:transition-transform [&_a]:duration-100 [&_a]:ease-in-out [&_a:active]:-translate-x-[10px] [&_a:active]:text-theme-light-blue [&_a:active]:font-semibold [&_a:active]:italic [&_a:active]:underline">
+    <section className="sticky top-[var(--header-height)] mx-[20px] my-0 py-[20px] text-[0.9rem] z-[2] bg-bg-page [&>ol]:border-l [&>ol]:border-link [&_ol]:ps-[20px] [&_li]:my-[10px] [&_a]:inline-block [&_a]:transition-transform [&_a]:duration-100 [&_a]:ease-in-out [&_a:active]:-translate-x-[10px] [&_a:active]:text-link [&_a:active]:font-semibold [&_a:active]:italic [&_a:active]:underline">
       <ol>
         {headings.map((heading) => (
           <li key={heading.element.id}>
