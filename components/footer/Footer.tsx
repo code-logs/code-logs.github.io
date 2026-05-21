@@ -5,8 +5,8 @@ export interface FooterProps {
 
 const Footer = (props: FooterProps) => {
   return (
-    <footer className="border-t border-theme-light bg-theme-footer-bg">
-      <p className="text-center text-theme font-thin">
+    <footer className="border-t border-divider bg-bg-page">
+      <p className="text-center text-text-muted font-thin">
         {props.message ? props.message : `ⓒ 2021. ${props.author}  all rights reserved.`}
       </p>
     </footer>
