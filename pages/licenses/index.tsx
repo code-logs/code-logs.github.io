@@ -13,7 +13,7 @@ const Licenses = () => {
         {Object.keys(licenses).map((depName) => {
           return (
             <details
-              className="text-text-muted [&_summary]:py-common [&_summary]:px-0 [&_a]:text-link"
+              className="text-text-muted [&_summary]:py-3 [&_summary]:px-0 [&_a]:text-link"
               key={depName}
             >
               <summary>{depName}</summary>

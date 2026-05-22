@@ -29,7 +29,7 @@ const About = ({ careerYears }: AboutProps) => {
         imageURL={'/icons/icon-512x512.png'}
       />
 
-      <article className="[&_section]:mb-8 [&_p]:ml-wide [&_p]:text-text-body [&_p]:italic">
+      <article className="[&_section]:mb-8 [&_p]:ml-5 [&_p]:text-text-body [&_p]:italic">
         <h1>About</h1>
 
         <RaiseSection timeout={standardTimeout}>
