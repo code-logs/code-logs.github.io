@@ -156,7 +156,7 @@
      prior baseline) preserves. See
      https://html.spec.whatwg.org/multipage/rendering.html#sections-and-headings */
   /* Per-element type ramp (issue #145 spec). Where a heading's line-height or
-     letter-spacing falls between named --leading-*/--tracking-* steps, the
+     letter-spacing falls between named --leading-* / --tracking-* steps, the
      literal is the intended design value, not a missing token. */
   h1 {
     font-size: var(--text-4xl);
