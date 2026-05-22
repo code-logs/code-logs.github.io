@@ -59,6 +59,7 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 
 ## Related
 
+- [typography-system-gotchas.md](typography-system-gotchas.md) — font loading and type-scale tokens (`--font-*`/`--text-*`/`--leading-*`/`--tracking-*`) layered on this `@theme` setup; covers how post-body headings (prose utilities layer) differ from the base `h1~h4` rules documented here.
 - [color-tokens-gotchas.md](color-tokens-gotchas.md) — semantic color token conventions layered on top of the `@theme` setup documented here (Zinc/Teal primitives, semantic-only consumption rule, WCAG AA notes).
 - [ads-adsense-rendering-gotchas.md](ads-adsense-rendering-gotchas.md) — pitfalls when the aside cell becomes too narrow for AdSense (ties into the `repeat(3, 1fr)` + fixed-width main grid behavior documented above).
 

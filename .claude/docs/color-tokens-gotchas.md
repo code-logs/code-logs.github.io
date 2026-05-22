@@ -88,3 +88,8 @@ If a new color is needed, add it as a primitive (if it's a palette extension) or
 The "신뢰감 있는 미니멀" tone target ruled out the legacy GitHub blue + pure-black approach. Zinc was chosen over Slate/Gray for the neutral scale because its slight warm tint reads less clinical at typography sizes. Teal (Tailwind's stock teal scale) was chosen as the accent because (a) it is distinct from any common framework default, (b) its 400/700 split lands in the AA-passable contrast band against both white and Zinc-950 with no exotic gamma adjustments, and (c) the same hue works in both modes — only luminance shifts. The semantic-over-primitive split exists to make future token swaps (e.g., trying Cyan instead of Teal) a single-file edit.
 
 The one-shot legacy-token cutover (no `--color-theme-*` aliases retained) was deliberate per the issue: aliases lengthen the migration tail and accumulate dead code. The `rg "*-theme-*"` sweep is the safety net; CI lint does not catch a phantom utility class.
+
+## Related
+
+- [styling-gotchas.md](styling-gotchas.md) — the Tailwind v4 `@theme` setup these color tokens live in.
+- [typography-system-gotchas.md](typography-system-gotchas.md) — sibling token system (font families + type scale) in the same `@theme` block.

@@ -45,7 +45,7 @@ export async function getStaticProps(context: { params: { title: string } }) {
 }
 
 const sectionHeadingClass =
-  '[&>h2]:mt-10 [&>h2]:mb-0 [&>h2]:text-[1.5rem] [&>h2]:pb-common [&>h2]:border-b [&>h2]:border-divider'
+  '[&>h2]:mt-10 [&>h2]:mb-0 [&>h2]:pb-common [&>h2]:border-b [&>h2]:border-divider'
 
 const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCategory }: PostDetailPageProps) => {
   const containerRef = useRef<HTMLElement>(null)
@@ -65,7 +65,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
       />
 
       <article className="prose max-w-none post-body" ref={containerRef}>
-        <p className="text-[0.9rem] text-text-muted m-0 text-right">
+        <p className="text-sm text-text-muted m-0 text-right">
           <span>{PostUtil.readablePublishedAt(post)}</span>
         </p>
         <section className="relative m-0 [&_img]:object-cover [&_img]:w-full [&_img]:h-[315px] max-tablet:[&_img]:!object-contain max-tablet:[&_img]:h-auto">
@@ -76,7 +76,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
 
         <section>
           <h1>{post.title}</h1>
-          <p className="italic text-text-muted text-[1.5rem] whitespace-pre-wrap leading-[2rem]">{post.description}</p>
+          <p className="italic text-text-muted text-2xl whitespace-pre-wrap leading-snug">{post.description}</p>
         </section>
 
         <section id="content" dangerouslySetInnerHTML={{ __html: content }}></section>

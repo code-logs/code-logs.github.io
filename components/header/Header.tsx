@@ -16,7 +16,7 @@ export interface HeaderProps {
 const Header = ({ title, menus, socialIcons }: HeaderProps) => {
   return (
     <header className="header-grid pb-wide border-b border-divider bg-bg-page max-tablet:pb-0 max-tablet:[&>nav]:m-auto">
-      <span className="[grid-area:title] font-bold text-[2rem] text-center m-auto text-text-heading max-tablet:text-[1.5rem] max-tablet:text-left max-tablet:my-auto max-tablet:mx-0 max-tablet:p-common">
+      <span className="[grid-area:title] font-bold text-3xl text-center m-auto text-text-heading max-tablet:text-2xl max-tablet:text-left max-tablet:my-auto max-tablet:mx-0 max-tablet:p-common">
         {title}
       </span>
 
