@@ -12,7 +12,7 @@ export interface CarouselBannerProps {
 
 export default function CarouselBanner({ banners }: CarouselBannerProps) {
   return (
-    <div className="max-w-[400px] mt-wide mx-auto">
+    <div className="max-w-[400px] mt-5 mx-auto">
       {banners.map(({ title, bannerSrc, link }) => (
         <a
           key={link}

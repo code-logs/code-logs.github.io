@@ -7,7 +7,7 @@ const SearchInput = (props: SearchInputProps) => {
     <label className="inline-flex w-full">
       <Search className="text-text-heading m-auto" />
       <input
-        className="flex-1 border-none bg-bg-page outline-none p-narrow text-text-body"
+        className="flex-1 border-none bg-bg-page outline-none p-1 text-text-body"
         {...props}
         spellCheck={false}
       />

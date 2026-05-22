@@ -9,10 +9,10 @@ export interface PostCardProps {
 }
 
 const PostCard = ({ titleLevel = 3, post }: PostCardProps) => (
-  <article className="clickable post-card-grid gap-common border-t border-divider py-wide">
+  <article className="clickable post-card-grid gap-3 border-t border-divider py-5">
     <a
       href={PostUtil.buildLinkURLByTitle(post.title)}
-      className="[grid-area:title] [&>*]:text-text-heading [&>*]:text-xl [&>*]:my-common"
+      className="[grid-area:title] [&>*]:text-text-heading [&>*]:text-xl [&>*]:my-3"
     >
       {titleLevel === 1 && <h1>{post.title}</h1>}
       {titleLevel === 2 && <h2>{post.title}</h2>}
@@ -29,7 +29,7 @@ const PostCard = ({ titleLevel = 3, post }: PostCardProps) => (
 
     <a
       href={PostUtil.buildLinkURLByTitle(post.title)}
-      className="[grid-area:description] [&>p]:whitespace-pre-wrap [&>p]:mt-0 [&>p]:leading-wide [&>p]:text-text-body"
+      className="[grid-area:description] [&>p]:whitespace-pre-wrap [&>p]:mt-0 [&>p]:leading-relaxed [&>p]:text-text-body"
     >
       <p>{post.description}</p>
     </a>

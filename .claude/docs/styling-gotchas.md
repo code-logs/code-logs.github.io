@@ -48,7 +48,19 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 
 - **Symptom:** A custom token defined in `@theme` doesn't generate the expected utility.
 - **Why:** Tailwind v4 only auto-generates utilities for tokens that match a registered namespace prefix (`--color-*` → `bg-*`/`text-*`/`border-*`, `--spacing-*` → `m-*`/`p-*`/`gap-*`, `--leading-*` → `leading-*`, `--breakpoint-*` → screen variants, etc.).
-- **Rule:** When adding a token, ALWAYS use the namespace prefix that matches the utility family you want. To get `leading-wide`, the token MUST be named `--leading-wide`, not `--line-height-wide` or `--wide-leading`.
+- **Rule:** When adding a token, ALWAYS use the namespace prefix that matches the utility family you want. To get `leading-wide`, the token MUST be named `--leading-wide`, not `--line-height-wide` or `--wide-leading`. The spacing scale (issue #146) is named `--spacing-1`…`--spacing-24` (NOT `--space-*`) precisely so Tailwind auto-generates `p-1`/`m-1`/`gap-1`/`py-*`/`mt-*`. The semantic aliases (`--spacing-card-inner`, `--spacing-section-gap`, …) share the same prefix so `p-card-inner` etc. would also generate — though components currently consume the numeric steps directly.
+
+### Spacing and radius scale tokens are px-based, not rem
+
+- **Symptom:** Mobile spacing renders smaller than intended, or a margin/padding that looked right on desktop shrinks at ≤768 px.
+- **Why:** `@layer base` sets `@media (max-width: 768px) { :root { font-size: 12px } }`. Tailwind's *default* spacing is rem-based (`--spacing: 0.25rem`), so any rem-based step shrinks to ~75% in that range. The legacy `narrow/common/wide` tokens were px and stayed fixed; issue #146 preserved that by defining `--spacing-1`…`--spacing-24` and `--radius-*` in **px**.
+- **Rule:** Keep the `--spacing-*` and `--radius-*` scale tokens in px. Switching them to rem silently regresses mobile spacing. Note that integer steps you did NOT explicitly define (e.g. `p-7`, `p-9`) still fall back to Tailwind's rem-based `calc(var(--spacing) * n)` — avoid mixing those with the px scale where the difference matters.
+
+### Redefining `--radius-*` / `--spacing-*` in `@theme` overrides Tailwind defaults globally
+
+- **Symptom:** An element you never touched (e.g. the PostCard thumbnail's `rounded-md`) suddenly renders with a different radius/spacing after a token change.
+- **Why:** `@theme` token values override Tailwind's built-in scale. Defining `--radius-md: 10px` / `--radius-sm: 6px` (issue #146) replaces the defaults (`md`=6px, `sm`=4px), so EVERY existing `rounded-md`/`rounded-sm` consumer — even ones not in your diff — re-renders at the new value. Same applies to `--spacing-*`.
+- **Rule:** When choosing scale-token values, account for the blast radius across all existing standard-class consumers, not just the lines you edit. To restyle only some elements, use an arbitrary value or a distinct token instead of redefining the shared scale token.
 
 ## Conventions
 
@@ -56,6 +68,7 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - New design tokens MUST be added to the `@theme` block in `globals.css`. Dark-mode overrides live in the same file's `@media (prefers-color-scheme: dark)` block — the codebase uses media-query dark mode, not a class strategy.
 - `normalize.css` MUST NOT be reintroduced. If a preflight reset bites a new component (lists, headings, form controls), restore the affected user-agent default in `globals.css` `@layer base` and document it here.
 - The post-body article element MUST carry `prose max-w-none post-body` together (in that order is fine). `prose` provides the typography baseline; `.post-body` selectively overrides.
+- Spacing and radius design tokens — the px-based `--spacing-1`…`--spacing-24` scale, its semantic aliases (`--spacing-card-inner`, `--spacing-card-gap`, `--spacing-section-inner`, `--spacing-section-gap`, `--spacing-page-x`, `--spacing-page-x-desktop`, `--spacing-page-y`), and the `--radius-sm`…`--radius-full` scale — live in `@theme` (issue #146). Components express spacing/radius via the generated utilities (`p-5`, `gap-3`, `rounded-full`); NEVER reintroduce arbitrary `rounded-[Npx]` or one-off margin/padding literals when a scale step fits.
 
 ## Related
 

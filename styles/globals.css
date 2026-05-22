@@ -4,11 +4,40 @@
 @theme {
   --breakpoint-tablet: 800px;
 
-  --spacing-narrow: 5px;
-  --spacing-common: 10px;
-  --spacing-wide: 20px;
+  /* ── Spacing scale (4px grid, 12 steps) ──────────────────────────────
+     px-based (not rem): preserves the legacy narrow/common/wide behavior
+     where spacing stayed fixed under the mobile `:root { font-size: 12px }`
+     rule. Step values follow the issue #146 table. */
+  --spacing-1:  4px;   /* icon↔text gap */
+  --spacing-2:  8px;   /* inline gap, tag-row gap */
+  --spacing-3:  12px;  /* chip/badge inner padding */
+  --spacing-4:  16px;  /* form gap, compact card padding */
+  --spacing-5:  20px;  /* card inner padding (standard) */
+  --spacing-6:  24px;  /* card-to-card gap */
+  --spacing-8:  32px;  /* section inner block gap */
+  --spacing-10: 40px;  /* main section separation */
+  --spacing-12: 48px;  /* section↔section */
+  --spacing-16: 64px;  /* header↔body, footer↔body */
+  --spacing-20: 80px;  /* page top/bottom */
+  --spacing-24: 96px;  /* hero↔content */
 
-  --leading-wide: var(--spacing-wide);
+  /* Semantic spacing aliases (intent-expressing). Defined per issue #146;
+     consumed by page/card/section markup in the follow-up redesign issues
+     (#149–159). Components in this change use the numeric steps directly. */
+  --spacing-card-inner:     var(--spacing-5);   /* 20 */
+  --spacing-card-gap:       var(--spacing-6);   /* 24 */
+  --spacing-section-inner:  var(--spacing-8);   /* 32 */
+  --spacing-section-gap:    var(--spacing-12);  /* 48 */
+  --spacing-page-x:         var(--spacing-6);   /* 24 — mobile L/R */
+  --spacing-page-x-desktop: var(--spacing-12);  /* 48 — desktop L/R */
+  --spacing-page-y:         var(--spacing-16);  /* 64 */
+
+  /* ── Radius scale ─────────────────────────────────────────────────── */
+  --radius-sm:   6px;     /* tags, badges, inputs */
+  --radius-md:   10px;    /* buttons */
+  --radius-lg:   14px;    /* cards */
+  --radius-xl:   20px;    /* modals, sheets */
+  --radius-full: 9999px;  /* count circles, avatars */
 
   /* ── Typography: font families ────────────────────────────────────── */
   /* next/font exposes the hashed family names through these variables
@@ -249,7 +278,7 @@
   main {
     grid-area: main;
     width: 768px;
-    padding-top: var(--spacing-wide);
+    padding-top: var(--spacing-5);
     padding-bottom: var(--footer-height);
   }
 
@@ -282,7 +311,7 @@
     main {
       margin: 0;
       width: 100%;
-      padding: var(--spacing-common) var(--spacing-wide) var(--footer-height);
+      padding: var(--spacing-3) var(--spacing-5) var(--footer-height);
     }
 
     aside {
@@ -336,18 +365,18 @@
 
   .post-body {
     & ins {
-      margin-top: 20px !important;
-      margin-bottom: 20px !important;
+      margin-top: var(--spacing-5) !important;
+      margin-bottom: var(--spacing-5) !important;
     }
 
     & ul,
     & ol {
-      padding-left: var(--spacing-wide);
+      padding-left: var(--spacing-5);
     }
 
     & ol,
     & li {
-      margin-top: var(--spacing-narrow);
+      margin-top: var(--spacing-1);
     }
 
     & li {
@@ -373,7 +402,7 @@
     & h2,
     & h3,
     & h4 {
-      padding-bottom: var(--spacing-common);
+      padding-bottom: var(--spacing-3);
       border-bottom: 1px solid var(--color-divider);
     }
 
@@ -411,7 +440,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--spacing-wide) 0;
+      padding: var(--spacing-5) 0;
       color: var(--color-text-body);
     }
 

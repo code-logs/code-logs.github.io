@@ -10,7 +10,7 @@ export interface TagListProps {
 
 const TagList = (props: TagListProps) => {
   return (
-    <ol className="m-0 p-0 [&_ol]:m-0 [&_ol]:p-0 [&_h2]:text-[1.5rem] [&_h2]:pb-narrow [&_h2]:border-b [&_h2]:border-divider">
+    <ol className="m-0 p-0 [&_ol]:m-0 [&_ol]:p-0 [&_h2]:text-[1.5rem] [&_h2]:pb-1 [&_h2]:border-b [&_h2]:border-divider">
       {props.indexGroups.map((indexGroup, idx) => (
         <ol key={idx}>
           {indexGroup

@@ -39,8 +39,8 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
   }
 
   return (
-    <div className="grid p-wide border-t border-divider [&_svg]:m-auto [&_svg]:w-6 [&_svg]:h-6 [&_svg]:text-text-muted">
-      <ul className="m-auto p-0 inline-flex gap-wide [&_li]:m-auto [&_li]:inline-grid [&_li>a]:inline-grid [&_li>a]:text-text-muted">
+    <div className="grid p-5 border-t border-divider [&_svg]:m-auto [&_svg]:w-6 [&_svg]:h-6 [&_svg]:text-text-muted">
+      <ul className="m-auto p-0 inline-flex gap-5 [&_li]:m-auto [&_li]:inline-grid [&_li>a]:inline-grid [&_li>a]:text-text-muted">
         {page > 1 && (
           <li>
             <a href={buildURL(page - 1)}>
@@ -62,7 +62,7 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
           <li key={pageNum}>
             <a
               href={buildURL(pageNum)}
-              className={page === pageNum ? 'bg-accent-700 py-narrow px-common rounded-[4px] !text-white' : ''}
+              className={page === pageNum ? 'bg-accent-700 py-1 px-3 rounded-md !text-white' : ''}
             >
               {pageNum}
             </a>

@@ -53,7 +53,7 @@ const Home: NextPage<{
 
       <MainAdsBanner />
 
-      <div className="grid grid-cols-2 pb-wide max-tablet:grid-cols-1 max-tablet:gap-common">
+      <div className="grid grid-cols-2 pb-5 max-tablet:grid-cols-1 max-tablet:gap-3">
         <CategoryIndexer categories={props.categories} />
 
         <TagIndexer tagsWithCount={props.tagsWithCount} limit={20} />

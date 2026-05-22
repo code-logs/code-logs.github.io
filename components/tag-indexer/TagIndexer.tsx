@@ -23,7 +23,7 @@ const TagIndexer = (props: TagIndexerProps) => {
         </a>
       </h2>
 
-      <div className="p-common">
+      <div className="p-3">
         <Tags tags={tagsWithCount.slice(0, limit)} />
       </div>
     </section>

@@ -10,6 +10,7 @@ Read this when: you need to find project knowledge documents written by AI agent
 | Why a lucide icon won't size via `font-size`, or where a brand icon went | [icon-library-gotchas.md](icon-library-gotchas.md) |
 | How to safely depend on dates, randomness, or other host-runtime values inside a page under `output: 'export'` | [static-export-rendering-gotchas.md](static-export-rendering-gotchas.md) |
 | How Tailwind v4 is set up here, and what classes/tokens MUST NOT be changed | [styling-gotchas.md](styling-gotchas.md) |
+| Why spacing/radius tokens are px not rem, why they are named `--spacing-*` (not `--space-*`), or why an untouched `rounded-md` element changed radius | [styling-gotchas.md](styling-gotchas.md) |
 | Which color token to use where, why `accent-700` (not `accent-600`) is the light-mode link, or how dark-mode pairing works | [color-tokens-gotchas.md](color-tokens-gotchas.md) |
 | How the self-hosted fonts load, why `--text-*`/`--leading-*` tokens override Tailwind built-ins, why fonts inject from `_app.tsx` not `_document.tsx`, or why post-body headings differ from base `h1~h4` | [typography-system-gotchas.md](typography-system-gotchas.md) |
 | Why AdSense throws a fatal error at narrow viewports, and why `useIsMobile` threshold is 1100 px | [ads-adsense-rendering-gotchas.md](ads-adsense-rendering-gotchas.md) |

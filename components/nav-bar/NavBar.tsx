@@ -16,7 +16,7 @@ const NavBar = (props: NavBarProps) => {
 
   return (
     <nav className="[grid-area:navBar] text-center">
-      <ul className="inline-flex gap-wide m-auto p-0 font-medium">
+      <ul className="inline-flex gap-5 m-auto p-0 font-medium">
         {menus.map(({ display, route }, idx) => (
           <li className="clickable" key={idx}>
             <MarkedAnchor href={route} display={display} matched={router.pathname.split('/')[1] === route.split('/')[1]} />

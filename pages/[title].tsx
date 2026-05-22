@@ -45,7 +45,7 @@ export async function getStaticProps(context: { params: { title: string } }) {
 }
 
 const sectionHeadingClass =
-  '[&>h2]:mt-10 [&>h2]:mb-0 [&>h2]:pb-common [&>h2]:border-b [&>h2]:border-divider'
+  '[&>h2]:mt-10 [&>h2]:mb-0 [&>h2]:pb-3 [&>h2]:border-b [&>h2]:border-divider'
 
 const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCategory }: PostDetailPageProps) => {
   const containerRef = useRef<HTMLElement>(null)

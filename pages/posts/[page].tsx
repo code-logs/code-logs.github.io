@@ -92,7 +92,7 @@ const Posts: NextPage<PostsProps> = (props) => {
           keywords={posts.map((post) => [...post.tags, post.title, post.description]).flat()}
         />
 
-        <span className="text-text-muted text-[0.8rem] float-right mt-wide">{query ? `Found ${posts.length}` : `Total ${totalCount}`}</span>
+        <span className="text-text-muted text-[0.8rem] float-right mt-5">{query ? `Found ${posts.length}` : `Total ${totalCount}`}</span>
         <h1>Posts </h1>
       </>
     ),
