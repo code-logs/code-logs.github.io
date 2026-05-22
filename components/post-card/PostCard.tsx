@@ -12,18 +12,18 @@ const PostCard = ({ titleLevel = 3, post }: PostCardProps) => (
   <article className="clickable post-card-grid gap-common border-t border-divider py-wide">
     <a
       href={PostUtil.buildLinkURLByTitle(post.title)}
-      className="[grid-area:title] [&>h1]:text-text-heading [&>h1]:text-[1.5rem] [&>h1]:my-common [&>h2]:text-text-heading [&>h2]:text-[1.5rem] [&>h2]:my-common [&>h3]:text-text-heading [&>h3]:text-[1.5rem] [&>h3]:my-common"
+      className="[grid-area:title] [&>*]:text-text-heading [&>*]:text-xl [&>*]:my-common"
     >
       {titleLevel === 1 && <h1>{post.title}</h1>}
       {titleLevel === 2 && <h2>{post.title}</h2>}
       {titleLevel === 3 && <h3>{post.title}</h3>}
     </a>
 
-    <span className="[grid-area:category] text-[0.9rem] font-light capitalize italic text-text-muted">
+    <span className="[grid-area:category] text-sm font-light capitalize italic text-text-muted">
       {(CATEGORIES as any)[post.category]}
     </span>
 
-    <span className="[grid-area:publishedAt] text-right text-[0.9rem] font-light text-text-muted">
+    <span className="[grid-area:publishedAt] text-right text-sm font-light text-text-muted">
       {PostUtil.readablePublishedAt(post)}
     </span>
 

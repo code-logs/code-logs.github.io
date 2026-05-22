@@ -2,7 +2,9 @@ pre code {
   display: block;
   overflow-x: auto;
   padding: 1rem;
-  line-height: var(--spacing-wide);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.65;
 }
 .hljs {
   background: var(--color-code-bg);

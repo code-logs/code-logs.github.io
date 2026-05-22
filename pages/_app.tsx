@@ -10,6 +10,7 @@ import blogConfig from '../config/blog.config'
 import menus from '../config/menu.config'
 import socialIcons from '../config/social.config'
 import useIsMobile from '../hooks/useIsMobile'
+import { fontVariables } from '../styles/fonts'
 import '../styles/globals.css'
 import '../styles/highlight.css'
 
@@ -17,7 +18,13 @@ const MainApp = ({ Component, pageProps }: AppProps) => {
   const isMobile = useIsMobile(true)
 
   return (
-    <>
+    // Font CSS variables are injected here, not in `_document.tsx`: next/font
+    // must be loaded from `_app`/pages, and the body className would otherwise
+    // need a wrapper. `display: contents` keeps header/main/aside/footer as
+    // direct grid items of `#__next` while still exposing the variables to them.
+    // `role="none"` neutralizes the box that `display: contents` drops from the
+    // a11y tree, so the landmark children below remain the only exposed regions.
+    <div className={fontVariables} style={{ display: 'contents' }} role="none">
       <GTagScript gaID={blogConfig.googleAnalytics.id} />
       <NaverAnalyticsScript issuedId={blogConfig.naverAnalytics.id} />
       <SWScript />
@@ -33,7 +40,7 @@ const MainApp = ({ Component, pageProps }: AppProps) => {
       </aside>
 
       <Footer author={blogConfig.author} />
-    </>
+    </div>
   )
 }
 
