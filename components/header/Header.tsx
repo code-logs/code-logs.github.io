@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import NavBar, { Menu } from '../nav-bar/NavBar'
+import ThemeToggle from '../theme-toggle/ThemeToggle'
 
 export interface SocialIcon {
   href: string
@@ -28,6 +29,11 @@ const Header = ({ title, menus, socialIcons }: HeaderProps) => {
             </a>
           </li>
         ))}
+        {/* Shares the social-icon slot so it stays visible on the tablet (≤800px)
+            one-row layout. The ul's `[&_svg]:w-6 [&_svg]:h-6` sizes the toggle icon. */}
+        <li>
+          <ThemeToggle />
+        </li>
       </ul>
 
       <NavBar menus={menus} />

@@ -1,10 +1,10 @@
 # Color Tokens Gotchas
 
-Read this when: editing `styles/globals.css` `@theme`/dark `@media` blocks, adding a new color token, applying a color utility (`bg-*`, `text-*`, `border-*`, `ring-*`) to a component, or changing the dark-mode palette.
+Read this when: editing `styles/globals.css` `@theme`/`.dark` blocks, adding a new color token, applying a color utility (`bg-*`, `text-*`, `border-*`, `ring-*`) to a component, or changing the dark-mode palette.
 
 ## Overview
 
-The color system is a two-tier palette layered under semantic aliases: **Zinc 9-step neutrals** + **Teal 5-step accents** as primitives, **semantic tokens** (`--color-bg-page`, `--color-text-body`, `--color-link`, `--color-danger`, …) as the surface components consume. Dark mode flips only neutrals + link semantics via `prefers-color-scheme: dark`; accents stay light-invariant. Manual dark toggle is out of scope (tracked in #148). The Tailwind v4 namespace rule (`--color-*` prefix is mandatory) is documented in [styling-gotchas.md](styling-gotchas.md) — this doc covers the semantic conventions on top of it.
+The color system is a two-tier palette layered under semantic aliases: **Zinc 9-step neutrals** + **Teal 5-step accents** as primitives, **semantic tokens** (`--color-bg-page`, `--color-text-body`, `--color-link`, `--color-danger`, …) as the surface components consume. Dark mode flips only neutrals + link semantics + shadow tokens via the `.dark` class; accents stay light-invariant. The class strategy (`next-themes` 3-mode toggle) and its FOUC/`theme-color` traps live in [dark-mode-toggle-gotchas.md](dark-mode-toggle-gotchas.md). The Tailwind v4 namespace rule (`--color-*` prefix is mandatory) is documented in [styling-gotchas.md](styling-gotchas.md) — this doc covers the semantic conventions on top of it.
 
 ## Pitfalls
 
@@ -29,7 +29,7 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 ### Components referencing primitive tokens directly bypass dark mode
 
 - **Symptom:** A component sets `text-neutral-700` and renders unreadable dark-on-dark text in dark mode.
-- **Why:** The semantic tokens (`--color-text-body`, `--color-text-heading`, …) are what get re-pointed in the dark `@media` block. Primitive tokens (`--color-neutral-*`, `--color-accent-*`) are also overridden in dark mode, but bypass the semantic intent — a component that says "I want neutral-700 specifically" gets `#d4d4d8` in dark mode, which is intended for *body text on dark*, not whatever the component meant.
+- **Why:** The semantic tokens (`--color-text-body`, `--color-text-heading`, …) are what get re-pointed in the `.dark` block. Primitive tokens (`--color-neutral-*`, `--color-accent-*`) are also overridden in dark mode, but bypass the semantic intent — a component that says "I want neutral-700 specifically" gets `#d4d4d8` in dark mode, which is intended for *body text on dark*, not whatever the component meant.
 - **Rule:** Components MUST use only semantic utilities (`text-text-body`, `text-text-muted`, `text-text-heading`, `bg-bg-page`, `bg-bg-subtle`, `border-divider`, `border-border`, `text-link`, `text-danger`, …). The single exception is `--color-code-bg` consumed by `.prose.post-body --tw-prose-pre-bg`. Primitives are palette infrastructure, not application surface.
 
 ### `border-border` vs `border-divider` is semantic, not stylistic
@@ -44,9 +44,9 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 
 | Tier | Examples | Where it lives | Who reads it |
 |---|---|---|---|
-| Primitive — neutral | `--color-neutral-0` … `--color-neutral-900` | `@theme` (light), dark `@media` override | Only semantic tokens. NEVER components. |
+| Primitive — neutral | `--color-neutral-0` … `--color-neutral-900` | `@theme` (light), `.dark` override | Only semantic tokens. NEVER components. |
 | Primitive — accent | `--color-accent-50` … `--color-accent-700` | `@theme` only — light-invariant | Only semantic tokens. NEVER components. |
-| Semantic | `--color-bg-page`, `--color-text-body`, `--color-link`, `--color-danger`, … | `@theme` (light), dark `@media` override (link only) | All components, all pages, `@layer base`, `.prose.post-body` |
+| Semantic | `--color-bg-page`, `--color-text-body`, `--color-link`, `--color-danger`, … | `@theme` (light), `.dark` override (link only) | All components, all pages, `@layer base`, `.prose.post-body` |
 
 ### Semantic token naming uses the long form
 
@@ -54,9 +54,10 @@ ALWAYS name semantic tokens with the role-doubled prefix even when it reads repe
 
 ### Dark mode flips only what diverges
 
-The dark `@media` block MUST override only:
+The `.dark` block MUST override only:
 - All 8 neutral steps (Zinc 0–900 → Zinc 950→50 inverse).
 - `--color-link` (accent-700 → accent-400) and `--color-link-hover` (accent-600 → accent-500).
+- The shadow tokens `--shadow-xs`…`--shadow-lg` (black shadows vanish on dark surfaces → white hairline + deeper shadow). `--shadow-focus` is NOT overridden — accent is light-invariant.
 
 Accent primitives (`--color-accent-*`) stay identical in both modes — the Teal palette is light-invariant by design. Semantic tokens that derive from neutrals/accents do not need their own dark override because they re-resolve through the overridden primitives. NEVER duplicate the dark override at the semantic layer; that creates two places to update.
 
@@ -85,7 +86,7 @@ If a new color is needed, add it as a primitive (if it's a palette extension) or
 
 ## Rationale
 
-The "신뢰감 있는 미니멀" tone target ruled out the legacy GitHub blue + pure-black approach. Zinc was chosen over Slate/Gray for the neutral scale because its slight warm tint reads less clinical at typography sizes. Teal (Tailwind's stock teal scale) was chosen as the accent because (a) it is distinct from any common framework default, (b) its 400/700 split lands in the AA-passable contrast band against both white and Zinc-950 with no exotic gamma adjustments, and (c) the same hue works in both modes — only luminance shifts. The semantic-over-primitive split exists to make future token swaps (e.g., trying Cyan instead of Teal) a single-file edit.
+The "trustworthy minimal" tone target ruled out the legacy GitHub blue + pure-black approach. Zinc was chosen over Slate/Gray for the neutral scale because its slight warm tint reads less clinical at typography sizes. Teal (Tailwind's stock teal scale) was chosen as the accent because (a) it is distinct from any common framework default, (b) its 400/700 split lands in the AA-passable contrast band against both white and Zinc-950 with no exotic gamma adjustments, and (c) the same hue works in both modes — only luminance shifts. The semantic-over-primitive split exists to make future token swaps (e.g., trying Cyan instead of Teal) a single-file edit.
 
 The one-shot legacy-token cutover (no `--color-theme-*` aliases retained) was deliberate per the issue: aliases lengthen the migration tail and accumulate dead code. The `rg "*-theme-*"` sweep is the safety net; CI lint does not catch a phantom utility class.
 
@@ -93,3 +94,4 @@ The one-shot legacy-token cutover (no `--color-theme-*` aliases retained) was de
 
 - [styling-gotchas.md](styling-gotchas.md) — the Tailwind v4 `@theme` setup these color tokens live in.
 - [typography-system-gotchas.md](typography-system-gotchas.md) — sibling token system (font families + type scale) in the same `@theme` block.
+- [dark-mode-toggle-gotchas.md](dark-mode-toggle-gotchas.md) — the `.dark` class strategy that flips these tokens, plus FOUC/`theme-color`/hydration traps.
