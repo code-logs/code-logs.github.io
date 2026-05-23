@@ -43,6 +43,7 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - **Symptom:** Tweaking a hljs token color in `globals.css` has no effect, or vice versa.
 - **Why:** `styles/highlight.css` is imported in `pages/_app.tsx` AFTER `globals.css` and is plain CSS (not a Tailwind layer). It owns `.hljs`, `.hljs-*`, and the `pre code` reset, and it is loaded last so it overrides preflight on code blocks.
 - **Rule:** Add or change syntax-highlight colors in `highlight.css` only. Add or change layout/typography for code blocks (e.g., border-radius on `<pre>`) also in `highlight.css`. NEVER move hljs rules into `globals.css` — the import order matters.
+- **Cross-file dependency:** `.hljs` consumes `var(--shadow-sm)` (a `@theme` shadow token defined in `globals.css`, issue #147) for its light-mode box-shadow, with `box-shadow: none` in dark mode. Renaming or removing shadow tokens in `globals.css` silently breaks the code-block shadow here — `highlight.css` is plain CSS, so an undefined `var()` just drops the shadow with no error. (This is the trap that bit the old `--common-shadow` token: it was assumed unused but was consumed here.)
 
 ### Token names must follow Tailwind v4's `--<namespace>-<name>` convention
 
@@ -61,6 +62,18 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - **Symptom:** An element you never touched (e.g. the PostCard thumbnail's `rounded-md`) suddenly renders with a different radius/spacing after a token change.
 - **Why:** `@theme` token values override Tailwind's built-in scale. Defining `--radius-md: 10px` / `--radius-sm: 6px` (issue #146) replaces the defaults (`md`=6px, `sm`=4px), so EVERY existing `rounded-md`/`rounded-sm` consumer — even ones not in your diff — re-renders at the new value. Same applies to `--spacing-*`.
 - **Rule:** When choosing scale-token values, account for the blast radius across all existing standard-class consumers, not just the lines you edit. To restyle only some elements, use an arbitrary value or a distinct token instead of redefining the shared scale token.
+
+### `--ease-*` / `--shadow-*` tokens in `@theme` override Tailwind's built-in utilities globally
+
+- **Symptom:** An `ease-in-out` or `shadow-md` utility you never touched animates/renders differently after the motion-token change (issue #147); e.g. a hover transition feels springier than the CSS standard `ease-in-out`.
+- **Why:** `--ease-*` and `--shadow-*` are registered Tailwind namespaces. Defining `--ease-out`/`--ease-in-out`/`--ease-spring`/`--ease-linear` and `--shadow-xs…lg` in `@theme` (issue #147) **replaces** the values backing the built-in `ease-*`/`shadow-*` utilities. Existing consumers re-render with the new curves/shadows — e.g. `components/content-explorer/ContentExplorer.tsx`'s `[&_a]:ease-in-out` now resolves to `cubic-bezier(0.65, 0, 0.35, 1)` instead of CSS-standard `ease-in-out`. This is intentional (one site-wide motion vocabulary) but the blast radius reaches every `ease-*`/`shadow-*` utility consumer, not just new code.
+- **Rule:** Treat `--ease-*`/`--shadow-*` like the `--radius-*`/`--spacing-*` scale (see above) — redefining them is a global override. The motion tokens (`--duration-*`, `--ease-*`) are consumed via `var()` in transition declarations, NOT as utilities; `--shadow-*` is consumed both as `shadow-*` utilities AND via `var()`. When changing a token value, account for all existing standard-class consumers. To apply a one-off easing/shadow without touching the global vocabulary, use an arbitrary value instead of redefining the token.
+
+### `@utility` rules override `@layer base` declarations for the same selector
+
+- **Symptom:** A property you declared for an element in `@layer base` (e.g. the `.clickable` `transition` baseline) silently has no effect.
+- **Why:** Tailwind v4 emits `@utility` definitions into the `utilities` layer, which beats `@layer base` in the cascade-layer order regardless of specificity. `@utility clickable`'s own `transition` (transform + box-shadow only) fully overrides any `.clickable` `transition` set in `@layer base`. This is why `.clickable` is intentionally **absent** from the shared interactive-element transition selector list in `@layer base` — including it would create a dead, misleading declaration.
+- **Rule:** When an element has both a `@utility` definition and a `@layer base` rule for the same property, the `@utility` wins. Do NOT add a selector to a `@layer base` rule if that same selector's `@utility` already sets the property — put the full intended value in the `@utility` instead.
 
 ## Conventions
 

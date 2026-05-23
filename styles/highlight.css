@@ -10,7 +10,7 @@ pre code {
   background: var(--color-code-bg);
   color: #fff;
   border-radius: 4px;
-  box-shadow: var(--common-shadow);
+  box-shadow: var(--shadow-sm);
 
   @media (prefers-color-scheme: dark) {
     box-shadow: none;
