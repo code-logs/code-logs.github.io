@@ -4,7 +4,6 @@ interface BlogConfig {
   pageLimit: number
   recentPostsLimit: number
   author: string
-  themeColor: string
   appleTouchIconPath: string
   kakaoAdfitUnitIDs: {
     mainBannerID: string
@@ -30,7 +29,6 @@ const blogConfig: BlogConfig = {
   pageLimit: 10,
   recentPostsLimit: 5,
   author: 'Jay Lee',
-  themeColor: '#fff',
   appleTouchIconPath: '/icons/icon-192x-192.png',
   kakaoAdfitUnitIDs: {
     mainBannerID: 'DAN-77VcMo8qRv55JIat',

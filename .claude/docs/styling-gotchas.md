@@ -78,7 +78,7 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 ## Conventions
 
 - `*.module.scss` and the `sass` dependency MUST stay removed. Components express their styles either as Tailwind utility classes in JSX or, for shared multi-rule blocks, as classes in `globals.css` `@layer components` (e.g. `.header-grid`, `.post-card-grid`, `.post-body`, `.clickable`).
-- New design tokens MUST be added to the `@theme` block in `globals.css`. Dark-mode overrides live in the same file's `@media (prefers-color-scheme: dark)` block — the codebase uses media-query dark mode, not a class strategy.
+- New design tokens MUST be added to the `@theme` block in `globals.css`. Dark-mode overrides live in the same file's `.dark` class block — the codebase uses a class strategy driven by `next-themes` (issue #148), not a media query. The `@variant dark (&:where(.dark, .dark *))` directive scopes Tailwind's `dark:` utilities to that class. See [dark-mode-toggle-gotchas.md](dark-mode-toggle-gotchas.md).
 - `normalize.css` MUST NOT be reintroduced. If a preflight reset bites a new component (lists, headings, form controls), restore the affected user-agent default in `globals.css` `@layer base` and document it here.
 - The post-body article element MUST carry `prose max-w-none post-body` together (in that order is fine). `prose` provides the typography baseline; `.post-body` selectively overrides.
 - Spacing and radius design tokens — the px-based `--spacing-1`…`--spacing-24` scale, its semantic aliases (`--spacing-card-inner`, `--spacing-card-gap`, `--spacing-section-inner`, `--spacing-section-gap`, `--spacing-page-x`, `--spacing-page-x-desktop`, `--spacing-page-y`), and the `--radius-sm`…`--radius-full` scale — live in `@theme` (issue #146). Components express spacing/radius via the generated utilities (`p-5`, `gap-3`, `rounded-full`); NEVER reintroduce arbitrary `rounded-[Npx]` or one-off margin/padding literals when a scale step fits.
@@ -87,6 +87,7 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 
 - [typography-system-gotchas.md](typography-system-gotchas.md) — font loading and type-scale tokens (`--font-*`/`--text-*`/`--leading-*`/`--tracking-*`) layered on this `@theme` setup; covers how post-body headings (prose utilities layer) differ from the base `h1~h4` rules documented here.
 - [color-tokens-gotchas.md](color-tokens-gotchas.md) — semantic color token conventions layered on top of the `@theme` setup documented here (Zinc/Teal primitives, semantic-only consumption rule, WCAG AA notes).
+- [dark-mode-toggle-gotchas.md](dark-mode-toggle-gotchas.md) — the `next-themes` `.dark` class strategy that the dark-mode token overrides and `highlight.css` `.dark` rules depend on.
 - [ads-adsense-rendering-gotchas.md](ads-adsense-rendering-gotchas.md) — pitfalls when the aside cell becomes too narrow for AdSense (ties into the `repeat(3, 1fr)` + fixed-width main grid behavior documented above).
 
 ## Rationale

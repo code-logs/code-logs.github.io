@@ -23,7 +23,9 @@ const CommonMeta = (props: CommonMetaProps) => {
       {/* PWA */}
       <link rel="apple-touch-icon" href={blogConfig.appleTouchIconPath} />
       <link rel="manifest" href="/manifest.json" />
-      <meta name="theme-color" key="theme-color" content={blogConfig.themeColor} />
+      {/* theme-color is owned by `_document.tsx` with a light/dark media split
+          (issue #148). A static, media-less meta here would inject after the
+          _document head and unconditionally override the dark variant. */}
 
       {/* Common meta */}
       {/* Static meta */}

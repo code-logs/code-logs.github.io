@@ -11,10 +11,16 @@ pre code {
   color: #fff;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
+}
 
-  @media (prefers-color-scheme: dark) {
-    box-shadow: none;
-  }
+/* Drop the resting shadow in dark mode (the dark --shadow-sm white hairline
+   reads as noise on the always-dark code surface). Class-based to track the
+   manual toggle (issue #148): this file is plain CSS outside the Tailwind
+   cascade, so `@variant dark` is unavailable — match the `.dark` ancestor
+   explicitly. Was previously an `@media (prefers-color-scheme: dark)` query,
+   which would desync from the toggle when OS and chosen mode differ. */
+.dark .hljs {
+  box-shadow: none;
 }
 .hljs-comment {
   color: #506686;
