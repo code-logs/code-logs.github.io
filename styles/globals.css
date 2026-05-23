@@ -114,12 +114,42 @@
 
   /* Kept: referenced by .prose.post-body --tw-prose-pre-bg */
   --color-code-bg: #212836;
+
+  /* ── Shadow scale (light mode) ────────────────────────────────────────
+     Semantic mapping: xs=input emphasis, sm=card resting, md=card hover /
+     dropdown, lg=modal / popover / sheet, focus=:focus-visible ring.
+     Dark-mode values are redefined in the @media block below as a white
+     hairline ring + shadow combo (black shadows vanish on dark surfaces). */
+  --shadow-xs:    0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm:    0 1px 3px 0 rgb(0 0 0 / 0.06),
+                  0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-md:    0 4px 12px -2px rgb(0 0 0 / 0.08),
+                  0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-lg:    0 12px 24px -6px rgb(0 0 0 / 0.10),
+                  0 4px 8px -4px rgb(0 0 0 / 0.04);
+  /* Reuses --color-focus-ring (accent-500 @ 35%); accent is light-invariant
+     so this needs no dark-mode override. */
+  --shadow-focus: 0 0 0 3px var(--color-focus-ring);
+
+  /* ── Motion tokens ────────────────────────────────────────────────────
+     Consumed via var() in transition declarations (not as utilities).
+     --ease-* matches Tailwind's ease-* namespace, intentionally overriding
+     the built-in easing utilities. spring is reserved for explicit emphasis
+     (never hover). */
+  --duration-instant: 80ms;    /* immediate feedback (active press) */
+  --duration-fast:    150ms;   /* hover, focus */
+  --duration-base:    200ms;   /* card lift, background swap */
+  --duration-slow:    280ms;   /* modal enter */
+  --duration-slower:  400ms;   /* page transition */
+
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-linear: linear;
 }
 
 @layer base {
   :root {
-    /* Consumed by styles/highlight.css (pre code box-shadow) */
-    --common-shadow: 2px 2px 2px var(--color-border);
     --header-height: 140px;
     --footer-height: 50px;
   }
@@ -141,6 +171,17 @@
       /* Dark-mode links use brighter teal */
       --color-link:       var(--color-accent-400);
       --color-link-hover: var(--color-accent-500);
+
+      /* Black shadows are near-invisible on dark surfaces, so each step pairs
+         a white hairline ring (surface separation) with a deeper shadow.
+         --shadow-focus is omitted: accent is light-invariant. */
+      --shadow-xs: 0 0 0 1px rgb(255 255 255 / 0.04);
+      --shadow-sm: 0 0 0 1px rgb(255 255 255 / 0.06),
+                   0 1px 2px 0 rgb(0 0 0 / 0.4);
+      --shadow-md: 0 0 0 1px rgb(255 255 255 / 0.06),
+                   0 6px 16px -4px rgb(0 0 0 / 0.5);
+      --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.08),
+                   0 12px 32px -8px rgb(0 0 0 / 0.6);
     }
   }
 
@@ -171,6 +212,34 @@
      ported as-is. */
   :focus:not(:focus-visible) {
     outline: none;
+  }
+
+  /* Keyboard focus ring: accent 3px ring that follows the element's radius.
+     Pairs with the mouse-click suppression above. */
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+    border-radius: var(--radius-sm);
+    transition: box-shadow var(--duration-instant) var(--ease-out);
+  }
+
+  /* Shared transition baseline for interactive elements. transform uses the
+     slower --duration-base (lift feels deliberate); the rest react fast.
+     .clickable is intentionally absent: the @utility clickable below sits in
+     the utilities layer and fully overrides this transition for it. */
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    transition:
+      color            var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      border-color     var(--duration-fast) var(--ease-out),
+      box-shadow       var(--duration-fast) var(--ease-out),
+      transform        var(--duration-base) var(--ease-out),
+      opacity          var(--duration-fast) var(--ease-out);
   }
 
   a {
@@ -318,12 +387,55 @@
       display: none;
     }
   }
+
+  /* Honor OS-level Reduce Motion: collapse animations/transitions to ~instant
+     instead of removing them outright (avoids breaking JS that waits on
+     transitionend). */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
+/* Hover-driven lift: rests flat, lifts 2px + md shadow on hover, snaps back
+   instantly on press. Replaces the prior :active-only scale(1.05) which gave
+   no hover feedback. */
 @utility clickable {
-  transition: transform 0.2s ease-in-out 0s;
+  cursor: pointer;
+  transition:
+    transform  var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
   &:active {
-    transform: scale(1.05);
+    transform: translateY(0);
+    transition-duration: var(--duration-instant);
+  }
+}
+
+/* Restrained card lift (1px) gated behind hover-capable pointers so touch
+   devices don't get a stuck hover state. Applied to card components in the
+   page-redesign issues, not here. */
+@utility card-hover {
+  transition:
+    transform    var(--duration-base) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow   var(--duration-base) var(--ease-out);
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
   }
 }
 
