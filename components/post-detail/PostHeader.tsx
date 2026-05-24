@@ -17,7 +17,7 @@ const POSTS_HREF = '/posts/1'
 // description → meta row framed by hairline dividers. Replaces the prior
 // right-aligned date + italic 1.5rem description flow.
 const PostHeader = ({ post, readingTime }: PostHeaderProps) => (
-  <header className="mb-8">
+  <section className="mb-8">
     <a
       href={POSTS_HREF}
       className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-heading"
@@ -48,7 +48,7 @@ const PostHeader = ({ post, readingTime }: PostHeaderProps) => (
       </span>
       <span>{readingTime} min read</span>
     </div>
-  </header>
+  </section>
 )
 
 export default PostHeader
