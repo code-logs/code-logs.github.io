@@ -47,4 +47,4 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 
 ## Rationale
 
-The legacy `#__next` `repeat(3, 1fr)` grid with a hardcoded `main { width: 768px }` pinned content to the right third of wide viewports and forced the aside to `display: none` on mobile. The container model decouples reading width from viewport thirds and lets the aside reflow instead of vanish. Header slot details (logo/search/mobile sheet) and footer content expansion are deferred to issues #150 and the footer-redesign issue respectively.
+The legacy `#__next` `repeat(3, 1fr)` grid with a hardcoded `main { width: 768px }` pinned content to the right third of wide viewports and forced the aside to `display: none` on mobile. The container model decouples reading width from viewport thirds and lets the aside reflow instead of vanish. The header slot contents (logo/search palette/mobile sheet) landed in issue #150 — their interaction traps live in [header-interaction-gotchas.md](header-interaction-gotchas.md); footer content expansion is deferred to the footer-redesign issue.

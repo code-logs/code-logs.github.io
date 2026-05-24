@@ -15,10 +15,13 @@ const NavBar = (props: NavBarProps) => {
   const router = useRouter()
 
   return (
+    // Centered nav. `.nav-link` owns weight/color/indicator (globals.css); the
+    // links stretch to the full header height so the 2px indicator lands on the
+    // header border. No `clickable` lift here — the indicator is the affordance.
     <nav className="flex-1 text-center">
-      <ul className="inline-flex gap-5 m-auto p-0 font-medium">
+      <ul className="inline-flex gap-5 m-auto p-0">
         {menus.map(({ display, route }, idx) => (
-          <li className="clickable" key={idx}>
+          <li key={idx}>
             <MarkedAnchor href={route} display={display} matched={router.pathname.split('/')[1] === route.split('/')[1]} />
           </li>
         ))}
