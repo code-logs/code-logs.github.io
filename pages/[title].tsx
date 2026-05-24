@@ -21,6 +21,9 @@ export interface PostDetailPageProps {
   post: Post
   content: string
   postsByCategory: Post[]
+  /* Currently unconsumed: the app-global aside that read this was removed in
+     issue #149. Kept as the wiring point for the ContentExplorer TOC rework
+     in #153 (post detail redesign). */
   enableContentExplorer: boolean
 }
 
@@ -55,7 +58,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
   }, [])
 
   return (
-    <>
+    <div className="container-reading">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.POST.TITLE(post.title))}
         description={META_CONTENTS.POST.DESCRIPTION(post.title, post.description, post.category, post.tags)}
@@ -117,7 +120,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, postsByCateg
         <h2>댓글</h2>
         <Utterances repo={'code-logs/code-logs.github.io'} theme={'preferred-color-scheme'} issueTerm={'title'} issueLabel={'Comment'} />
       </section>
-    </>
+    </div>
   )
 }
 

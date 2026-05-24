@@ -7,7 +7,7 @@ import licenses from '../../public/licenses.json'
 
 const Licenses = () => {
   return (
-    <>
+    <div className="container-reading">
       <h1>Licenses</h1>
       <RaiseSection className="grid grid-cols-2 overflow-auto">
         {Object.keys(licenses).map((depName) => {
@@ -33,7 +33,7 @@ const Licenses = () => {
       </RaiseSection>
 
       <MainAdsBanner />
-    </>
+    </div>
   )
 }
 

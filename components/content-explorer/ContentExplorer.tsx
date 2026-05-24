@@ -67,7 +67,7 @@ const ContentExplorer = () => {
     const headingElements = getHeadingElements()
     if (!headingElements.length) return
 
-    const HEADER_HEIGHT = 140
+    const HEADER_HEIGHT = 64
     const TOP_MARGIN = 20
     const BOUNDARY = 10
     const PADDING = HEADER_HEIGHT + TOP_MARGIN + BOUNDARY

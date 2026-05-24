@@ -15,7 +15,7 @@ const NavBar = (props: NavBarProps) => {
   const router = useRouter()
 
   return (
-    <nav className="[grid-area:navBar] text-center">
+    <nav className="flex-1 text-center">
       <ul className="inline-flex gap-5 m-auto p-0 font-medium">
         {menus.map(({ display, route }, idx) => (
           <li className="clickable" key={idx}>
