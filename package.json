@@ -9,10 +9,11 @@
     "dev": "next dev",
     "build": "next build",
     "docs:clean": "rm -rf ./docs ./out",
-    "docs": "pnpm run docs:clean && pnpm run build && mv ./out ./docs && touch ./docs/.nojekyll && pnpm run sitemap",
+    "docs": "pnpm run docs:clean && pnpm run search-index && pnpm run build && mv ./out ./docs && touch ./docs/.nojekyll && pnpm run sitemap",
     "start": "next start",
     "lint": "eslint .",
     "prepare": "husky",
+    "search-index": "ts-node bin/generate-search-index.ts",
     "sitemap": "ts-node bin/generate-sitemap.ts",
     "licenses": "ts-node bin/generate-licenses.ts"
   },

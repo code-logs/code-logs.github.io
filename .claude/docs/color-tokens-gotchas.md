@@ -4,7 +4,7 @@ Read this when: editing `styles/globals.css` `@theme`/`.dark` blocks, adding a n
 
 ## Overview
 
-The color system is a two-tier palette layered under semantic aliases: **Zinc 9-step neutrals** + **Teal 5-step accents** as primitives, **semantic tokens** (`--color-bg-page`, `--color-text-body`, `--color-link`, `--color-danger`, …) as the surface components consume. Dark mode flips only neutrals + link semantics + shadow tokens via the `.dark` class; accents stay light-invariant. The class strategy (`next-themes` 3-mode toggle) and its FOUC/`theme-color` traps live in [dark-mode-toggle-gotchas.md](dark-mode-toggle-gotchas.md). The Tailwind v4 namespace rule (`--color-*` prefix is mandatory) is documented in [styling-gotchas.md](styling-gotchas.md) — this doc covers the semantic conventions on top of it.
+The color system is a two-tier palette layered under semantic aliases: **Zinc 9-step neutrals** + **Teal 5-step accents** as primitives, **semantic tokens** (`--color-bg-page`, `--color-text-body`, `--color-link`, `--color-accent`, `--color-danger`, …) as the surface components consume. Dark mode flips only neutrals + link semantics + the `--color-accent` brand mark + shadow tokens via the `.dark` class; the accent *primitives* (`--color-accent-*`) stay light-invariant — only which step `--color-accent` points at changes. The class strategy (`next-themes` 3-mode toggle) and its FOUC/`theme-color` traps live in [dark-mode-toggle-gotchas.md](dark-mode-toggle-gotchas.md). The Tailwind v4 namespace rule (`--color-*` prefix is mandatory) is documented in [styling-gotchas.md](styling-gotchas.md) — this doc covers the semantic conventions on top of it.
 
 ## Pitfalls
 
@@ -13,6 +13,12 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 - **Symptom:** A small interactive element (active page number, badge) styled `bg-accent-600 text-white` looks fine visually but trips a WCAG AA contrast check at 3.74:1 (< 4.5:1).
 - **Why:** Teal-600 `#0d9488` is borderline for AA when paired with white at normal text size. The 3:1 large-text exemption does not apply to ~12–14 px text.
 - **Rule:** For white-on-accent UI surfaces, ALWAYS use `bg-accent-700` (`#0f766e` → ~5.47:1). Reserve `bg-accent-600` for non-text surfaces (hover backgrounds, decorative fills) where contrast against a text-color foreground is checked separately.
+
+### `text-accent` is decorative-only — use `text-link` for accent-colored text
+
+- **Symptom:** A `text-accent` label, mark highlight, or small accent string fails WCAG AA at ~3.74:1 in light mode.
+- **Why:** `--color-accent` resolves to `accent-600` in light mode (it is the *visible brand* Teal — logo slash, nav indicator), which is below AA for normal text on white. `--color-link` is the AA-tuned text token (`accent-700` light / `accent-400` dark).
+- **Rule:** Use `text-accent` ONLY for decorative, non-text-readability marks (the `code-logs/` slash, the `.nav-link` 2px indicator). For any accent-colored *text* a user reads (search mark highlight, accent labels), use `text-link`. See [header-interaction-gotchas.md](header-interaction-gotchas.md) for the search-palette mark case.
 
 ### `--color-danger: #ef4444` (Tailwind red-500) on white fails AA
 
@@ -46,7 +52,7 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 |---|---|---|---|
 | Primitive — neutral | `--color-neutral-0` … `--color-neutral-900` | `@theme` (light), `.dark` override | Only semantic tokens. NEVER components. |
 | Primitive — accent | `--color-accent-50` … `--color-accent-700` | `@theme` only — light-invariant | Only semantic tokens. NEVER components. |
-| Semantic | `--color-bg-page`, `--color-text-body`, `--color-link`, `--color-danger`, … | `@theme` (light), `.dark` override (link only) | All components, all pages, `@layer base`, `.prose.post-body` |
+| Semantic | `--color-bg-page`, `--color-text-body`, `--color-link`, `--color-accent`, `--color-danger`, … | `@theme` (light), `.dark` override (link + accent) | All components, all pages, `@layer base`, `.prose.post-body` |
 
 ### Semantic token naming uses the long form
 
@@ -57,6 +63,7 @@ ALWAYS name semantic tokens with the role-doubled prefix even when it reads repe
 The `.dark` block MUST override only:
 - All 8 neutral steps (Zinc 0–900 → Zinc 950→50 inverse).
 - `--color-link` (accent-700 → accent-400) and `--color-link-hover` (accent-600 → accent-500).
+- `--color-accent` (accent-600 → accent-400) — the brand mark brightens on dark surfaces, mirroring the link split. This is a sanctioned semantic-layer dark override (added with the issue #150 header redesign): it points at a *different accent primitive* per mode, it does not redefine a primitive.
 - The shadow tokens `--shadow-xs`…`--shadow-lg` (black shadows vanish on dark surfaces → white hairline + deeper shadow). `--shadow-focus` is NOT overridden — accent is light-invariant.
 
 Accent primitives (`--color-accent-*`) stay identical in both modes — the Teal palette is light-invariant by design. Semantic tokens that derive from neutrals/accents do not need their own dark override because they re-resolve through the overridden primitives. NEVER duplicate the dark override at the semantic layer; that creates two places to update.

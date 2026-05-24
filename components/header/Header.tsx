@@ -1,6 +1,10 @@
-import { ReactElement } from 'react'
+import { Menu as MenuIcon } from 'lucide-react'
+import { ReactElement, useState } from 'react'
+import MobileSheet from '../mobile-sheet/MobileSheet'
 import NavBar, { Menu } from '../nav-bar/NavBar'
+import SearchTrigger from '../search-trigger/SearchTrigger'
 import ThemeToggle from '../theme-toggle/ThemeToggle'
+import Logo from './Logo'
 
 export interface SocialIcon {
   href: string
@@ -9,38 +13,65 @@ export interface SocialIcon {
 }
 
 export interface HeaderProps {
-  title: string
   menus: Menu[]
   socialIcons: SocialIcon[]
+  // The search palette is mounted globally in _app (Cmd+K is a global shortcut),
+  // so the header only triggers it.
+  onOpenSearch: () => void
 }
 
-const Header = ({ title, menus, socialIcons }: HeaderProps) => {
-  // Single-row layout fitted to the 64px slim header (issue #149): title left,
-  // nav centered (flex-1), social + theme toggle right. Background/border live
-  // in the base `header` rule (globals.css) so the backdrop-blur shows through —
-  // do NOT add an opaque bg here. Logo/search/mobile-sheet slots come in #150.
+// Five-slot header (issue #150). Desktop (≥768): Logo · Nav (centered) · Search ·
+// Theme · Social. Mobile (<768): Logo · Search(icon) · Theme · Hamburger, with the
+// hamburger opening a right slide-in sheet for nav + social. Background/border are
+// owned by the base `header` rule (globals.css) — do NOT add an opaque bg here, it
+// would defeat the backdrop blur. The mobile sheet state is local: the header owns
+// the menus/socialIcons it needs, so there is nothing to lift.
+const Header = ({ menus, socialIcons, onOpenSearch }: HeaderProps) => {
+  const [sheetOpen, setSheetOpen] = useState(false)
+
   return (
-    <header className="flex items-center gap-4 max-tablet:gap-2">
-      <span className="shrink-0 font-bold text-xl text-text-heading whitespace-nowrap max-tablet:text-lg">
-        {title}
-      </span>
+    <header className="flex items-center gap-2 md:gap-4">
+      <Logo />
 
-      <NavBar menus={menus} />
+      {/* Desktop nav doubles as the flex spacer; on mobile a bare spacer pushes the
+          action cluster to the right edge. */}
+      <div className="hidden flex-1 md:block">
+        <NavBar menus={menus} />
+      </div>
+      <div className="flex-1 md:hidden" />
 
-      <ul className="shrink-0 flex items-center gap-3 [&_li]:flex [&_svg]:w-5 [&_svg]:h-5">
-        {socialIcons.map((socialIcon, idx) => (
-          <li key={idx}>
-            <a href={socialIcon.href} target="_blank" rel="noreferrer" aria-label={socialIcon.label}>
-              {socialIcon.icon}
-            </a>
-          </li>
-        ))}
-        {/* Shares the social-icon slot so the toggle stays inline; the ul's
-            `[&_svg]:w-5 [&_svg]:h-5` sizes the toggle icon to match. */}
-        <li>
-          <ThemeToggle />
-        </li>
-      </ul>
+      <div className="flex items-center gap-1 md:gap-3">
+        <SearchTrigger onOpen={onOpenSearch} />
+        <ThemeToggle />
+
+        <ul className="hidden items-center gap-1 md:flex [&_svg]:h-5 [&_svg]:w-5">
+          {socialIcons.map((socialIcon, idx) => (
+            <li key={idx} className="flex">
+              <a
+                href={socialIcon.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={socialIcon.label}
+                className="clickable rounded-md p-2 text-text-body hover:bg-bg-subtle hover:text-text-heading"
+              >
+                {socialIcon.icon}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          type="button"
+          onClick={() => setSheetOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={sheetOpen}
+          className="flex rounded-md p-2 text-text-body hover:bg-bg-subtle hover:text-text-heading md:hidden"
+        >
+          <MenuIcon className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
+        </button>
+      </div>
+
+      <MobileSheet open={sheetOpen} onClose={() => setSheetOpen(false)} menus={menus} socialIcons={socialIcons} />
     </header>
   )
 }
