@@ -59,7 +59,7 @@ const MainApp = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </main>
 
-        <Footer author={blogConfig.author} />
+        <Footer />
 
         <SearchPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
       </div>
