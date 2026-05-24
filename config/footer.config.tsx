@@ -1,4 +1,3 @@
-import { Rss } from 'lucide-react'
 import type { ReactElement } from 'react'
 import GithubIcon from '../components/icons/GithubIcon'
 
@@ -10,7 +9,7 @@ export interface FooterConfig {
     href: string
     icon: ReactElement
   }[]
-  categoriesViewAllHref: string
+  categoriesViewAllHref: string | null
 }
 
 const footerConfig: FooterConfig = {
@@ -21,14 +20,10 @@ const footerConfig: FooterConfig = {
     { label: 'Tags', href: '/tags' },
     { label: 'About', href: '/about' },
   ],
-  // GitHub stays an inline SVG brand mark; RSS is a generic (non-brand) icon so
-  // lucide-react's Rss is fine. The RSS link is a placeholder until the feed
-  // (/rss.xml) ships in a follow-up issue.
   socialLinks: [
     { label: 'GitHub', href: 'https://github.com/possible819', icon: <GithubIcon /> },
-    { label: 'RSS', href: '/rss.xml', icon: <Rss strokeWidth={1.5} aria-hidden="true" /> },
   ],
-  categoriesViewAllHref: '/categories',
+  categoriesViewAllHref: null,
 }
 
 export default footerConfig

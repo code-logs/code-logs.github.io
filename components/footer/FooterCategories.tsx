@@ -30,14 +30,16 @@ const FooterCategories = () => (
           </a>
         </li>
       ))}
-      <li>
-        <a
-          href={footerConfig.categoriesViewAllHref}
-          className="text-sm text-text-muted transition-colors hover:text-text-heading"
-        >
-          View all &rarr;
-        </a>
-      </li>
+      {footerConfig.categoriesViewAllHref && (
+        <li>
+          <a
+            href={footerConfig.categoriesViewAllHref}
+            className="text-sm text-text-muted transition-colors hover:text-text-heading"
+          >
+            View all &rarr;
+          </a>
+        </li>
+      )}
     </ul>
   </nav>
 )
