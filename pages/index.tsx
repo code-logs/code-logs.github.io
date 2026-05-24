@@ -38,7 +38,7 @@ const Home: NextPage<{
   tagsWithCount: TagWithCount[]
 }> = (props) => {
   return (
-    <>
+    <div className="container-content">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.MAIN.TITLE)}
         description={META_CONTENTS.MAIN.DESCRIPTION}
@@ -58,7 +58,7 @@ const Home: NextPage<{
 
         <TagIndexer tagsWithCount={props.tagsWithCount} limit={20} />
       </div>
-    </>
+    </div>
   )
 }
 

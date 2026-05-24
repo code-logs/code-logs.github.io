@@ -77,7 +77,7 @@ const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
   }, [] as string[])
 
   return (
-    <section>
+    <section className="container-content">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.TAGS.TITLE)}
         description={META_CONTENTS.TAGS.DESCRIPTION}

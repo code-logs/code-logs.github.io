@@ -32,6 +32,19 @@
   --spacing-page-x-desktop: var(--spacing-12);  /* 48 — desktop L/R */
   --spacing-page-y:         var(--spacing-16);  /* 64 */
 
+  /* ── Layout tokens (issue #149) ──────────────────────────────────────
+     Consumed only via var() (header height drives scroll-margin + sticky
+     offset; container maxes cap reading/content/wide widths; aside-width
+     sizes the layout-with-aside grid column). These are not utility
+     namespaces, so they carry no blast radius like the spacing/radius
+     scale tokens do. */
+  --header-height:          64px;
+  --header-height-mobile:   56px;
+  --container-reading-max:  720px;
+  --container-content-max: 1120px;
+  --container-wide-max:    1280px;
+  --aside-width:            280px;
+
   /* ── Radius scale ─────────────────────────────────────────────────── */
   --radius-sm:   6px;     /* tags, badges, inputs */
   --radius-md:   10px;    /* buttons */
@@ -41,7 +54,7 @@
 
   /* ── Typography: font families ────────────────────────────────────── */
   /* next/font exposes the hashed family names through these variables
-     (see styles/fonts.ts, injected on a display:contents wrapper in _app).
+     (see styles/fonts.ts, injected on the top-level flex wrapper in _app).
      Latin glyphs resolve to Geist; Korean glyphs fall through to Pretendard. */
   --font-sans: var(--font-geist), var(--font-pretendard), -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, system-ui, sans-serif;
@@ -156,10 +169,8 @@
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
-  :root {
-    --header-height: 140px;
-    --footer-height: 50px;
-  }
+  /* --header-height / --header-height-mobile now live in @theme (issue #149);
+     --footer-height was removed with the fixed→static footer migration. */
 
   /* Dark mode: only neutrals and link semantics flip. Accent tokens stay
      identical in both modes — the Teal palette is light-invariant.
@@ -330,70 +341,63 @@
   h2,
   h3,
   h4 {
-    scroll-margin-top: calc(var(--header-height) + 20px);
+    scroll-margin-top: calc(var(--header-height) + var(--spacing-5));
   }
 
   li {
     list-style: none;
   }
 
-  #__next {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-areas: 'header header header' '. main aside' 'footer footer footer';
-  }
-
+  /* Slim sticky header (issue #149): 64px desktop / 56px mobile. The
+     semi-transparent bg + backdrop-blur let content scroll under a frosted
+     bar. Background/border own a single source of truth here — Header.tsx
+     must NOT also set an opaque bg (it would defeat the blur-through). */
   header {
-    grid-area: header;
     height: var(--header-height);
     position: sticky;
-    left: 0;
-    right: 0;
     top: 0;
-    z-index: 1;
+    z-index: 10;
+    background-color: color-mix(in oklab, var(--color-bg-page) 80%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+    /* Match the .container-* horizontal padding so the header's title/nav/icons
+       align with page content's left/right edges (24 mobile → 48 desktop). */
+    padding-inline: var(--spacing-page-x);
   }
 
+  @media (min-width: 1024px) {
+    header {
+      padding-inline: var(--spacing-page-x-desktop);
+    }
+  }
+
+  /* main is the flex-1 child of the _app skeleton; only top breathing room
+     below the sticky header is needed here. Horizontal width/padding is
+     owned by the per-page .container-* wrapper. */
   main {
-    grid-area: main;
-    width: 768px;
     padding-top: var(--spacing-5);
-    padding-bottom: var(--footer-height);
   }
 
-  aside {
-    grid-area: aside;
-    margin-top: 0;
-    margin-bottom: var(--footer-height);
-  }
-
+  /* Static footer (issue #149): the min-h-dvh flex-col skeleton pins it to
+     the viewport bottom on short pages without position: fixed. */
   footer {
-    grid-area: footer;
-    height: var(--footer-height);
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    margin-top: var(--spacing-24);
+    padding: var(--spacing-12) 0;
+    border-top: 1px solid var(--color-border);
   }
 
-  @media (max-width: 768px) {
+  /* Three-tier responsive model (issue #149):
+       ≤767     mobile  — single column, reduced base font + slim header
+       768–1023 tablet  — single column, container padding bumps at 1024
+       ≥1024    desktop — .layout-with-aside grid activates
+     Component-internal reflows keep using the 800px `max-tablet:` variant. */
+  @media (max-width: 767px) {
     :root {
       font-size: 12px;
-      --header-height: 48px;
-      --footer-height: 38.8px;
     }
 
-    #__next {
-      display: block;
-    }
-
-    main {
-      margin: 0;
-      width: 100%;
-      padding: var(--spacing-3) var(--spacing-5) var(--footer-height);
-    }
-
-    aside {
-      display: none;
+    header {
+      height: var(--header-height-mobile);
     }
   }
 
@@ -449,15 +453,47 @@
 }
 
 @layer components {
-  /* Header layout — three-column grid that collapses on tablet width.
-     Pulled out of Header.tsx where the arbitrary-value classes were noisy. */
-  .header-grid {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-areas: '. title socialIcons' '. navBar .';
+  /* Page-width containers (issue #149). Pages opt into one of three reading
+     widths; all share centered margins + page-x padding that bumps on desktop.
+       reading 720 — long-form prose (post, about, licenses, 404)
+       content 1120 — card/list pages (index, posts, categories, tags)
+       wide    1280 — reserved for future full-bleed layouts */
+  .container-reading {
+    max-width: var(--container-reading-max);
+    margin-inline: auto;
+    padding-inline: var(--spacing-page-x);
+  }
+  .container-content {
+    max-width: var(--container-content-max);
+    margin-inline: auto;
+    padding-inline: var(--spacing-page-x);
+  }
+  .container-wide {
+    max-width: var(--container-wide-max);
+    margin-inline: auto;
+    padding-inline: var(--spacing-page-x);
+  }
 
-    @media (max-width: 800px) {
-      grid-template-areas: 'title navBar socialIcons';
+  @media (min-width: 1024px) {
+    .container-reading,
+    .container-content,
+    .container-wide {
+      padding-inline: var(--spacing-page-x-desktop);
+    }
+  }
+
+  /* Main + aside grid (issue #149). Defined here as a reusable utility; the
+     follow-up issues (2-2/2-3) compose pages with it. Reflows to a single
+     column ≤1023 so the aside falls below main instead of being hidden. */
+  .layout-with-aside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--aside-width);
+    gap: var(--spacing-12);
+  }
+
+  @media (max-width: 1023px) {
+    .layout-with-aside {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -509,7 +545,7 @@
     & h3,
     & h4 {
       margin-top: 40px;
-      scroll-margin-top: calc(var(--header-height) + 20px);
+      scroll-margin-top: calc(var(--header-height) + var(--spacing-5));
     }
 
     & h1 {

@@ -21,7 +21,7 @@ interface AboutProps {
 
 const About = ({ careerYears }: AboutProps) => {
   return (
-    <>
+    <div className="container-reading">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.ABOUT.TITLE)}
         description={META_CONTENTS.ABOUT.DESCRIPTION}
@@ -70,7 +70,7 @@ const About = ({ careerYears }: AboutProps) => {
       </article>
 
       <MainAdsBanner />
-    </>
+    </div>
   )
 }
 

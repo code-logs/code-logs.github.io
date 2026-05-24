@@ -3,9 +3,12 @@ export interface FooterProps {
   message?: string
 }
 
+// Static footer (issue #149): border-top, padding, and top margin live in the
+// base `footer` rule (globals.css). Keep this element class-free of border/bg to
+// avoid a doubled border / token drift.
 const Footer = (props: FooterProps) => {
   return (
-    <footer className="border-t border-divider bg-bg-page">
+    <footer>
       <p className="text-center text-text-muted font-thin">
         {props.message ? props.message : `ⓒ 2021. ${props.author}  all rights reserved.`}
       </p>

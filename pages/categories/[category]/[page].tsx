@@ -61,7 +61,7 @@ const Category: NextPage<{
   const { page, lastPage, posts, category } = props
 
   return (
-    <>
+    <div className="container-content">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.CATEGORIES.TITLE(category))}
         description={META_CONTENTS.CATEGORIES.DESCRIPTION(category, page)}
@@ -77,7 +77,7 @@ const Category: NextPage<{
       <MainAdsBanner />
 
       <Paginator page={page} lastPage={lastPage} baseURL={`${blogConfig.baseURL}/categories/${category}`} />
-    </>
+    </div>
   )
 }
 

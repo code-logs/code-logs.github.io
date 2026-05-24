@@ -10,6 +10,7 @@ Read this when: you need to find project knowledge documents written by AI agent
 | Why a lucide icon won't size via `font-size`, or where a brand icon went | [icon-library-gotchas.md](icon-library-gotchas.md) |
 | How to safely depend on dates, randomness, or other host-runtime values inside a page under `output: 'export'` | [static-export-rendering-gotchas.md](static-export-rendering-gotchas.md) |
 | How Tailwind v4 is set up here, and what classes/tokens MUST NOT be changed | [styling-gotchas.md](styling-gotchas.md) |
+| How the page skeleton/containers/slim header/static footer work, which `.container-*` a page uses, why the app-global aside is gone, or why the layout breakpoint is 767/1024 | [layout-system-gotchas.md](layout-system-gotchas.md) |
 | Why spacing/radius tokens are px not rem, why they are named `--spacing-*` (not `--space-*`), or why an untouched `rounded-md` element changed radius | [styling-gotchas.md](styling-gotchas.md) |
 | Why an untouched `ease-in-out`/`shadow-md` utility changed after the motion-token work, why `.clickable`'s `@layer base` transition has no effect, or why the code-block shadow depends on `--shadow-sm` | [styling-gotchas.md](styling-gotchas.md) |
 | Which color token to use where, why `accent-700` (not `accent-600`) is the light-mode link, or how dark-mode pairing works | [color-tokens-gotchas.md](color-tokens-gotchas.md) |

@@ -30,7 +30,7 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 
 - **Symptom:** A new component uses `md:` for its tablet break and looks wrong at 769–800 px.
 - **Why:** Tailwind's default `md` breakpoint is 768 px. The legacy stylesheets used `@media (max-width: 800px)` for layout reflows (header rearrange, post-card stacking, aside hide). To preserve the exact reflow points, `@theme` defines `--breakpoint-tablet: 800px`, exposing the `tablet:` and `max-tablet:` variants.
-- **Rule:** Use `max-tablet:` for legacy 800 px reflows. `max-md:` (768 px) is reserved for the rarer 768 px breakpoint already present in `globals.css` `@layer base` (`#__next`, mobile font-size, aside hide).
+- **Rule:** Use `max-tablet:` for component-internal reflows (header gap, post-card stacking, hero image) — these stayed on 800 px. The base-layer *layout* `@media` blocks were consolidated to the three-tier 767/1024 model in issue #149 (mobile boundary is now `max-width: 767px`, not 768; the `#__next` grid and `aside { display: none }` were removed). Do NOT reintroduce a 768 px layout breakpoint. See [layout-system-gotchas.md](layout-system-gotchas.md).
 
 ### Complex `grid-template-areas` belong in `@layer components`, not inline
 
@@ -88,7 +88,8 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - [typography-system-gotchas.md](typography-system-gotchas.md) — font loading and type-scale tokens (`--font-*`/`--text-*`/`--leading-*`/`--tracking-*`) layered on this `@theme` setup; covers how post-body headings (prose utilities layer) differ from the base `h1~h4` rules documented here.
 - [color-tokens-gotchas.md](color-tokens-gotchas.md) — semantic color token conventions layered on top of the `@theme` setup documented here (Zinc/Teal primitives, semantic-only consumption rule, WCAG AA notes).
 - [dark-mode-toggle-gotchas.md](dark-mode-toggle-gotchas.md) — the `next-themes` `.dark` class strategy that the dark-mode token overrides and `highlight.css` `.dark` rules depend on.
-- [ads-adsense-rendering-gotchas.md](ads-adsense-rendering-gotchas.md) — pitfalls when the aside cell becomes too narrow for AdSense (ties into the `repeat(3, 1fr)` + fixed-width main grid behavior documented above).
+- [layout-system-gotchas.md](layout-system-gotchas.md) — the page skeleton, `.container-*`/`.layout-with-aside` utilities, slim sticky header, and static footer (issue #149) that replaced the legacy `#__next` grid; covers the 767/1024 three-tier breakpoint model referenced above.
+- [ads-adsense-rendering-gotchas.md](ads-adsense-rendering-gotchas.md) — pitfalls when an aside cell becomes too narrow for AdSense (note: the app-global aside was removed in #149; aside ads are deferred to a follow-up issue).
 
 ## Rationale
 

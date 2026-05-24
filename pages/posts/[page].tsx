@@ -99,10 +99,10 @@ const Posts: NextPage<PostsProps> = (props) => {
     [page, posts, query, totalCount]
   )
 
-  if (!pageInitialized) return renderCommonFragment()
+  if (!pageInitialized) return <div className="container-content">{renderCommonFragment()}</div>
 
   return (
-    <>
+    <div className="container-content">
       {renderCommonFragment()}
 
       <form
@@ -131,7 +131,7 @@ const Posts: NextPage<PostsProps> = (props) => {
       )}
 
       {query && !posts.length && <NoFoundPosting condition={query} />}
-    </>
+    </div>
   )
 }
 
