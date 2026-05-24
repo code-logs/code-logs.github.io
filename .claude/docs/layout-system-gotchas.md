@@ -33,11 +33,11 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 - **Why:** `.container-*` uses `--spacing-page-x` (24) that bumps to `--spacing-page-x-desktop` (48) at `min-width: 1024px`. If the header uses a fixed `px-6`, it stays at 24 while content moves to 48.
 - **Rule:** The base `header` rule sets `padding-inline: var(--spacing-page-x)` with a `@media (min-width: 1024px)` bump to `var(--spacing-page-x-desktop)` — identical to the containers. Do NOT hardcode header padding in `Header.tsx`.
 
-### The app-global aside is gone — `enableContentExplorer` is currently dead
+### The aside is composed per-page, NOT in `_app.tsx`
 
-- **Symptom:** Looking for where `ContentExplorer` (post TOC) or `AsideAdsBanner` renders and finding nothing; `pageProps.enableContentExplorer` has no consumer.
-- **Why:** Issue #149 removed the `<aside>` from `_app.tsx` (the issue's own skeleton has none). `ContentExplorer` rework is deferred to #153; `AsideAdsBanner` re-placement to the follow-up aside-composition issues (2-2/2-3). The `enableContentExplorer` prop on `pages/[title].tsx` is intentionally kept as the wiring point for #153 but reads nowhere today.
-- **Rule:** To add an aside, compose `.layout-with-aside` inside the page's container (it is defined but applied to no page). Do NOT re-add an app-global aside to `_app.tsx`.
+- **Symptom:** Looking for where `ContentExplorer` (post TOC) or `AsideAdsBanner` renders globally and finding nothing.
+- **Why:** Issue #149 removed the `<aside>` from `_app.tsx` (the skeleton has none). The post-detail page (issue #153) now composes its own TOC aside in-page via `.post-detail-layout` — see [post-detail-page-gotchas.md](post-detail-page-gotchas.md). The dead `enableContentExplorer` prop was removed with that work. `AsideAdsBanner` re-placement is still pending (follow-up aside-composition issues 2-2/2-3).
+- **Rule:** To add an aside, compose `.layout-with-aside` (1fr aside) or `.post-detail-layout` (capped reading + fixed TOC aside) inside the page. Do NOT re-add an app-global aside to `_app.tsx`.
 
 ### `/` intentionally opts out of `.layout-with-aside` — modifying `_app.tsx` for it is a no-op
 
@@ -54,7 +54,7 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 ## Conventions
 
 - Layout tokens (`--header-height` 64, `--header-height-mobile` 56, `--container-reading-max` 720, `--container-content-max` 1120, `--container-wide-max` 1280, `--aside-width` 280) live in `@theme` and are consumed only via `var()` — they are NOT utility namespaces, so they carry no blast radius (unlike the `--spacing-*`/`--radius-*` scales; see [styling-gotchas.md](styling-gotchas.md)).
-- Every page MUST wrap its top-level element in exactly one container: `container-reading` (720, long-form prose — post/about/licenses/404), `container-content` (1120, card/list pages — index/posts/categories/tags), or `container-wide` (1280, reserved). `<main className="flex-1">` in `_app.tsx` owns vertical flex; the container owns horizontal width/padding.
+- Every page MUST wrap its top-level element in exactly one container: `container-reading` (720, long-form prose — about/licenses/404), `container-content` (1120, card/list pages — index/posts/categories/tags), `container-wide` (1280, reserved), or `.post-detail-layout` (the post route `/[title]` — a centered 1080 shell that becomes a `reading 720 + sticky TOC aside 280` grid at ≥1024; see [post-detail-page-gotchas.md](post-detail-page-gotchas.md)). `<main className="flex-1">` in `_app.tsx` owns vertical flex; the container owns horizontal width/padding.
 - The static footer is pinned to the viewport bottom on short pages by the skeleton (`min-h-dvh flex flex-col` + `main flex-1`), NOT by `position: fixed`. NEVER reintroduce `position: fixed` on the footer.
 - Responsive model is three-tier: **≤767** mobile (single column, `:root { font-size: 12px }`, 56px header), **768–1023** tablet (single column, container padding bumps at 1024), **≥1024** desktop (`.layout-with-aside` grid active). The base-layer mobile `@media` boundary is `max-width: 767px`. Component-internal reflows keep using the `max-tablet:` (800px) variant — see [styling-gotchas.md](styling-gotchas.md).
 

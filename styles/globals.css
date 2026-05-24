@@ -132,8 +132,22 @@
   /* red-600 (not red-500): white text on this background passes WCAG AA */
   --color-danger:  #dc2626;
 
-  /* Kept: referenced by .prose.post-body --tw-prose-pre-bg */
-  --color-code-bg: #212836;
+  /* Code block surface + syntax palette (issue #153). Light mode = GitHub Light
+     tone on a near-white surface; the .dark block below flips these to a
+     GitHub Dark / tokyo-night tone on a deep surface. Consumed by
+     `.prose.post-body --tw-prose-pre-bg`/`--tw-prose-pre-code` and the token-
+     based `styles/highlight.css` rewrite. The dark palette deliberately avoids
+     teal hues so syntax never collides with --color-accent. */
+  --color-code-bg:        #f6f8fa;
+  --color-text-body-code: #24292f;
+
+  --syntax-keyword:  #cf222e;
+  --syntax-string:   #0a3069;
+  --syntax-number:   #0550ae;
+  --syntax-function: #8250df;
+  --syntax-variable: #953800;
+  --syntax-tag:      #116329;
+  --syntax-builtin:  #0550ae;
 
   /* ── Shadow scale (light mode) ────────────────────────────────────────
      Semantic mapping: xs=input emphasis, sm=card resting, md=card hover /
@@ -213,6 +227,20 @@
                  0 6px 16px -4px rgb(0 0 0 / 0.5);
     --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.08),
                  0 12px 32px -8px rgb(0 0 0 / 0.6);
+
+    /* Code surface + syntax palette flip to a deep GitHub Dark / tokyo-night
+       tone (issue #153). Hues stay clear of teal so syntax never collides with
+       --color-accent on the dark surface. */
+    --color-code-bg:        #1e2430;
+    --color-text-body-code: #c9d1d9;
+
+    --syntax-keyword:  #ff7b72;
+    --syntax-string:   #a5d6ff;
+    --syntax-number:   #79c0ff;
+    --syntax-function: #d2a8ff;
+    --syntax-variable: #ffa657;
+    --syntax-tag:      #7ee787;
+    --syntax-builtin:  #79c0ff;
   }
 
   html,
@@ -575,6 +603,25 @@
     }
   }
 
+  /* Post-detail TOC hybrid (issue #153): centered 1080-wide shell that becomes
+     a `reading 720 + TOC aside 280` grid at ≥1024, and a single column below.
+     Distinct from .layout-with-aside (1fr aside) — the post body is capped at a
+     fixed reading measure rather than flexing. */
+  .post-detail-layout {
+    max-width: 1080px;
+    margin-inline: auto;
+    padding-inline: var(--spacing-page-x);
+  }
+
+  @media (min-width: 1024px) {
+    .post-detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 720px) var(--aside-width);
+      gap: var(--spacing-16);
+      padding-inline: var(--spacing-page-x-desktop);
+    }
+  }
+
   /* PostCard layout — area-named grid that reflows on tablet width.
      Pulled out of PostCard.tsx where the arbitrary-value classes were noisy. */
   .post-card-grid {
@@ -645,21 +692,41 @@
       line-height: 25px;
     }
 
-    & p > code {
+    /* Inline code (issue #153): neutral subtle chip, not the prior danger-red.
+       Targets any non-pre code so list/table/heading inline code matches. */
+    & :not(pre) > code {
       background-color: var(--color-bg-subtle);
       padding: 2px 5px;
-      border-radius: 4px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
       font-family: var(--font-mono);
       font-size: 0.9em;
       font-weight: 500;
-      color: var(--color-danger);
+      color: var(--color-text-heading);
+    }
+
+    /* Code block container (issue #153): rounded, clipped, hairline border.
+       The dark/light surface + syntax colors come from styles/highlight.css. */
+    & pre {
+      padding: var(--spacing-4);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    & pre > code {
+      border: 0;
+      padding: 0;
+      background: transparent;
     }
 
     & blockquote {
-      padding: 0.8rem 1rem;
+      padding: var(--spacing-3) var(--spacing-4);
       margin: 0;
-      border-left: 0.25rem solid var(--color-divider);
+      border-left: 3px solid var(--color-accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       background-color: var(--color-bg-subtle);
+      font-style: normal;
     }
 
     & blockquote > p {
@@ -671,6 +738,13 @@
       text-decoration: underline;
     }
 
+    /* Body images (issue #153): soft radius + hairline border; figure centers
+       the image and its optional caption. */
+    & img {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+    }
+
     & figure {
       display: flex;
       flex-direction: column;
@@ -679,9 +753,47 @@
       color: var(--color-text-body);
     }
 
+    & figcaption {
+      margin-top: var(--spacing-2);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+
+    /* Tables (issue #153): hairline borders only, no zebra striping. */
     & table {
       display: block;
       overflow-x: auto;
+      border-collapse: collapse;
+    }
+
+    & th,
+    & td {
+      padding: var(--spacing-2) var(--spacing-3);
+      border: 1px solid var(--color-divider);
+    }
+
+    /* Heading anchor affordance (issue #153): a `#` glyph fades in to the left
+       of h2/h3 on hover; the whole heading is the click target that copies the
+       anchor URL (wired in pages/[title].tsx). */
+    & h2,
+    & h3 {
+      position: relative;
+      cursor: pointer;
+    }
+
+    & h2::before,
+    & h3::before {
+      content: '#';
+      position: absolute;
+      left: -1.1ch;
+      color: var(--color-accent);
+      opacity: 0;
+      transition: opacity var(--duration-fast) var(--ease-out);
+    }
+
+    & h2:hover::before,
+    & h3:hover::before {
+      opacity: 1;
     }
   }
 }
@@ -711,7 +823,9 @@
   --tw-prose-kbd: var(--color-text-heading);
   --tw-prose-kbd-shadows: color-mix(in oklab, var(--color-text-heading) 10%, transparent);
   --tw-prose-code: var(--color-text-body);
-  --tw-prose-pre-code: #fff;
+  /* token (not #fff): the code surface flips light↔dark in issue #153, so a
+     hard-coded white pre-code would vanish on the light-mode surface. */
+  --tw-prose-pre-code: var(--color-text-body-code);
   --tw-prose-pre-bg: var(--color-code-bg);
   --tw-prose-th-borders: var(--color-border);
   --tw-prose-td-borders: var(--color-divider);

@@ -25,6 +25,7 @@ Dark mode is a 3-mode (System / Light / Dark) manual toggle built on `next-theme
 - **Symptom:** Code-block dark styling desyncs from the toggle (e.g. the resting shadow stays) when OS scheme and chosen mode differ.
 - **Why:** `styles/highlight.css` is plain CSS loaded outside the Tailwind cascade (see [styling-gotchas.md](styling-gotchas.md)), so `@variant dark` is unavailable. A `@media (prefers-color-scheme: dark)` query tracks the OS, not the `.dark` class the toggle sets.
 - **Rule:** Dark overrides in `highlight.css` MUST be written as `.dark .hljs { … }` (explicit ancestor selector). NEVER use `@media (prefers-color-scheme)` there — it desyncs from the manual toggle.
+- **Note (issue #153):** the code theme now flips via `--syntax-*` / `--color-code-bg` / `--color-text-body-code` tokens (defined in `@theme`, overridden in the `.dark` block of `globals.css`), so `highlight.css` itself carries no `.dark` rules — the token indirection handles the flip. Add a `.dark .hljs` rule only for a property that is NOT already token-driven. See [post-detail-page-gotchas.md](post-detail-page-gotchas.md).
 
 ### Hydration mismatch from server-unknown theme
 
@@ -47,3 +48,4 @@ The class strategy replaced the prior `@media (prefers-color-scheme: dark)` bloc
 
 - [color-tokens-gotchas.md](color-tokens-gotchas.md) — which tokens the `.dark` block flips (neutrals, link, shadow) and the semantic-only consumption rule.
 - [styling-gotchas.md](styling-gotchas.md) — the Tailwind v4 `@theme`/`@variant` setup and why `highlight.css` sits outside the Tailwind cascade.
+- [post-detail-page-gotchas.md](post-detail-page-gotchas.md) — the token-driven code-block theme flip and how Utterances comments follow the toggle via `postMessage`.

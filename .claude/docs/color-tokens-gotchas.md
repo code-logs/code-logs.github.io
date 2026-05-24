@@ -36,7 +36,7 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 
 - **Symptom:** A component sets `text-neutral-700` and renders unreadable dark-on-dark text in dark mode.
 - **Why:** The semantic tokens (`--color-text-body`, `--color-text-heading`, …) are what get re-pointed in the `.dark` block. Primitive tokens (`--color-neutral-*`, `--color-accent-*`) are also overridden in dark mode, but bypass the semantic intent — a component that says "I want neutral-700 specifically" gets `#d4d4d8` in dark mode, which is intended for *body text on dark*, not whatever the component meant.
-- **Rule:** Components MUST use only semantic utilities (`text-text-body`, `text-text-muted`, `text-text-heading`, `bg-bg-page`, `bg-bg-subtle`, `border-divider`, `border-border`, `text-link`, `text-danger`, …). The single exception is `--color-code-bg` consumed by `.prose.post-body --tw-prose-pre-bg`. Primitives are palette infrastructure, not application surface.
+- **Rule:** Components MUST use only semantic utilities (`text-text-body`, `text-text-muted`, `text-text-heading`, `bg-bg-page`, `bg-bg-subtle`, `border-divider`, `border-border`, `text-link`, `text-danger`, …). The exceptions are the code-surface tokens (`--color-code-bg`, `--color-text-body-code`, `--syntax-*`) consumed by `.prose.post-body` + `styles/highlight.css` (issue #153). Primitives are palette infrastructure, not application surface.
 
 ### `border-border` vs `border-divider` is semantic, not stylistic
 
@@ -86,8 +86,7 @@ If a forward-looking token is still unused after its referenced issue closes, th
 
 NEVER add a hex literal in a component, page, or `@layer components/base` block. The only sanctioned hardcoded colors are:
 - The primitive scale values inside `@theme` (the palette source of truth).
-- `styles/highlight.css` syntax-highlight tokens (kept outside the Tailwind cascade — see [styling-gotchas.md](styling-gotchas.md) §"`highlight.css` is intentionally outside the Tailwind cascade").
-- `--color-code-bg: #212836` (a brand-specific code background that is neither Zinc nor Teal).
+- The code-surface + syntax palette tokens in `@theme` / `.dark` (`--color-code-bg`, `--color-text-body-code`, `--syntax-keyword/string/number/function/variable/tag/builtin`) — a brand-specific code theme that is neither Zinc nor Teal, with a light/dark split (issue #153). `styles/highlight.css` itself holds NO hex literals; every `hljs-*` rule resolves through these tokens — see [post-detail-page-gotchas.md](post-detail-page-gotchas.md) and [styling-gotchas.md](styling-gotchas.md) §"`highlight.css` is intentionally outside the Tailwind cascade".
 
 If a new color is needed, add it as a primitive (if it's a palette extension) or as a semantic token (if it expresses an intent). NEVER inline it.
 
