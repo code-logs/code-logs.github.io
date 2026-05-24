@@ -1,63 +1,133 @@
 import type { NextPage } from 'next'
-import CategoryIndexer from '../components/category-indexer/CategoryIndexer'
+import CategoriesGrid, { CategoryWithCount } from '../components/categories-grid/CategoriesGrid'
 import CommonMeta from '../components/common-meta/CommonMeta'
+import HomeHero from '../components/hero/HomeHero'
+import FeaturedPostCard from '../components/post-card/FeaturedPostCard'
+import PostCardGrid from '../components/post-card/PostCardGrid'
+import SectionHeader from '../components/section-header/SectionHeader'
 import MainAdsBanner from '../components/ads-banner/MainAdsBanner'
-import RecentPosts from '../components/recent-posts/RecentPosts'
-import TagIndexer, { TagWithCount } from '../components/tag-indexer/TagIndexer'
+import { TagWithCount } from '../components/tag-indexer/TagIndexer'
+import Tags from '../components/tags/Tags'
 import blogConfig from '../config/blog.config'
 import { META_CONTENTS } from '../config/meta-contents'
 import { Post } from '../config/posts.config'
 import postsDatabase from '../database/post-database'
 import TitleUtil from '../utils/TitleUtil'
+import { calculateReadingTime } from '../utils/PostServerUtil'
+
+type PostWithReadingTime = Post & { readingTime: number }
 
 export async function getStaticProps() {
   const posts = postsDatabase.find()
 
-  const recentPosts = postsDatabase.find(blogConfig.recentPostsLimit)
-  const categories = Array.from(new Set(posts.map((post) => post.category))).sort()
+  // Featured = most recent post; Recent = next 4 posts (indices 1–4)
+  const featuredPost: PostWithReadingTime = {
+    ...posts[0],
+    readingTime: calculateReadingTime(posts[0]),
+  }
 
-  const tags = Array.from(new Set(posts.map((post) => post.tags).flat()))
+  const recentPosts: PostWithReadingTime[] = posts.slice(1, 5).map((post) => ({
+    ...post,
+    readingTime: calculateReadingTime(post),
+  }))
 
-  const tagsWithCount = tags.reduce((tagsWithCount, tag) => {
-    let count = 0
-    posts.forEach((post) => {
-      if (post.tags?.includes(tag!)) count++
+  // Top 8 categories by post count
+  const categoryCountMap = new Map<string, number>()
+  posts.forEach((post) => {
+    categoryCountMap.set(post.category, (categoryCountMap.get(post.category) ?? 0) + 1)
+  })
+  const categoriesWithCount: CategoryWithCount[] = Array.from(categoryCountMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([category, count]) => ({
+      category,
+      count,
+      hasNew: postsDatabase.hasNewByCategory(category),
+    }))
+
+  // Top 12 tags by post count
+  const tagCountMap = new Map<string, number>()
+  posts.forEach((post) => {
+    post.tags.forEach((tag) => {
+      tagCountMap.set(tag, (tagCountMap.get(tag) ?? 0) + 1)
     })
+  })
+  const tagsWithCount: TagWithCount[] = Array.from(tagCountMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 12)
+    .map(([tag, count]) => ({ tag, count }))
 
-    tagsWithCount.push({ tag: tag!, count })
+  const totalPostCount = postsDatabase.count()
+  const lastUpdated = posts[0].publishedAt
 
-    return tagsWithCount
-  }, [] as TagWithCount[])
-
-  return { props: { recentPosts, categories, tagsWithCount } }
+  return {
+    props: {
+      featuredPost,
+      recentPosts,
+      categoriesWithCount,
+      tagsWithCount,
+      totalPostCount,
+      lastUpdated,
+    },
+  }
 }
 
 const Home: NextPage<{
-  recentPosts: Post[]
-  categories: string[]
+  featuredPost: PostWithReadingTime
+  recentPosts: PostWithReadingTime[]
+  categoriesWithCount: CategoryWithCount[]
   tagsWithCount: TagWithCount[]
+  totalPostCount: number
+  lastUpdated: string
 }> = (props) => {
+  const { featuredPost, recentPosts, categoriesWithCount, tagsWithCount, totalPostCount, lastUpdated } = props
+
   return (
     <div className="container-content">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.MAIN.TITLE)}
         description={META_CONTENTS.MAIN.DESCRIPTION}
-        keywords={props.categories}
+        keywords={categoriesWithCount.map((c) => c.category)}
         url={blogConfig.baseURL}
         imageURL={'/icons/icon-512x512.png'}
       />
 
-      <h1>Home</h1>
+      {/* Hero — acts as page <h1> for accessibility */}
+      <HomeHero lastUpdated={lastUpdated} postCount={totalPostCount} />
 
-      <RecentPosts posts={props.recentPosts} />
+      {/* Featured post */}
+      <section className="mb-16">
+        <SectionHeader title="Featured" />
+        <FeaturedPostCard post={featuredPost} />
+      </section>
 
+      {/* Ad separator between Featured and Recent */}
       <MainAdsBanner />
 
-      <div className="grid grid-cols-2 pb-5 max-tablet:grid-cols-1 max-tablet:gap-3">
-        <CategoryIndexer categories={props.categories} />
+      {/* Recent posts — 2x2 grid */}
+      <section className="mb-16">
+        <SectionHeader title="Recent" viewAllHref="/posts/1" />
+        <div className="grid grid-cols-1 tablet:grid-cols-2 gap-6">
+          {recentPosts.map((post) => (
+            <PostCardGrid key={post.title} post={post} />
+          ))}
+        </div>
+      </section>
 
-        <TagIndexer tagsWithCount={props.tagsWithCount} limit={20} />
-      </div>
+      {/* Categories — top 8, no "View all" until /categories index exists (#155) */}
+      <section className="mb-16">
+        <SectionHeader title="Categories" />
+        <CategoriesGrid categoriesWithCount={categoriesWithCount} />
+      </section>
+
+      {/* Ad separator between Categories and Tags */}
+      <MainAdsBanner />
+
+      {/* Tags — top 12 */}
+      <section className="mb-16">
+        <SectionHeader title="Tags" viewAllHref="/tags" />
+        <Tags tags={tagsWithCount} />
+      </section>
     </div>
   )
 }
