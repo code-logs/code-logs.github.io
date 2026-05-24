@@ -1,3 +1,4 @@
+import SectionHeader from '../section-header/SectionHeader'
 import Tags from '../tags/Tags'
 
 export interface TagWithCount {
@@ -11,21 +12,15 @@ export interface TagIndexerProps {
 }
 
 const TagIndexer = (props: TagIndexerProps) => {
-  const { tagsWithCount, limit = 10 } = props
-  tagsWithCount.sort((tagA, tagB) => tagB.count - tagA.count)
+  const { tagsWithCount, limit = 12 } = props
+  // Defensive copy: never mutate the props array in place.
+  const sorted = [...tagsWithCount].sort((tagA, tagB) => tagB.count - tagA.count)
 
   return (
     <section>
-      <h2>
-        Tags
-        <a href="tags" className="float-right">
-          <span>See more tags</span>
-        </a>
-      </h2>
+      <SectionHeader title="Tags" viewAllHref="/tags" />
 
-      <div className="p-3">
-        <Tags tags={tagsWithCount.slice(0, limit)} />
-      </div>
+      <Tags tags={sorted.slice(0, limit)} />
     </section>
   )
 }

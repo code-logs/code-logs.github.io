@@ -39,6 +39,18 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 - **Why:** Issue #149 removed the `<aside>` from `_app.tsx` (the issue's own skeleton has none). `ContentExplorer` rework is deferred to #153; `AsideAdsBanner` re-placement to the follow-up aside-composition issues (2-2/2-3). The `enableContentExplorer` prop on `pages/[title].tsx` is intentionally kept as the wiring point for #153 but reads nowhere today.
 - **Rule:** To add an aside, compose `.layout-with-aside` inside the page's container (it is defined but applied to no page). Do NOT re-add an app-global aside to `_app.tsx`.
 
+### `/` intentionally opts out of `.layout-with-aside` — modifying `_app.tsx` for it is a no-op
+
+- **Symptom:** An implementation plan calls for `_app.tsx` changes to disable the aside for the home page; the change has no visible effect.
+- **Why:** Issue #149 already removed the global `<aside>` from `_app.tsx`. Any page that simply does not apply `.layout-with-aside` to its container is already single-column — no `_app.tsx` branching needed. `pages/index.tsx` uses `container-content` without `.layout-with-aside` and is therefore single-column by default.
+- **Rule:** To make a page single-column, just omit `.layout-with-aside` from its container element. NEVER add per-page aside-disable logic to `_app.tsx`.
+
+### Categories "View all →" MUST NOT link to `/categories` until `pages/categories/index.tsx` exists
+
+- **Symptom:** Build succeeds but clicking "View all →" in the Categories section returns a 404 on the deployed static site.
+- **Why:** `pages/categories/index.tsx` does not exist — only `pages/categories/[category]/` does. Static export produces no `categories/index.html`, so the link 404s silently in dev (Next.js dev server may handle it) but fails in production.
+- **Rule:** NEVER render a `viewAllHref` pointing to `/categories` in `SectionHeader` (or anywhere) until `pages/categories/index.tsx` is created (follow-up issue #155). Pass `viewAllHref` as `undefined` to `SectionHeader` to suppress the link entirely.
+
 ## Conventions
 
 - Layout tokens (`--header-height` 64, `--header-height-mobile` 56, `--container-reading-max` 720, `--container-content-max` 1120, `--container-wide-max` 1280, `--aside-width` 280) live in `@theme` and are consumed only via `var()` — they are NOT utility namespaces, so they carry no blast radius (unlike the `--spacing-*`/`--radius-*` scales; see [styling-gotchas.md](styling-gotchas.md)).
@@ -48,4 +60,4 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 
 ## Rationale
 
-The legacy `#__next` `repeat(3, 1fr)` grid with a hardcoded `main { width: 768px }` pinned content to the right third of wide viewports and forced the aside to `display: none` on mobile. The container model decouples reading width from viewport thirds and lets the aside reflow instead of vanish. The header slot contents (logo/search palette/mobile sheet) landed in issue #150 — their interaction traps live in [header-interaction-gotchas.md](header-interaction-gotchas.md). The footer content (3-column Brand/Explore/Categories + copyright meta bar) landed in issue #151; its build-time dynamic-year handling — a sanctioned exception to the `getStaticProps` rule because the footer is globally rendered from `_app` — is in [static-export-rendering-gotchas.md](static-export-rendering-gotchas.md).
+The legacy `#__next` `repeat(3, 1fr)` grid with a hardcoded `main { width: 768px }` pinned content to the right third of wide viewports and forced the aside to `display: none` on mobile. The container model decouples reading width from viewport thirds and lets the aside reflow instead of vanish. The header slot contents (logo/search palette/mobile sheet) landed in issue #150 — their interaction traps live in [header-interaction-gotchas.md](header-interaction-gotchas.md). The footer content (3-column Brand/Explore/Categories + copyright meta bar) landed in issue #151; its build-time dynamic-year handling — a sanctioned exception to the `getStaticProps` rule because the footer is globally rendered from `_app` — is in [static-export-rendering-gotchas.md](static-export-rendering-gotchas.md). The home page redesign (issue #152) introduced `PostServerUtil.calculateReadingTime` as a build-time-only fs utility — see [post-reading-time-gotchas.md](post-reading-time-gotchas.md).
