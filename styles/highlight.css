@@ -1,125 +1,87 @@
+/* Token-based highlight.js theme (issue #153).
+   The prior file hard-coded a purple/neon palette that clashed with the minimal
+   tone. Every color now resolves through the `--syntax-*` / `--color-code-bg` /
+   `--color-text-body-code` tokens defined in styles/globals.css, which flip
+   light↔dark via the `.dark` class (issue #148 manual toggle). No box-shadow:
+   the resting code-block shadow token was dropped in issue #147. */
+
+/* The pre container: rounded, clipped, hairline border. Padding/font come from
+   the prose `.post-body pre` rule in globals.css; sizing here stays minimal. */
 pre code {
   display: block;
   overflow-x: auto;
-  padding: 1rem;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   line-height: 1.65;
 }
+
 .hljs {
   background: var(--color-code-bg);
-  color: #fff;
-  border-radius: 4px;
-  box-shadow: var(--shadow-sm);
+  color: var(--color-text-body-code);
+  border-radius: var(--radius-lg);
 }
 
-/* Drop the resting shadow in dark mode (the dark --shadow-sm white hairline
-   reads as noise on the always-dark code surface). Class-based to track the
-   manual toggle (issue #148): this file is plain CSS outside the Tailwind
-   cascade, so `@variant dark` is unavailable — match the `.dark` ancestor
-   explicitly. Was previously an `@media (prefers-color-scheme: dark)` query,
-   which would desync from the toggle when OS and chosen mode differ. */
-.dark .hljs {
-  box-shadow: none;
+.hljs-comment,
+.hljs-quote {
+  color: var(--color-text-muted);
+  font-style: italic;
 }
-.hljs-comment {
-  color: #506686;
-}
-.hljs-punctuation,
-.hljs-tag {
-  color: #444a;
-}
-.hljs-tag .hljs-attr,
-.hljs-tag .hljs-name {
-  color: #4db0d7;
-}
-.hljs-attribute,
-.hljs-doctag,
+
 .hljs-keyword,
+.hljs-selector-tag,
+.hljs-doctag,
 .hljs-meta .hljs-keyword,
-.hljs-name,
-.hljs-selector-tag {
-  font-weight: 700;
+.hljs-attribute {
+  color: var(--syntax-keyword);
 }
-.hljs-deletion,
-.hljs-number,
-.hljs-quote,
-.hljs-selector-class,
-.hljs-selector-id,
+
 .hljs-string,
-.hljs-template-tag,
-.hljs-type {
-  color: #800;
-}
-.hljs-section,
-.hljs-title {
-  color: #800;
-  font-weight: 700;
-}
-.hljs-link,
-.hljs-operator,
+.hljs-template-string,
 .hljs-regexp,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-symbol,
-.hljs-template-variable,
-.hljs-variable {
-  color: #ab5656;
-}
-.hljs-literal {
-  color: #695;
-}
-.hljs-addition,
-.hljs-built_in,
-.hljs-bullet,
-.hljs-code {
-  color: #397300;
-}
-.hljs-meta {
-  color: #1f7199;
-}
 .hljs-meta .hljs-string {
-  color: #38a;
+  color: var(--syntax-string);
 }
+
+.hljs-number,
+.hljs-literal,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: var(--syntax-number);
+}
+
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: var(--syntax-function);
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attr,
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--syntax-variable);
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-tag .hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: var(--syntax-tag);
+}
+
+.hljs-built_in,
+.hljs-type,
+.hljs-title.class_,
+.hljs-meta {
+  color: var(--syntax-builtin);
+}
+
 .hljs-emphasis {
   font-style: italic;
 }
+
 .hljs-strong {
   font-weight: 700;
-}
-
-/* Customized */
-.hljs.language-bash {
-  color: #97a7c8;
-}
-.hljs-keyword {
-  color: #d59df6;
-}
-.hljs-string {
-  color: #70f49c;
-}
-.hljs-title.class_,
-.hljs-variable {
-  color: #e26674;
-}
-.hljs-title.function_ {
-  color: #71b1fe;
-}
-.hljs-punctuation {
-  color: #ffd703;
-}
-.hljs-attr,
-.hljs-number,
-.hljs-attribute {
-  color: #4db0d7;
-}
-.hljs-tag {
-  color: #e26674;
-}
-.hljs-tag .hljs-name {
-  color: #e26674;
-}
-.hljs-selector-tag,
-.hljs-selector-id {
-  color: #ffd703;
 }

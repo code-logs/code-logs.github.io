@@ -64,6 +64,22 @@ class PostDatabase extends Database<Post & { order: number }> {
       return PostUtil.normalizeTitle(post.title) === normalizedTitle
     })
   }
+
+  // Chronological neighbors over the full published set (issue #153). The
+  // dataset is sorted publishedAt desc (index 0 = newest), so the older
+  // ("previous") post sits at the next index and the newer ("next") post at
+  // the prior index. Returns undefined at the chronological boundaries.
+  findPrevious(post: Post) {
+    const index = this.dataset.findIndex((p) => p.title === post.title)
+    if (index < 0) return undefined
+    return this.dataset[index + 1]
+  }
+
+  findNext(post: Post) {
+    const index = this.dataset.findIndex((p) => p.title === post.title)
+    if (index <= 0) return undefined
+    return this.dataset[index - 1]
+  }
 }
 
 const postsDatabase = new PostDatabase()
