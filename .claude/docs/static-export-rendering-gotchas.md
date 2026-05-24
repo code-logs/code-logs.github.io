@@ -21,6 +21,16 @@ The site builds with `output: 'export'` (Next.js 15 Pages Router) and is served 
 - ALWAYS type the prop contract with `GetStaticProps<Props>` so the build-time-to-component handoff is checked.
 - The same rule applies to `Math.random()` and any other non-deterministic source: pin it in `getStaticProps` or push it strictly client-side behind `useEffect`.
 
+## Exceptions
+
+### Global `_app`/`_document` components that render on every page have no `getStaticProps`
+
+- **Where:** `components/footer/FooterBottomBar.tsx` (copyright year), rendered via the `pages/_app.tsx` skeleton (issue #151).
+- **Problem:** `getStaticProps` is a *page* hook — it does not exist on `_app`/`_document` or on any component rendered from them. A globally-rendered component therefore cannot use the standard fix above to pin a build-time value.
+- **Accepted pattern:** compute the value as a **module-scope build constant** (`const currentYear = new Date().getFullYear()`) so it bakes into the static HTML, and put `suppressHydrationWarning` on the **smallest node that wraps the drifting value** (not the whole subtree). This is the ONLY sanctioned exception to the "never call `new Date()` outside `getStaticProps`" rule.
+- **Why it is safe here:** (1) crawlers see the build year; (2) the site redeploys far more often than yearly, so the build year stays current; (3) the only drift window is a cached HTML loaded after Jan 1 before the next deploy — harmless for a copyright line, and React reconciles it to the fresh client year on hydration. `suppressHydrationWarning` suppresses the dev warning for that intentional, scoped drift.
+- **NEVER widen this exception:** it applies only to display-only, low-stakes values (copyright year) in genuinely global components. Anything page-scoped MUST still use `getStaticProps`, and anything correctness-sensitive (not just cosmetic) must not rely on this drift being "harmless".
+
 ## Examples
 
 ```tsx
