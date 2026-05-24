@@ -1,6 +1,7 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /posts/*?query=
 
 # Host
 Host: https://code-logs.github.io

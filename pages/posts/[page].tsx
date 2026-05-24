@@ -125,7 +125,8 @@ const Posts: NextPage<PostsProps> = (props) => {
           url={`${blogConfig.baseURL}/posts/${page}`}
           imageURL={'/icons/icon-512x512.png'}
           keywords={posts.map((post) => [...post.tags, post.title, post.description]).flat()}
-          // Search-result URLs must not be indexed (follow keeps link equity).
+          // Supplemental client-side signal; static export blocks search query
+          // URLs at robots.txt because this meta appears only after hydration.
           customMeta={query ? <meta name="robots" content="noindex, follow" /> : undefined}
         />
 
