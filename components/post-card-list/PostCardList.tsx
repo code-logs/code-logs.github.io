@@ -11,7 +11,7 @@ export interface PostCardListProps {
 
 const PostCardList = ({ titleLevel, posts, adsBlockCycle = 3 }: PostCardListProps) =>
   !!posts.length ? (
-    <ul className="m-0 p-0">
+    <ul className="m-0 list-none space-y-4 p-0">
       {posts.map((post, idx) => (
         <React.Fragment key={post.title}>
           <li key={post.title}>

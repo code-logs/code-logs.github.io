@@ -12,7 +12,13 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 
 - **Symptom:** A small interactive element (active page number, badge) styled `bg-accent-600 text-white` looks fine visually but trips a WCAG AA contrast check at 3.74:1 (< 4.5:1).
 - **Why:** Teal-600 `#0d9488` is borderline for AA when paired with white at normal text size. The 3:1 large-text exemption does not apply to ~12–14 px text.
-- **Rule:** For white-on-accent UI surfaces, ALWAYS use `bg-accent-700` (`#0f766e` → ~5.47:1). Reserve `bg-accent-600` for non-text surfaces (hover backgrounds, decorative fills) where contrast against a text-color foreground is checked separately.
+- **Rule:** For white-on-accent UI surfaces, ALWAYS use `bg-accent-700` (`#0f766e` → ~5.47:1). Reserve `bg-accent-600` for non-text surfaces (hover backgrounds, decorative fills) where contrast against a text-color foreground is checked separately. For a *selected/active solid-accent control* that flips with dark mode, use the `accent-strong`/`accent-on` semantic pair below, NOT `bg-accent`.
+
+### A selected/active solid-accent surface MUST use `bg-accent-strong text-accent-on`, never `bg-accent`
+
+- **Symptom:** An active pagination page, selected chip, or toggle styled `bg-accent text-accent-on` (or `bg-accent` + white) renders the brand Teal-600 in light mode and fails AA for its label (3.74:1), and/or shows white-on-bright-teal in dark mode at low contrast.
+- **Why:** `--color-accent` is the *decorative brand mark* (accent-600 light / accent-400 dark) — it is not AA-tuned for a text-bearing fill (same root cause as the pitfall above). A solid control that carries a readable label needs the AA-tuned accent step plus a foreground that contrasts in both modes.
+- **Rule:** Use `bg-accent-strong text-accent-on` (issue #154). `--color-accent-strong` mirrors the link split (accent-700 light / accent-400 dark); `--color-accent-on` reuses `--color-neutral-0` so it auto-flips white (light) → near-black (dark) with NO `.dark` override. White on accent-700 and near-black on accent-400 both clear AA. NEVER add a `dark:` utility to a component to fix accent-fill contrast — the token pair already encodes the per-mode values (see the dark-mode "flips only what diverges" convention below).
 
 ### `text-accent` is decorative-only — use `text-link` for accent-colored text
 
@@ -52,7 +58,7 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 |---|---|---|---|
 | Primitive — neutral | `--color-neutral-0` … `--color-neutral-900` | `@theme` (light), `.dark` override | Only semantic tokens. NEVER components. |
 | Primitive — accent | `--color-accent-50` … `--color-accent-700` | `@theme` only — light-invariant | Only semantic tokens. NEVER components. |
-| Semantic | `--color-bg-page`, `--color-text-body`, `--color-link`, `--color-accent`, `--color-danger`, … | `@theme` (light), `.dark` override (link + accent) | All components, all pages, `@layer base`, `.prose.post-body` |
+| Semantic | `--color-bg-page`, `--color-text-body`, `--color-link`, `--color-accent`, `--color-accent-strong`, `--color-accent-on`, `--color-danger`, … | `@theme` (light), `.dark` override (link + accent + accent-strong) | All components, all pages, `@layer base`, `.prose.post-body` |
 
 ### Semantic token naming uses the long form
 
@@ -64,6 +70,7 @@ The `.dark` block MUST override only:
 - All 8 neutral steps (Zinc 0–900 → Zinc 950→50 inverse).
 - `--color-link` (accent-700 → accent-400) and `--color-link-hover` (accent-600 → accent-500).
 - `--color-accent` (accent-600 → accent-400) — the brand mark brightens on dark surfaces, mirroring the link split. This is a sanctioned semantic-layer dark override (added with the issue #150 header redesign): it points at a *different accent primitive* per mode, it does not redefine a primitive.
+- `--color-accent-strong` (accent-700 → accent-400) — the AA-tuned solid-accent fill (issue #154), same sanctioned per-mode-primitive pattern. `--color-accent-on` is NOT overridden: it reuses `--color-neutral-0`, which the neutral flip already inverts.
 - The shadow tokens `--shadow-xs`…`--shadow-lg` (black shadows vanish on dark surfaces → white hairline + deeper shadow). `--shadow-focus` is NOT overridden — accent is light-invariant.
 
 Accent primitives (`--color-accent-*`) stay identical in both modes — the Teal palette is light-invariant by design. Semantic tokens that derive from neutrals/accents do not need their own dark override because they re-resolve through the overridden primitives. NEVER duplicate the dark override at the semantic layer; that creates two places to update.

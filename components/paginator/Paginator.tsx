@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export interface PaginatorProps {
@@ -9,6 +9,11 @@ export interface PaginatorProps {
   enableQuickPaging?: boolean
   baseURL: string
 }
+
+// Shared box for every paginator cell (page numbers, prev/next, ellipsis):
+// 32×32 on mobile, 36×36 from md up. tabular-nums keeps page digits aligned.
+const cellClass =
+  'inline-flex h-8 w-8 items-center justify-center rounded-md text-sm tabular-nums md:h-9 md:w-9'
 
 const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: PaginatorProps) => {
   const [pageList, setPageList] = useState<number[]>([])
@@ -29,63 +34,91 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
     setPageList([...prevPages, page, ...nextPages])
   }, [page, lastPage, displayCount])
 
-  useEffect(() => {}, [])
-
-  const buildURL = (page: number) => {
-    let url = `${baseURL}/${page}`
+  const buildURL = (target: number) => {
+    let url = `${baseURL}/${target}`
     if (query) url += `?query=${query}`
-
     return url
   }
 
-  return (
-    <div className="grid p-5 border-t border-divider [&_svg]:m-auto [&_svg]:w-6 [&_svg]:h-6 [&_svg]:text-text-muted">
-      <ul className="m-auto p-0 inline-flex gap-5 [&_li]:m-auto [&_li]:inline-grid [&_li>a]:inline-grid [&_li>a]:text-text-muted">
-        {page > 1 && (
-          <li>
-            <a href={buildURL(page - 1)}>
-              <ChevronLeft />
-            </a>
-          </li>
-        )}
+  // A non-current page link.
+  const pageLink = (target: number) => (
+    <a href={buildURL(target)} className={`${cellClass} text-text-muted hover:bg-bg-subtle hover:text-text-heading`}>
+      {target}
+    </a>
+  )
 
+  // Prev/Next arrow: a real link when in range, a disabled box at the bounds.
+  const arrow = (direction: 'prev' | 'next') => {
+    const disabled = direction === 'prev' ? page <= 1 : page >= lastPage
+    const target = direction === 'prev' ? page - 1 : page + 1
+    const Icon = direction === 'prev' ? ChevronLeft : ChevronRight
+    const label = direction === 'prev' ? 'Previous page' : 'Next page'
+
+    if (disabled) {
+      return (
+        <span aria-disabled className={`${cellClass} pointer-events-none text-text-muted opacity-40`}>
+          <Icon size={18} strokeWidth={1.5} />
+        </span>
+      )
+    }
+
+    return (
+      <a href={buildURL(target)} aria-label={label} className={`${cellClass} text-text-muted hover:bg-bg-subtle hover:text-text-heading`}>
+        <Icon size={18} strokeWidth={1.5} />
+      </a>
+    )
+  }
+
+  return (
+    <nav aria-label="Pagination" className="mt-12 border-t border-divider pt-6">
+      <ul role="list" className="flex list-none items-center justify-center gap-1 p-0">
+        <li>{arrow('prev')}</li>
+
+        {/* Desktop: full numbered list with leading/trailing ellipsis. */}
         {page > 1 && !pageList.includes(1) && (
           <>
-            <li>
-              <a href={buildURL(1)}>{1}</a>
+            <li className="hidden md:inline-flex">{pageLink(1)}</li>
+            <li aria-hidden className="hidden md:inline-flex">
+              <span className={cellClass}>…</span>
             </li>
-            <MoreHorizontal />
           </>
         )}
 
         {pageList.map((pageNum) => (
-          <li key={pageNum}>
-            <a
-              href={buildURL(pageNum)}
-              className={page === pageNum ? 'bg-accent-700 py-1 px-3 rounded-md !text-white' : ''}
-            >
-              {pageNum}
-            </a>
+          <li key={pageNum} className="hidden md:inline-flex">
+            {page === pageNum ? (
+              <a
+                href={buildURL(pageNum)}
+                aria-current="page"
+                className={`${cellClass} bg-accent-strong text-accent-on`}
+              >
+                {pageNum}
+              </a>
+            ) : (
+              pageLink(pageNum)
+            )}
           </li>
         ))}
 
         {page < lastPage && !pageList.includes(lastPage) && (
           <>
-            <MoreHorizontal />
-            <li>
-              <a href={buildURL(lastPage)}>{lastPage}</a>
+            <li aria-hidden className="hidden md:inline-flex">
+              <span className={cellClass}>…</span>
             </li>
+            <li className="hidden md:inline-flex">{pageLink(lastPage)}</li>
           </>
         )}
-        {page < lastPage && (
-          <li>
-            <a href={buildURL(page + 1)}>
-              <ChevronRight />
-            </a>
-          </li>
-        )}
+
+        {/* Mobile: compact "{page} / {lastPage}" indicator between the arrows. */}
+        <li className="md:hidden">
+          <span className="px-2 text-sm tabular-nums text-text-muted">
+            {page} / {lastPage}
+          </span>
+        </li>
+
+        <li>{arrow('next')}</li>
       </ul>
-    </div>
+    </nav>
   )
 }
 

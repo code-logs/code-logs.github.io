@@ -26,6 +26,12 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - **Why:** The legacy SCSS had `* { outline: none }`. Porting that as-is is an accessibility regression.
 - **Rule:** Suppress focus rings only for non-keyboard interaction: `:focus:not(:focus-visible) { outline: none }`. NEVER reintroduce a universal `outline: none`.
 
+### A composite/wrapped input doubles the focus ring unless the inner control suppresses its own
+
+- **Symptom:** A search box (bordered wrapper around a borderless `<input>`) shows two concentric accent rings on keyboard focus — one on the wrapper, one on the input.
+- **Why:** The global `:focus-visible { box-shadow: var(--shadow-focus) }` base rule applies to *every* focusable element, so the inner `<input>` gets its own ring on top of the wrapper's `focus-within` ring.
+- **Rule:** Put the ring on the wrapper via `focus-within:shadow-focus` (the `--shadow-focus` token, NOT a hand-rolled `ring-*` utility — and note `ring-color-focus-ring` is not a valid utility name; the token is `--color-focus-ring` → `shadow-focus`). Then suppress the inner control's global ring with `focus-visible:shadow-none`. Pattern lives in `components/search-input/SearchInput.tsx` (issue #154).
+
 ### `--breakpoint-tablet: 800px` is intentional, not a typo for `md`
 
 - **Symptom:** A new component uses `md:` for its tablet break and looks wrong at 769–800 px.

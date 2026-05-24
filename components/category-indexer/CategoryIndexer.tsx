@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CATEGORIES } from '../../config/posts.config'
 import postsDatabase from '../../database/post-database'
+import SectionHeader from '../section-header/SectionHeader'
 
 export interface CategoryIndexerProps {
   categories: string[]
@@ -15,22 +16,23 @@ const CategoryIndexer = ({ categories }: CategoryIndexerProps) => {
 
   return (
     <section>
-      <h2>Categories</h2>
-      <ul className="m-0 p-0">
-        {categories.map((category, idx) => (
-          <li key={idx}>
+      {/* No "View all →" until /categories index exists (#155). */}
+      <SectionHeader title="Categories" />
+      <ul className="m-0 list-none p-0">
+        {categories.map((category) => (
+          <li key={category}>
             <a
               href={`/categories/${encodeURIComponent(category)}/1`}
-              className="flex gap-1 border-b border-divider p-1"
+              className="flex items-center gap-2 border-b border-divider py-2 text-sm text-text-body hover:text-link"
             >
               {newCategories.includes(category) && (
-                <span className="bg-danger py-1 px-1 rounded-full text-white font-semibold italic text-[0.7rem] my-auto">
+                <span className="rounded-sm bg-accent-strong px-1.5 text-[0.65rem] font-semibold uppercase tracking-wide text-accent-on">
                   New
                 </span>
               )}
-              <span className="flex-1 my-auto capitalize">{(CATEGORIES as any)[category]}</span>
-              <span className="rounded-full bg-bg-subtle text-text-body w-[25px] h-[25px] grid">
-                <span className="m-auto">{postsDatabase.countByCategory(category)}</span>
+              <span className="flex-1 capitalize">{(CATEGORIES as Record<string, string>)[category]}</span>
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-bg-subtle text-xs tabular-nums text-text-muted">
+                {postsDatabase.countByCategory(category)}
               </span>
             </a>
           </li>
