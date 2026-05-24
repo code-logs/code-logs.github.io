@@ -36,8 +36,8 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 ### The aside is composed per-page, NOT in `_app.tsx`
 
 - **Symptom:** Looking for where `ContentExplorer` (post TOC) or `AsideAdsBanner` renders globally and finding nothing.
-- **Why:** Issue #149 removed the `<aside>` from `_app.tsx` (the skeleton has none). The post-detail page (issue #153) now composes its own TOC aside in-page via `.post-detail-layout` — see [post-detail-page-gotchas.md](post-detail-page-gotchas.md). The dead `enableContentExplorer` prop was removed with that work. `AsideAdsBanner` re-placement is still pending (follow-up aside-composition issues 2-2/2-3).
-- **Rule:** To add an aside, compose `.layout-with-aside` (1fr aside) or `.post-detail-layout` (capped reading + fixed TOC aside) inside the page. Do NOT re-add an app-global aside to `_app.tsx`.
+- **Why:** Issue #149 removed the `<aside>` from `_app.tsx` (the skeleton has none). The post-detail page (issue #153) now composes its own TOC aside in-page via `.post-detail-layout` — see [post-detail-page-gotchas.md](post-detail-page-gotchas.md). The dead `enableContentExplorer` prop was removed with that work. The `/posts/[page]` list page (issue #154) is the live `.layout-with-aside` example: its container is `container-content layout-with-aside`, the main column holds the list, and the second grid child is an `<aside>` with `CategoryIndexer` + `TagIndexer`. `AsideAdsBanner` re-placement remains pending.
+- **Rule:** To add an aside, compose `.layout-with-aside` (1fr aside) or `.post-detail-layout` (capped reading + fixed TOC aside) inside the page — the page container is the grid, its first child is the main column and its second child is the `<aside>`. Do NOT re-add an app-global aside to `_app.tsx`.
 
 ### `/` intentionally opts out of `.layout-with-aside` — modifying `_app.tsx` for it is a no-op
 

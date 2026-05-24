@@ -14,6 +14,12 @@ The site builds with `output: 'export'` (Next.js 15 Pages Router) and is served 
 - **Why:** Module-scope code and component-body code execute in two contexts under `output: 'export'`: the Node build process (its result is baked into the static HTML) and the client bundle at hydration. The two evaluations of `new Date()` / `Date.now()` see different clocks. Static export has no per-request server render to reconcile them.
 - **Rule:** Compute time-dependent values inside `getStaticProps` and pass them down as props. `getStaticProps` runs only at build time, is stripped from the client bundle, and feeds the same value into the HTML and the hydrated tree.
 
+### Gating page content behind a `useEffect`/`initialized` flag empties the static HTML
+
+- **Symptom:** A list page returns early (`if (!initialized) return <HeaderOnly/>`) or seeds list state to `[]` and fills it in a `useEffect`. The exported `*.html` then contains only the header chrome — the actual list is absent from the artifact and appears only after hydration. JS-less crawlers and first paint see an empty page.
+- **Why:** Under `output: 'export'` the build-time render is the served HTML. State initialized to empty (or an early return) bakes the empty state into the artifact; the `useEffect` that populates it runs only in the client.
+- **Rule:** Seed component state from `getStaticProps` props (`useState(props.posts)`), not from `[]`/effect-only population, so the first render — and therefore the static HTML — carries the real content. Use a `useEffect` only to *override* for genuinely client-only states (e.g. a `?query=` search filter), and accept that the pre-effect flash shows the static (props) content. `pages/posts/[page].tsx` (issue #154) follows this: it renders the static page-1 list in HTML, then swaps to filtered results client-side on a search URL.
+
 ## Conventions
 
 - ALWAYS source build-time-constant values (current year, computed offsets from a fixed start year, build timestamp) from `getStaticProps`, never from module scope or the component body.

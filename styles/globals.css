@@ -125,6 +125,17 @@
      utilities via the Tailwind v4 --color-* namespace. */
   --color-accent:     var(--color-accent-600);
 
+  /* Solid accent surface for selected/active controls (pagination current page).
+     Mirrors the --color-link split (accent-700 light / accent-400 dark) rather
+     than --color-accent (accent-600): white text on accent-600 fails WCAG AA
+     (3.74:1), so the AA-tuned 700/400 pair is required for a text-bearing fill.
+     Flipped in the .dark block below. */
+  --color-accent-strong: var(--color-accent-700);
+  /* Text/icon color ON a solid accent surface. Reuses neutral-0, which already
+     flips white (light) → near-black (dark) — so accent-on needs no .dark
+     override: white on accent-700, near-black on accent-400, both pass AA. */
+  --color-accent-on:     var(--color-neutral-0);
+
   --color-focus-ring: color-mix(in oklab, var(--color-accent-500) 35%, transparent);
 
   --color-success: #10b981;
@@ -216,6 +227,10 @@
 
     /* Brand accent brightens on dark surfaces (600 → 400), like the link split */
     --color-accent:     var(--color-accent-400);
+
+    /* Solid accent surface brightens to accent-400 on dark (paired with the
+       auto-flipped --color-accent-on, which becomes near-black here). */
+    --color-accent-strong: var(--color-accent-400);
 
     /* Black shadows are near-invisible on dark surfaces, so each step pairs
        a white hairline ring (surface separation) with a deeper shadow.
