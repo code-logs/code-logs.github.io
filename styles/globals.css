@@ -618,6 +618,49 @@
     }
   }
 
+  /* About-page editorial prose (issue #157). Replaces the old arbitrary
+     `[&_p]:ml-5 [&_p]:italic` block: body copy is upright, flush-left, relaxed
+     line-height; section headings and links use the shared token scale. */
+  .prose-about p {
+    margin-top: var(--spacing-3);
+    margin-left: 0;
+    color: var(--color-text-body);
+    font-style: normal;
+    line-height: var(--leading-relaxed);
+  }
+  .prose-about h2 {
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--color-text-heading);
+    /* Section-opening headings: spacing comes from the hero padding (first
+       section) or .section-divider (rest), so the heading itself sits flush. */
+    margin-top: 0;
+    margin-bottom: var(--spacing-4);
+  }
+  .prose-about strong {
+    color: var(--color-text-heading);
+    font-weight: 600;
+  }
+  /* Scoped to paragraph links only so chip/button anchors (Topics, Get in
+     touch) keep their own utility styling instead of the accent link look. */
+  .prose-about p a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+  .prose-about p a:hover {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+  }
+
+  /* Hairline divider above major About sections (issue #157). Uses
+     --color-divider (between-content separator), not --color-border (interactive
+     surface edge) — see color-tokens-gotchas.md. */
+  .section-divider {
+    border-top: 1px solid var(--color-divider);
+    margin-top: var(--spacing-12);
+    padding-top: var(--spacing-8);
+  }
+
   /* Post-detail TOC hybrid (issue #153): centered 1080-wide shell that becomes
      a `reading 720 + TOC aside 280` grid at ≥1024, and a single column below.
      Distinct from .layout-with-aside (1fr aside) — the post body is capped at a
