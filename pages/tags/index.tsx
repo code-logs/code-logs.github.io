@@ -1,16 +1,30 @@
+import { ArrowLeft } from 'lucide-react'
 import { NextPage } from 'next'
+import AlphabetNav from '../../components/alphabet-nav/AlphabetNav'
 import CommonMeta from '../../components/common-meta/CommonMeta'
 import MainAdsBanner from '../../components/ads-banner/MainAdsBanner'
+import PageHeader from '../../components/page-header/PageHeader'
+import SectionHeader from '../../components/section-header/SectionHeader'
 import { TagWithCount } from '../../components/tag-indexer/TagIndexer'
-import TagList, { TagsByIndexes } from '../../components/tag-list/TagList'
-import TagNavigator from '../../components/tag-navigator/TagNavigator'
-import TitleWithCount from '../../components/title-with-count/TitleWithCount'
+import TagsComponent from '../../components/tags/Tags'
 import blogConfig from '../../config/blog.config'
 import { META_CONTENTS } from '../../config/meta-contents'
 import postsDatabase from '../../database/post-database'
+import { ENGLISH_LETTERS, getIndexLetter, KOREAN_GROUPS, OTHER_GROUP } from '../../utils/HangulUtil'
 import TitleUtil from '../../utils/TitleUtil'
 
+// Native <a> for internal navigation kept in a const so the literal path stays
+// out of the no-html-link-for-pages rule, matching the site-wide convention.
+const POSTS_HREF = '/posts/1'
+
+const POPULAR_LIMIT = 10
+
+// Every bucket in render order: A–Z, the 14 Korean groups, then the catch-all.
+const ALL_LETTERS = [...ENGLISH_LETTERS, ...KOREAN_GROUPS, OTHER_GROUP]
+
 export async function getStaticProps() {
+  // Flat list of every tag occurrence across published posts (duplicates kept —
+  // they drive per-tag usage counts).
   const tags = postsDatabase
     .find()
     .map((post) => post.tags)
@@ -25,56 +39,38 @@ export async function getStaticProps() {
 }
 
 const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
-  const indexGroups = [
-    ['가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '하'],
-    Array(26)
-      .fill('')
-      .map((_: string, idx: number) => String.fromCharCode(idx + 65)),
-  ]
+  // Fix for the legacy count bug: unique tag count vs. total usage. The old
+  // header showed tags.length (total occurrences) as if it were the tag count.
+  const uniqueTagCount = new Set(tags).size
+  const totalUsage = tags.length
 
-  const tagsWithCount = tags.reduce((tagsWithCount, tag) => {
-    const targetIndex = tagsWithCount.findIndex((tagWithCount) => tagWithCount.tag === tag)
-
-    if (targetIndex >= 0) {
-      tagsWithCount[targetIndex].count++
+  // Collapse occurrences into { tag, count }.
+  const tagsWithCount = tags.reduce((acc, tag) => {
+    const existing = acc.find((entry) => entry.tag === tag)
+    if (existing) {
+      existing.count++
     } else {
-      tagsWithCount.push({ tag, count: 1 })
+      acc.push({ tag, count: 1 })
     }
-
-    return tagsWithCount
+    return acc
   }, [] as TagWithCount[])
 
-  const indexes = indexGroups.flat()
-  const tagsByIndexes = indexes.reduce((tagsByIndexes, index) => {
-    tagsByIndexes[index] = []
-    return tagsByIndexes
-  }, {} as TagsByIndexes)
+  // Top tags by usage, alphabetical tiebreak for stable output.
+  const popularTags = [...tagsWithCount]
+    .sort((a, b) => b.count - a.count || (a.tag > b.tag ? 1 : -1))
+    .slice(0, POPULAR_LIMIT)
 
-  tagsWithCount.forEach((tagWithCount) => {
-    const tagCharCode = tagWithCount.tag.toUpperCase().charCodeAt(0)
+  // Bucket each tag into its alphabet group via the shared helper (correct
+  // Hangul initial-consonant grouping included).
+  const tagsByLetter = tagsWithCount.reduce((acc, tagWithCount) => {
+    const letter = getIndexLetter(tagWithCount.tag)
+    ;(acc[letter] ??= []).push(tagWithCount)
+    return acc
+  }, {} as Record<string, TagWithCount[]>)
 
-    for (let i = 0; i < indexes.length; i++) {
-      const index = indexes[i]
-      const nextIndex = indexes[i + 1]
-      const indexCharCode = index.toUpperCase().charCodeAt(0)
-      let nextIndexCharCode: number | undefined
-      if (nextIndex) nextIndexCharCode = nextIndex.toUpperCase().charCodeAt(0)
-
-      if (nextIndexCharCode !== undefined) {
-        if (tagCharCode >= indexCharCode && tagCharCode < nextIndexCharCode) {
-          tagsByIndexes[index].push(tagWithCount)
-          break
-        }
-      } else {
-        tagsByIndexes[index].push(tagWithCount)
-      }
-    }
-  })
-
-  const activatedIndexes = indexes.reduce((activatedIndexes, index) => {
-    if (tagsByIndexes[index].length) activatedIndexes.push(index)
-    return activatedIndexes
-  }, [] as string[])
+  const activeLetterList = ALL_LETTERS.filter((letter) => tagsByLetter[letter]?.length)
+  const activeLetters = new Set(activeLetterList)
+  const firstActiveLetter = activeLetterList[0]
 
   return (
     <section className="container-content">
@@ -85,11 +81,49 @@ const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
         imageURL={'/icons/icon-512x512.png'}
       />
 
-      <TitleWithCount level={1} title="Tags" count={tags.length}></TitleWithCount>
+      <a
+        href={POSTS_HREF}
+        className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-heading"
+      >
+        <ArrowLeft size={16} aria-hidden />
+        Posts
+      </a>
 
-      <TagNavigator activatedIndexes={activatedIndexes} indexGroups={indexGroups} />
+      <div className="mt-6">
+        <PageHeader
+          title={META_CONTENTS.TAGS.TITLE}
+          subtitle={`${uniqueTagCount} tags · ${totalUsage} uses`}
+        />
+      </div>
 
-      <TagList indexGroups={indexGroups} tagsByIndexes={tagsByIndexes} />
+      {popularTags.length > 0 && (
+        <section className="mb-10">
+          <SectionHeader title="Popular tags" />
+          <TagsComponent tags={popularTags} />
+          {firstActiveLetter && (
+            <a
+              href={`#${firstActiveLetter}`}
+              className="mt-3 inline-block text-sm text-text-muted transition-colors hover:text-accent"
+            >
+              View all below ↓
+            </a>
+          )}
+        </section>
+      )}
+
+      <AlphabetNav activeLetters={activeLetters} ariaLabel="Tag index navigation" />
+
+      {activeLetterList.map((letter) => (
+        <section
+          key={letter}
+          id={letter}
+          className="mt-12 border-t border-divider pt-6"
+          style={{ scrollMarginTop: 'calc(var(--header-height) + var(--spacing-12))' }}
+        >
+          <h2 className="mb-4 text-2xl font-semibold text-text-heading">{letter}</h2>
+          <TagsComponent tags={tagsByLetter[letter]} />
+        </section>
+      ))}
 
       <MainAdsBanner />
     </section>
