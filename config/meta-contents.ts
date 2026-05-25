@@ -31,5 +31,9 @@ export const META_CONTENTS = {
   NOT_FOUND: {
     TITLE: '페이지를 찾을 수 없음',
     DESCRIPTION: 'Code Logs | 페이지를 찾을 수 없습니다! 입력하신 URL을 확인해 주세요.',
+    // On-page guidance copy (distinct from the SEO DESCRIPTION above), shown in
+    // the 404 body. Centralized here so all NOT_FOUND strings live in one place.
+    HEADING: '페이지를 찾을 수 없습니다',
+    BODY: '찾으시는 페이지가 존재하지 않거나 이동되었습니다.',
   },
 }
