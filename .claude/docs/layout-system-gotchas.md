@@ -50,6 +50,7 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 - **Symptom:** Confusion over which file owns `/categories` vs `/categories/css/1`, or an attempt to add `getStaticPaths` to the index page.
 - **Why:** Issue #155 added `pages/categories/index.tsx` (the root index — single-column `CategoriesGrid`, alphabetical) alongside the pre-existing `pages/categories/[category]/[page].tsx` (the detail list — `.layout-with-aside`). In the Pages Router these coexist cleanly: the index emits `categories/index.html`, the dynamic segment emits `categories/<cat>/<page>.html`. The index needs NO `getStaticPaths` (it is a single static page); the detail page keeps its own.
 - **Rule:** Keep the two files separate-of-concern: the index is the alphabetical browse-all grid (no aside), the detail is the per-category paginated list (with aside). Both home (`pages/index.tsx`) and footer (`config/footer.config.tsx` → `categoriesViewAllHref: '/categories'`) now wire "View all →" to the index — it resolves correctly because `categories/index.html` exists.
+- **Drill-down (#156):** the `/categories` index and `/tags` now share a sticky `AlphabetNav` + the `getIndexLetter` bucketing helper. For the Korean grouping, the unique-vs-total count, the full-bleed sticky padding, and the `CategoriesGrid` `enableLetterAnchors` gate, see [tags-categories-index-gotchas.md](tags-categories-index-gotchas.md).
 
 ### A list-row highlight that shares `bg-bg-subtle` with an inner chip makes the chip vanish
 

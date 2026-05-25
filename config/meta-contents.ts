@@ -21,8 +21,8 @@ export const META_CONTENTS = {
     DESCRIPTION: (category: string, page: number) => `Code Logs | ${category} 연관 포스팅 목록 ${page} 페이지`
   },
   TAGS: {
-    TITLE: 'Tags 목록',
-    DESCRIPTION: 'Code Logs | Tag를 기준으로 포스팅을 색인합니다.',
+    TITLE: 'Tags',
+    DESCRIPTION: 'Browse posts by tag on code-logs.',
   },
   ABOUT: {
     TITLE: 'About',

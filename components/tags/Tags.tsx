@@ -7,7 +7,7 @@ export interface TagsProps {
 
 const Tags = (props: TagsProps) => {
   return (
-    <ul className="list-none m-0 p-0 [&>li]:inline-block [&>li]:mt-0 [&>li]:mr-[5px] [&>li]:mb-[5px] [&>li]:ml-0">
+    <ul className="list-none m-0 p-0 flex flex-wrap gap-2">
       {props.tags.map((tag, idx) => (
         <li key={idx}>
           {typeof tag === 'string' ? (
