@@ -45,11 +45,17 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 - **Why:** Issue #149 already removed the global `<aside>` from `_app.tsx`. Any page that simply does not apply `.layout-with-aside` to its container is already single-column — no `_app.tsx` branching needed. `pages/index.tsx` uses `container-content` without `.layout-with-aside` and is therefore single-column by default.
 - **Rule:** To make a page single-column, just omit `.layout-with-aside` from its container element. NEVER add per-page aside-disable logic to `_app.tsx`.
 
-### Categories "View all →" MUST NOT link to `/categories` until `pages/categories/index.tsx` exists
+### The `/categories` index and `/categories/[category]/[page]` are two routes that MUST stay distinct
 
-- **Symptom:** Build succeeds but clicking "View all →" in the Categories section returns a 404 on the deployed static site.
-- **Why:** `pages/categories/index.tsx` does not exist — only `pages/categories/[category]/` does. Static export produces no `categories/index.html`, so the link 404s silently in dev (Next.js dev server may handle it) but fails in production.
-- **Rule:** NEVER render a `viewAllHref` pointing to `/categories` in `SectionHeader` (or anywhere) until `pages/categories/index.tsx` is created (follow-up issue #155). Pass `viewAllHref` as `undefined` to `SectionHeader` to suppress the link entirely.
+- **Symptom:** Confusion over which file owns `/categories` vs `/categories/css/1`, or an attempt to add `getStaticPaths` to the index page.
+- **Why:** Issue #155 added `pages/categories/index.tsx` (the root index — single-column `CategoriesGrid`, alphabetical) alongside the pre-existing `pages/categories/[category]/[page].tsx` (the detail list — `.layout-with-aside`). In the Pages Router these coexist cleanly: the index emits `categories/index.html`, the dynamic segment emits `categories/<cat>/<page>.html`. The index needs NO `getStaticPaths` (it is a single static page); the detail page keeps its own.
+- **Rule:** Keep the two files separate-of-concern: the index is the alphabetical browse-all grid (no aside), the detail is the per-category paginated list (with aside). Both home (`pages/index.tsx`) and footer (`config/footer.config.tsx` → `categoriesViewAllHref: '/categories'`) now wire "View all →" to the index — it resolves correctly because `categories/index.html` exists.
+
+### A list-row highlight that shares `bg-bg-subtle` with an inner chip makes the chip vanish
+
+- **Symptom:** On `/categories/[category]/[page]`, the active category row in the aside `CategoryIndexer` shows its count badge as invisible (badge background = row background).
+- **Why:** `CategoryIndexer` is shared between `/posts` (no active row) and the category detail page (passes `currentCategory`). The active row gets `bg-bg-subtle`; the count chip ALSO defaults to `bg-bg-subtle rounded-full`, so on the highlighted row foreground and background collapse to the same token.
+- **Rule:** When highlighting a list row with `bg-bg-subtle`, any inner element that also uses `bg-bg-subtle` MUST switch to a contrasting treatment on the active branch — `CategoryIndexer` swaps the active chip to `ring-1 ring-divider` (no fill). The active row also carries `aria-current="page"`; `currentCategory` matches the RAW category key (not the `CATEGORIES` display label) so equality holds.
 
 ## Conventions
 
@@ -57,6 +63,8 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 - Every page MUST wrap its top-level element in exactly one container: `container-reading` (720, long-form prose — about/licenses/404), `container-content` (1120, card/list pages — index/posts/categories/tags), `container-wide` (1280, reserved), or `.post-detail-layout` (the post route `/[title]` — a centered 1080 shell that becomes a `reading 720 + sticky TOC aside 280` grid at ≥1024; see [post-detail-page-gotchas.md](post-detail-page-gotchas.md)). `<main className="flex-1">` in `_app.tsx` owns vertical flex; the container owns horizontal width/padding.
 - The static footer is pinned to the viewport bottom on short pages by the skeleton (`min-h-dvh flex flex-col` + `main flex-1`), NOT by `position: fixed`. NEVER reintroduce `position: fixed` on the footer.
 - Responsive model is three-tier: **≤767** mobile (single column, `:root { font-size: 12px }`, 56px header), **768–1023** tablet (single column, container padding bumps at 1024), **≥1024** desktop (`.layout-with-aside` grid active). The base-layer mobile `@media` boundary is `max-width: 767px`. Component-internal reflows keep using the `max-tablet:` (800px) variant — see [styling-gotchas.md](styling-gotchas.md).
+- `PageHeader` (the shared list-page `<h1>` owner) takes an optional `breadcrumb?: BreadcrumbItem[]` rendered as a `<nav aria-label="Breadcrumb"><ol>` above the title; the last (href-less) item is the current page and carries `aria-current="page"`. The category detail page passes `[{ label: 'Categories', href: '/categories' }, { label }]`. The `query` (search-mode) and `breadcrumb` props are independent.
+- `META_CONTENTS.CATEGORIES` was split in #155: the per-category detail meta is now `META_CONTENTS.CATEGORY_DETAIL` (functions `TITLE(category)` / `DESCRIPTION(category, page)`); the new static `META_CONTENTS.CATEGORIES_INDEX` (`{ TITLE, DESCRIPTION }`) serves the index page. Do NOT reintroduce a `CATEGORIES` key.
 
 ## Rationale
 

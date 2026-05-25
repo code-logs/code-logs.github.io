@@ -12,7 +12,11 @@ export const META_CONTENTS = {
     DESCRIPTION: (title: string, description: string, category: string, tags: string[]) =>
       `Code Logs ${title} - ${description} | ${category}, ${tags.join(', ')}`,
   },
-  CATEGORIES: {
+  CATEGORIES_INDEX: {
+    TITLE: 'Categories',
+    DESCRIPTION: 'Browse all categories on code-logs.',
+  },
+  CATEGORY_DETAIL: {
     TITLE: (category: string) => category,
     DESCRIPTION: (category: string, page: number) => `Code Logs | ${category} 연관 포스팅 목록 ${page} 페이지`
   },

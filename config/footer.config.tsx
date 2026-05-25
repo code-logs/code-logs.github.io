@@ -27,7 +27,7 @@ const footerConfig: FooterConfig = {
   socialLinks: [
     { label: 'GitHub', href: 'https://github.com/possible819', icon: <GithubIcon /> },
   ],
-  categoriesViewAllHref: null,
+  categoriesViewAllHref: '/categories',
 }
 
 export default footerConfig

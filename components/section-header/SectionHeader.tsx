@@ -1,7 +1,6 @@
 export interface SectionHeaderProps {
   title: string
   // When omitted the "View all →" link is not rendered.
-  // Categories deliberately omits this until /categories index page exists (#155).
   viewAllHref?: string
 }
 

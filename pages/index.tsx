@@ -114,9 +114,9 @@ const Home: NextPage<{
         </div>
       </section>
 
-      {/* Categories — top 8, no "View all" until /categories index exists (#155) */}
+      {/* Categories — top 8, "View all →" links to the /categories index (#155) */}
       <section className="mb-16">
-        <SectionHeader title="Categories" />
+        <SectionHeader title="Categories" viewAllHref="/categories" />
         <CategoriesGrid categoriesWithCount={categoriesWithCount} />
       </section>
 
