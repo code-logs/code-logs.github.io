@@ -28,6 +28,10 @@ export const META_CONTENTS = {
     TITLE: 'About',
     DESCRIPTION: 'Code Logs | 웹개발과 관련된 정보를 기록하고 공유하는 개인공간 입니다.'
   },
+  LICENSES: {
+    TITLE: 'Licenses',
+    DESCRIPTION: 'Third-party packages used on code-logs.',
+  },
   NOT_FOUND: {
     TITLE: '페이지를 찾을 수 없음',
     DESCRIPTION: 'Code Logs | 페이지를 찾을 수 없습니다! 입력하신 URL을 확인해 주세요.',
