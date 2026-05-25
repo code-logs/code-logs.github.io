@@ -488,6 +488,17 @@ Shadow DOM의 이해`,
       }
     ]
   }
+,
+  {
+    title: `테스트 포스팅`,
+    description: `블로그 발행 파이프라인 확인을 위한 아주 간단한 테스트 포스팅`,
+    fileName: 'test-post.md',
+    category: CATEGORIES['개발환경'],
+    published: true,
+    publishedAt: `2026-05-25`,
+    thumbnailName: `test-post.png`,
+    tags: [`test`, `blog`, `개발환경`],
+  },
 ]
 
 export default posts
