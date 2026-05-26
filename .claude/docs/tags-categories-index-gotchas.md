@@ -50,6 +50,24 @@ The `/tags` and `/categories` index pages (issue #156) share one sticky alphabet
 - **Why:** `CategoriesGrid` is reused by both the home page and `/categories`. Letter anchors only belong on the full index.
 - **Rule:** Pass `enableLetterAnchors` ONLY from `/categories`. When on, the first card of each letter group (in the caller's sort order) gets `id={letter}` + `scroll-margin-top`; the home page omits the prop.
 
+### `/tags` empty state MUST replace the all-muted nav, not sit beside it
+
+- **Symptom:** With zero published tags the page renders a `PageHeader` reading `0 tags · 0 uses`, an `AlphabetNav` whose every letter is muted/non-interactive, no letter sections, and a lone `MainAdsBanner` — it reads as broken.
+- **Why:** `AlphabetNav` always renders its A–Z + Korean rows; with no active letters every entry falls through to the muted `<span>` branch. An empty body plus an ad is not a designed state.
+- **Rule:** Gate on `isEmpty = activeLetterList.length === 0`. When empty, render ONLY the inline empty-state block (centered, lucide `Tags` icon, `h2`, muted copy, `Browse posts` CTA) and SKIP `AlphabetNav`, the letter sections, and `MainAdsBanner`. Keep `CommonMeta` and `PageHeader`. Do NOT attach `MainAdsBanner` to a content-empty page (see [ads-placement-list-pages-gotchas.md](ads-placement-list-pages-gotchas.md)). The empty state is effectively unreachable in production (posts exist) but satisfies the QA empty-state requirement cheaply — keep it a minimal inline branch, do not over-build.
+
+### `/tags` Popular section MUST be gated on distinct-tag count, not occurrence count
+
+- **Symptom:** With few distinct tags the "Popular tags" section lists the same tags that the alphabetical sections below already show — pure duplication.
+- **Why:** `popularTags` is the top-`POPULAR_LIMIT` slice; when the total distinct tags are ≤ `POPULAR_LIMIT` that slice IS the whole set, so it duplicates the full listing.
+- **Rule:** Render Popular only when `showPopular = uniqueTagCount > POPULAR_LIMIT` (strict `>`: exactly `POPULAR_LIMIT` distinct tags still duplicates, so hide). NEVER gate on `popularTags.length > 0`. The "View all below ↓" anchor lives inside this section, so it disappears with it — correct, since there is nothing to scroll past.
+
+### `/tags` empty-state CTA uses a `POSTS_HREF` const to dodge the lint rule
+
+- **Symptom:** `@next/next/no-html-link-for-pages` errors on an inline `<a href="/posts/1">` in `pages/tags/index.tsx`.
+- **Why:** The rule statically scans literal internal `href`s on native `<a>`; the site convention is native `<a>` for internal nav, so the literal must be hidden behind a const.
+- **Rule:** Hoist the path to a module-level `const POSTS_HREF = '/posts/1'` and reference it, mirroring `components/no-found-posting/NoFoundPosting.tsx`. The empty-state block reuses `NoFoundPosting`'s visual language inline rather than the component itself, because `NoFoundPosting` carries search-specific copy and a required `condition` prop.
+
 ## Conventions
 
 - **Key↔label sort invariant (`/categories`):** `getStaticProps` sorts cards by the category *key* (`a.category.localeCompare(b.category)`, the #155 decision), but `activeLetters` and card anchors derive from the display *label* via `getIndexLetter(label)`. This is correct ONLY while each `CATEGORIES` key and its label share a first letter (true for the current map). If a future label's first letter diverges from its key, switch the sort to the label, or anchors will land on a non-first card. A comment at the sort site records this. For the key-as-slug vs. value-as-label distinction when building category *hrefs*, see [category-key-label-slug-gotchas.md](category-key-label-slug-gotchas.md).

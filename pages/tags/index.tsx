@@ -1,4 +1,5 @@
 import { NextPage } from 'next'
+import { Tags as TagsIcon } from 'lucide-react'
 import AlphabetNav from '../../components/alphabet-nav/AlphabetNav'
 import CommonMeta from '../../components/common-meta/CommonMeta'
 import MainAdsBanner from '../../components/ads-banner/MainAdsBanner'
@@ -13,6 +14,11 @@ import { ENGLISH_LETTERS, getIndexLetter, KOREAN_GROUPS, OTHER_GROUP } from '../
 import TitleUtil from '../../utils/TitleUtil'
 
 const POPULAR_LIMIT = 10
+
+// Native <a> for internal navigation (site-wide convention); the literal path
+// lives in a const to stay out of the statically-analyzed no-html-link-for-pages
+// rule, matching NoFoundPosting.
+const POSTS_HREF = '/posts/1'
 
 // Every bucket in render order: A–Z, the 14 Korean groups, then the catch-all.
 const ALL_LETTERS = [...ENGLISH_LETTERS, ...KOREAN_GROUPS, OTHER_GROUP]
@@ -67,6 +73,13 @@ const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
   const activeLetters = new Set(activeLetterList)
   const firstActiveLetter = activeLetterList[0]
 
+  // No published tags at all: render a friendly empty state instead of an
+  // all-muted AlphabetNav + ad-only body, which reads as broken.
+  const isEmpty = activeLetterList.length === 0
+  // Hide "Popular tags" when the distinct-tag count is small enough that the
+  // section would just duplicate the full alphabetical listing below.
+  const showPopular = uniqueTagCount > POPULAR_LIMIT
+
   return (
     <section className="container-content py-12">
       <CommonMeta
@@ -82,7 +95,25 @@ const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
         breadcrumb={[{ label: 'Posts', href: '/posts/1' }, { label: META_CONTENTS.TAGS.TITLE }]}
       />
 
-      {popularTags.length > 0 && (
+      {isEmpty && (
+        <section className="mx-auto max-w-md py-16 text-center">
+          <TagsIcon className="mx-auto mb-4 h-12 w-12 text-text-muted" strokeWidth={1.5} />
+          <h2 className="text-2xl font-semibold text-text-heading">No tags yet</h2>
+          <p className="mt-2 text-sm text-text-muted">
+            Tags will appear here once posts are published.
+            <br />
+            Browse all posts in the meantime.
+          </p>
+          <a
+            href={POSTS_HREF}
+            className="mt-6 inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-medium hover:bg-bg-subtle"
+          >
+            Browse posts
+          </a>
+        </section>
+      )}
+
+      {!isEmpty && showPopular && (
         <section className="mb-10">
           <SectionHeader title="Popular tags" />
           <TagsComponent tags={popularTags} />
@@ -97,21 +128,25 @@ const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
         </section>
       )}
 
-      <AlphabetNav activeLetters={activeLetters} ariaLabel="Tag index navigation" />
+      {!isEmpty && (
+        <>
+          <AlphabetNav activeLetters={activeLetters} ariaLabel="Tag index navigation" />
 
-      {activeLetterList.map((letter) => (
-        <section
-          key={letter}
-          id={letter}
-          className="mt-12 border-t border-divider pt-6"
-          style={{ scrollMarginTop: 'calc(var(--header-height) + var(--spacing-12))' }}
-        >
-          <h2 className="mb-4 text-2xl font-semibold text-text-heading">{letter}</h2>
-          <TagsComponent tags={tagsByLetter[letter]} />
-        </section>
-      ))}
+          {activeLetterList.map((letter) => (
+            <section
+              key={letter}
+              id={letter}
+              className="mt-12 border-t border-divider pt-6"
+              style={{ scrollMarginTop: 'calc(var(--header-height) + var(--spacing-12))' }}
+            >
+              <h2 className="mb-4 text-2xl font-semibold text-text-heading">{letter}</h2>
+              <TagsComponent tags={tagsByLetter[letter]} />
+            </section>
+          ))}
 
-      <MainAdsBanner />
+          <MainAdsBanner />
+        </>
+      )}
     </section>
   )
 }
