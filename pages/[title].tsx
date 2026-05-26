@@ -124,7 +124,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, readingTime,
   }, [content])
 
   return (
-    <div className="post-detail-layout">
+    <div className="post-detail-layout py-12">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.POST.TITLE(post.title))}
         description={META_CONTENTS.POST.DESCRIPTION(post.title, post.description, post.category, post.tags)}
