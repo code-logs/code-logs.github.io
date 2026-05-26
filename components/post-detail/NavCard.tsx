@@ -17,7 +17,7 @@ const NavCard = ({ direction, label, title, description, href }: NavCardProps) =
   return (
     <a
       href={href}
-      className={`card-hover group flex flex-col gap-1 rounded-lg border border-border ring-1 ring-border p-4 no-underline ${
+      className={`card-hover group flex flex-col gap-1 rounded-lg ring-1 ring-border p-4 no-underline ${
         isPrev ? 'items-start text-left' : 'items-end text-right'
       }`}
     >

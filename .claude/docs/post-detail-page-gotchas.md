@@ -44,6 +44,12 @@ The post route `/[title]` (issue #153) is a TOC-hybrid reading page: `PostHeader
 - **Why:** `Utterrances.tsx` derives the widget theme from next-themes' `resolvedTheme` (mapping `dark→github-dark`, `light→github-light`). The script is injected once **after** `resolvedTheme` is known (avoids a wrong-theme flash), and later toggles are pushed to the loaded iframe via `postMessage({ type: 'set-theme', theme }, 'https://utteranc.es')`.
 - **Rule:** Do not pass a static `theme` prop or revert to `preferred-color-scheme`. Guard against `resolvedTheme` being `undefined` on first render. The toggle-time `postMessage` is a no-op until the `.utterances-frame` iframe exists — that is expected (the initial theme was already set on the script tag).
 
+### `MoreFromCategory` desktop columns MUST track the visible post count via static literals
+
+- **Symptom:** A category with only 1–2 other posts renders the "More from" cards as lone, narrow, left-skewed cards in a fixed 3-wide grid; OR the grid loses its column count entirely (renders `class="grid  gap-6 …"`) after a "simplification".
+- **Why:** `getStaticProps` slices to `MORE_FROM_CATEGORY_LIMIT = 3`, so the section can receive 1, 2, or 3 posts. The desktop column count is chosen via `DESKTOP_GRID_COLS[Math.min(posts.length, 3)]` (issue #192) so 1–2 posts fill the row instead of skewing left. Tailwind v4 JIT purges any class it cannot see as a whole string — a computed `grid-cols-${n}` would be stripped, leaving no column utility.
+- **Rule:** Keep the column class as a lookup into a static-literal map (`grid-cols-1/2/3`), NEVER a template string. Keep the `?? 'grid-cols-3'` fallback and the `max-tablet:grid-cols-1` mobile override. See [styling-gotchas.md](styling-gotchas.md) for the JIT-detectable-class rule.
+
 ## Conventions
 
 - The post route uses `.post-detail-layout` (defined in `globals.css`), NOT `container-reading` — a centered 1080 shell that becomes `grid-template-columns: minmax(0, 720px) var(--aside-width)` at ≥1024. The TOC aside is `max-lg:hidden`; `MobileToc` is `lg:hidden`. The 1024 breakpoint matches the layout system's desktop tier.
@@ -51,6 +57,7 @@ The post route `/[title]` (issue #153) is a TOC-hybrid reading page: `PostHeader
 - `MainAdsBanner` sits between the body and the footer sections (body-end ↔ PostFooter). Keep it there; the AdSense narrow-viewport guard still applies — see [ads-adsense-rendering-gotchas.md](ads-adsense-rendering-gotchas.md).
 - Prev/Next semantics: `postsDatabase.findPrevious(post)` returns the **older** post (next index in the publishedAt-desc dataset), `findNext` the **newer** one; both return `undefined` at the chronological boundaries. `getStaticProps` MUST coerce these to `null` (Next.js rejects `undefined` in JSON props).
 - `MoreFromCategory` reuses `PostCardGrid` (issue #152), which requires `readingTime` per post — compute it in `getStaticProps` with `calculateReadingTime` ([post-reading-time-gotchas.md](post-reading-time-gotchas.md)), never in the component.
+- Card edge convention is `ring-1 ring-border` with NO `border` (matches `PostCardGrid`). `NavCard` previously carried both `border border-border` and `ring-1 ring-border`, doubling the edge to 2px (issue #192) — keep cards on the single-ring edge so they stay consistent and flip cleanly per theme via `--color-border`.
 - Internal page links use native `<a>` (full reload) site-wide. A literal internal path like `/posts/1` trips the `no-html-link-for-pages` ESLint rule — keep it in a const so the analyzer treats it as dynamic, matching the dynamic hrefs elsewhere.
 
 ## Rationale
