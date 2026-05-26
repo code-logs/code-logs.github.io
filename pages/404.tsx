@@ -34,7 +34,7 @@ const NotFound = () => {
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/"
-          className="inline-flex items-center gap-2 h-10 px-5 rounded-md bg-text-heading text-bg-page text-sm font-medium transition-colors hover:bg-accent"
+          className="inline-flex items-center gap-2 h-10 px-5 rounded-md bg-text-heading text-bg-page text-sm font-medium transition-colors hover:bg-accent-strong"
         >
           <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
           홈으로
