@@ -1,5 +1,4 @@
 import { NextPage } from 'next'
-import MainAdsBanner from '../../../components/ads-banner/MainAdsBanner'
 import CategoryIndexer from '../../../components/category-indexer/CategoryIndexer'
 import CommonMeta from '../../../components/common-meta/CommonMeta'
 import PageHeader from '../../../components/page-header/PageHeader'
@@ -96,7 +95,7 @@ const Category: NextPage<{
           description={META_CONTENTS.CATEGORY_DETAIL.DESCRIPTION(category, page)}
           url={`${blogConfig.baseURL}/categories/${encodeURIComponent(category)}/${page}`}
           imageURL={'/icons/icon-512x512.png'}
-          keywords={posts.map((post) => [...post.tags, post.title, post.category, post.description]).flat()}
+          keywords={Array.from(new Set(posts.flatMap((post) => [...post.tags, post.title, post.category])))}
         />
 
         <PageHeader
@@ -106,8 +105,6 @@ const Category: NextPage<{
         />
 
         <PostCardList titleLevel={2} posts={posts} />
-
-        <MainAdsBanner />
 
         <Paginator
           page={page}
