@@ -44,6 +44,12 @@ The color system is a two-tier palette layered under semantic aliases: **Zinc 9-
 - **Why:** The semantic tokens (`--color-text-body`, `--color-text-heading`, …) are what get re-pointed in the `.dark` block. Primitive tokens (`--color-neutral-*`, `--color-accent-*`) are also overridden in dark mode, but bypass the semantic intent — a component that says "I want neutral-700 specifically" gets `#d4d4d8` in dark mode, which is intended for *body text on dark*, not whatever the component meant.
 - **Rule:** Components MUST use only semantic utilities (`text-text-body`, `text-text-muted`, `text-text-heading`, `bg-bg-page`, `bg-bg-subtle`, `border-divider`, `border-border`, `text-link`, `text-danger`, …). The exceptions are the code-surface tokens (`--color-code-bg`, `--color-text-body-code`, `--syntax-*`) consumed by `.prose.post-body` + `styles/highlight.css` (issue #153). Primitives are palette infrastructure, not application surface.
 
+### A `hover:bg-bg-page` on a raised surface emphasizes in light but de-emphasizes in dark
+
+- **Symptom:** A chip/button that rests on `bg-bg-subtle` and swaps to `hover:bg-bg-page` looks like a correct "brighten on hover" in light mode, but in dark mode the same hover makes it vanish into the page (the surface darkens to the page background, leaving only its ring).
+- **Why:** `--color-bg-page` is the lightest neutral in light mode but the *darkest* in dark mode (the neutral flip — see "Dark mode flips only what diverges"). `bg-subtle → bg-page` therefore increases contrast-against-page in light mode and decreases it in dark mode. The hover direction is theme-asymmetric, so testing only one theme hides the regression. Found on the `/about` Topics chips (issue #187).
+- **Rule:** NEVER express an emphasis-adding hover as a swap *toward* `bg-bg-page`. For a theme-symmetric hover, either add depth with the `clickable` utility (translateY lift + `shadow-md`, color-independent — this is what the `#144 <Tag>` chips use) or move *up* a surface step (`bg-subtle → bg-surface`), not down to the page. A hover must read the same direction in both modes.
+
 ### `border-border` vs `border-divider` is semantic, not stylistic
 
 - **Symptom:** A new component picks one of `border-border` / `border-divider` based on which name reads better, and the visual weight ends up wrong.
