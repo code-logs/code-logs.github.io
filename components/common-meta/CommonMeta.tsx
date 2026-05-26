@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { ReactElement } from 'react'
 import blogConfig from '../../config/blog.config'
 import useAdsense from '../../hooks/useAdsense'
+import PathUtil from '../../utils/PathUtil'
 
 // Article-level OpenGraph metadata (issue #153). When supplied, the page is
 // tagged as an `article` (overriding the default `website` og:type via the
@@ -25,6 +26,10 @@ const CommonMeta = (props: CommonMetaProps) => {
   const { title, description, keywords, url, imageURL, article, customMeta } = props
   useAdsense(blogConfig.googleAdsense.adClient)
 
+  // OG/Twitter cards require an absolute URL; callers pass a site-relative path
+  // (`/icons/...` or `/assets/images/...`), so absolutize here once for every page.
+  const absoluteImageURL = PathUtil.absolutePath(imageURL)
+
   return (
     <Head>
       <link rel="canonical" href={url} />
@@ -41,15 +46,15 @@ const CommonMeta = (props: CommonMetaProps) => {
       <meta property="og:type" key="og:type" content={article ? 'article' : 'website'} />
       <meta property="og:site_name" key="og:site_name" content={blogConfig.title} />
       <meta name="author" key="author" content={blogConfig.author} />
-      <meta name="viewport" content="width=device-width, user-scalable=no" />
+      <meta name="viewport" key="viewport" content="width=device-width, initial-scale=1" />
 
       {/* Dynamic meta */}
-      {keywords?.length && <meta name="keyword" key="keyword" content={keywords!.join(', ')} />}
+      {!!keywords?.length && <meta name="keywords" key="keywords" content={keywords.join(', ')} />}
       <meta name="description" key="description" content={description} />
       <meta property="og:description" key="og:description" content={description} />
       <meta property="og:title" key="og:title" content={title} />
       <meta property="og:url" key="og:url" content={url} />
-      <meta property="og:image" key="og:image" content={imageURL} />
+      <meta property="og:image" key="og:image" content={absoluteImageURL} />
 
       {/* Article meta (issue #153) */}
       {article && (
@@ -60,7 +65,7 @@ const CommonMeta = (props: CommonMetaProps) => {
             <meta property="article:tag" key={`article:tag:${tag}`} content={tag} />
           ))}
           <meta name="twitter:card" key="twitter:card" content="summary_large_image" />
-          <meta name="twitter:image" key="twitter:image" content={imageURL} />
+          <meta name="twitter:image" key="twitter:image" content={absoluteImageURL} />
         </>
       )}
 
