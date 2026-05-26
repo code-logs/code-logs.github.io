@@ -34,6 +34,12 @@ const Paginator = ({ page, lastPage, displayCount = 5, query, baseURL }: Paginat
     setPageList([...prevPages, page, ...nextPages])
   }, [page, lastPage, displayCount])
 
+  // A single (or empty) page needs no navigation — render nothing rather than a
+  // lone "1" flanked by two disabled arrows. Placed after hooks so the hook call
+  // order stays unconditional (React rules-of-hooks). Shared by /posts and
+  // /categories/[category]/[page].
+  if (lastPage <= 1) return null
+
   const buildURL = (target: number) => {
     let url = `${baseURL}/${target}`
     if (query) url += `?query=${query}`
