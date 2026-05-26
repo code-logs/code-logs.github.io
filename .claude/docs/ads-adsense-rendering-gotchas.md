@@ -41,3 +41,7 @@ This page documents pitfalls in the AdSense ad rendering system and the `aside` 
 ## Rationale
 
 The 3-column equal-fraction grid with a fixed-width main column is a legacy layout decision. Rather than refactoring the grid (high risk, wide blast radius), the safer fix was a JS-level render gate (`useIsMobile` threshold) backed by a component-level push guard (`MIN_SLOT_WIDTH`). The two layers are complementary: the threshold prevents rendering the aside entirely at unsafe widths, and the push guard is a last-resort safety net for any future caller that bypasses the render gate.
+
+## Related
+
+- [ads-placement-list-pages-gotchas.md](ads-placement-list-pages-gotchas.md) — sibling concern: where `MainAdsBanner` units are placed on list pages and why a standalone banner must not be added next to `PostCardList`. This doc covers *whether an ad can render*; that doc covers *where ads are placed*.
