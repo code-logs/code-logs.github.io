@@ -14,7 +14,7 @@ export const META_CONTENTS = {
   },
   CATEGORIES_INDEX: {
     TITLE: 'Categories',
-    DESCRIPTION: 'Browse all categories on code-logs.',
+    DESCRIPTION: 'Code Logs | 전체 카테고리 목록',
   },
   CATEGORY_DETAIL: {
     TITLE: (category: string) => category,
@@ -22,7 +22,7 @@ export const META_CONTENTS = {
   },
   TAGS: {
     TITLE: 'Tags',
-    DESCRIPTION: 'Browse posts by tag on code-logs.',
+    DESCRIPTION: 'Code Logs | 태그별 포스팅 목록',
   },
   ABOUT: {
     TITLE: 'About',
@@ -30,7 +30,7 @@ export const META_CONTENTS = {
   },
   LICENSES: {
     TITLE: 'Licenses',
-    DESCRIPTION: 'Third-party packages used on code-logs.',
+    DESCRIPTION: 'Code Logs | 사용 중인 오픈소스 패키지 라이선스 목록',
   },
   NOT_FOUND: {
     TITLE: '페이지를 찾을 수 없음',
