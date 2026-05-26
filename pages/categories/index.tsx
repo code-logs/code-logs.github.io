@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import AlphabetNav from '../../components/alphabet-nav/AlphabetNav'
 import CategoriesGrid, { CategoryWithCount } from '../../components/categories-grid/CategoriesGrid'
 import CommonMeta from '../../components/common-meta/CommonMeta'
+import MainAdsBanner from '../../components/ads-banner/MainAdsBanner'
 import PageHeader from '../../components/page-header/PageHeader'
 import blogConfig from '../../config/blog.config'
 import { META_CONTENTS } from '../../config/meta-contents'
@@ -43,8 +44,10 @@ const CategoriesIndex: NextPage<CategoriesIndexProps> = ({ categoriesWithCount }
     )
   )
 
+  const categoryCount = categoriesWithCount.length
+
   return (
-    <div className="container-content py-12">
+    <section className="container-content py-12">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.CATEGORIES_INDEX.TITLE)}
         description={META_CONTENTS.CATEGORIES_INDEX.DESCRIPTION}
@@ -55,7 +58,7 @@ const CategoriesIndex: NextPage<CategoriesIndexProps> = ({ categoriesWithCount }
 
       <PageHeader
         title={META_CONTENTS.CATEGORIES_INDEX.TITLE}
-        subtitle={`Browse posts by topic. ${categoriesWithCount.length} categories.`}
+        subtitle={`Browse posts by topic. ${categoryCount} ${categoryCount === 1 ? 'category' : 'categories'}.`}
         breadcrumb={[{ label: 'Posts', href: '/posts/1' }, { label: META_CONTENTS.CATEGORIES_INDEX.TITLE }]}
       />
 
@@ -64,7 +67,9 @@ const CategoriesIndex: NextPage<CategoriesIndexProps> = ({ categoriesWithCount }
       <div className="mt-8">
         <CategoriesGrid categoriesWithCount={categoriesWithCount} enableLetterAnchors />
       </div>
-    </div>
+
+      <MainAdsBanner />
+    </section>
   )
 }
 
