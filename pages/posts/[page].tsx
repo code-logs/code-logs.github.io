@@ -148,7 +148,12 @@ const Posts: NextPage<PostsProps> = (props) => {
             location.href = url.href
           }}
         >
-          <SearchInput placeholder="Search posts..." name="query" defaultValue={decodedQuery} />
+          <SearchInput
+            placeholder="Search posts..."
+            aria-label="Search posts"
+            name="query"
+            defaultValue={decodedQuery}
+          />
         </form>
 
         {!!posts.length && (
