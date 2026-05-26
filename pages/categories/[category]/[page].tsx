@@ -89,7 +89,7 @@ const Category: NextPage<{
   const label = (CATEGORIES as Record<string, string>)[category] ?? category
 
   return (
-    <div className="container-content layout-with-aside">
+    <div className="container-content layout-with-aside py-12">
       <div>
         <CommonMeta
           title={TitleUtil.buildPageTitle(META_CONTENTS.CATEGORY_DETAIL.TITLE(category))}

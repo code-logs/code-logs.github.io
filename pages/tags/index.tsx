@@ -1,4 +1,3 @@
-import { ArrowLeft } from 'lucide-react'
 import { NextPage } from 'next'
 import AlphabetNav from '../../components/alphabet-nav/AlphabetNav'
 import CommonMeta from '../../components/common-meta/CommonMeta'
@@ -12,10 +11,6 @@ import { META_CONTENTS } from '../../config/meta-contents'
 import postsDatabase from '../../database/post-database'
 import { ENGLISH_LETTERS, getIndexLetter, KOREAN_GROUPS, OTHER_GROUP } from '../../utils/HangulUtil'
 import TitleUtil from '../../utils/TitleUtil'
-
-// Native <a> for internal navigation kept in a const so the literal path stays
-// out of the no-html-link-for-pages rule, matching the site-wide convention.
-const POSTS_HREF = '/posts/1'
 
 const POPULAR_LIMIT = 10
 
@@ -73,7 +68,7 @@ const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
   const firstActiveLetter = activeLetterList[0]
 
   return (
-    <section className="container-content">
+    <section className="container-content py-12">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.TAGS.TITLE)}
         description={META_CONTENTS.TAGS.DESCRIPTION}
@@ -81,20 +76,11 @@ const Tags: NextPage<{ tags: string[] }> = ({ tags }) => {
         imageURL={'/icons/icon-512x512.png'}
       />
 
-      <a
-        href={POSTS_HREF}
-        className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-heading"
-      >
-        <ArrowLeft size={16} aria-hidden />
-        Posts
-      </a>
-
-      <div className="mt-6">
-        <PageHeader
-          title={META_CONTENTS.TAGS.TITLE}
-          subtitle={`${uniqueTagCount} tags · ${totalUsage} uses`}
-        />
-      </div>
+      <PageHeader
+        title={META_CONTENTS.TAGS.TITLE}
+        subtitle={`${uniqueTagCount} tags · ${totalUsage} uses`}
+        breadcrumb={[{ label: 'Posts', href: '/posts/1' }, { label: META_CONTENTS.TAGS.TITLE }]}
+      />
 
       {popularTags.length > 0 && (
         <section className="mb-10">

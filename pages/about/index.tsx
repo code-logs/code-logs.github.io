@@ -28,7 +28,7 @@ const subLabel = 'mt-8 mb-0 text-base font-semibold text-text-heading'
 
 const About = ({ careerYears, categoryChips }: AboutProps) => {
   return (
-    <div className="container-reading py-16">
+    <div className="container-reading py-12">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.ABOUT.TITLE)}
         description={META_CONTENTS.ABOUT.DESCRIPTION}

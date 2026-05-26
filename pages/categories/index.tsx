@@ -1,4 +1,3 @@
-import { ArrowLeft } from 'lucide-react'
 import { NextPage } from 'next'
 import AlphabetNav from '../../components/alphabet-nav/AlphabetNav'
 import CategoriesGrid, { CategoryWithCount } from '../../components/categories-grid/CategoriesGrid'
@@ -10,10 +9,6 @@ import { CATEGORIES } from '../../config/posts.config'
 import postsDatabase from '../../database/post-database'
 import { getIndexLetter } from '../../utils/HangulUtil'
 import TitleUtil from '../../utils/TitleUtil'
-
-// Native <a> for internal navigation kept in a const so the literal path stays
-// out of the no-html-link-for-pages rule, matching the site-wide convention.
-const POSTS_HREF = '/posts/1'
 
 interface CategoriesIndexProps {
   categoriesWithCount: CategoryWithCount[]
@@ -49,7 +44,7 @@ const CategoriesIndex: NextPage<CategoriesIndexProps> = ({ categoriesWithCount }
   )
 
   return (
-    <div className="container-content">
+    <div className="container-content py-12">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.CATEGORIES_INDEX.TITLE)}
         description={META_CONTENTS.CATEGORIES_INDEX.DESCRIPTION}
@@ -58,20 +53,11 @@ const CategoriesIndex: NextPage<CategoriesIndexProps> = ({ categoriesWithCount }
         keywords={categoriesWithCount.map(({ category }) => category)}
       />
 
-      <a
-        href={POSTS_HREF}
-        className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-heading"
-      >
-        <ArrowLeft size={16} aria-hidden />
-        Posts
-      </a>
-
-      <div className="mt-6">
-        <PageHeader
-          title={META_CONTENTS.CATEGORIES_INDEX.TITLE}
-          subtitle={`Browse posts by topic. ${categoriesWithCount.length} categories.`}
-        />
-      </div>
+      <PageHeader
+        title={META_CONTENTS.CATEGORIES_INDEX.TITLE}
+        subtitle={`Browse posts by topic. ${categoriesWithCount.length} categories.`}
+        breadcrumb={[{ label: 'Posts', href: '/posts/1' }, { label: META_CONTENTS.CATEGORIES_INDEX.TITLE }]}
+      />
 
       <AlphabetNav activeLetters={activeLetters} ariaLabel="Category index navigation" />
 
