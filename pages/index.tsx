@@ -83,7 +83,7 @@ const Home: NextPage<{
   const { featuredPost, recentPosts, categoriesWithCount, tagsWithCount, totalPostCount, lastUpdated } = props
 
   return (
-    <div className="container-content">
+    <div className="container-content py-12">
       <CommonMeta
         title={TitleUtil.buildPageTitle(META_CONTENTS.MAIN.TITLE)}
         description={META_CONTENTS.MAIN.DESCRIPTION}

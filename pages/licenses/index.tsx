@@ -59,7 +59,7 @@ const Licenses = () => {
       <PageHeader
         title="Licenses"
         subtitle={`Third-party packages used in this site. ${items.length} packages.`}
-        breadcrumb={[{ label: '← About', href: '/about' }]}
+        breadcrumb={[{ label: 'About', href: '/about' }, { label: 'Licenses' }]}
       />
 
       {/* Inline filter — URL state is overkill here (resets on reload, per #159).

@@ -117,7 +117,7 @@ const Posts: NextPage<PostsProps> = (props) => {
     : `Total ${count} ${count === 1 ? 'post' : 'posts'}`
 
   return (
-    <div className="container-content layout-with-aside">
+    <div className="container-content layout-with-aside py-12">
       <div>
         <CommonMeta
           title={TitleUtil.buildPageTitle(META_CONTENTS.POSTS.TITLE)}
