@@ -43,9 +43,20 @@ const items: PackageItem[] = Object.entries(licenses as Record<string, LicenseEn
 const Licenses = () => {
   const [filter, setFilter] = useState('')
 
-  const filteredItems = filter
-    ? items.filter((item) => item.name.toLowerCase().includes(filter.toLowerCase()))
+  const trimmedFilter = filter.trim()
+  const hasFilter = trimmedFilter.length > 0
+  const filteredItems = hasFilter
+    ? items.filter((item) => item.name.toLowerCase().includes(trimmedFilter.toLowerCase()))
     : items
+
+  // Single always-mounted live region so result-count transitions are announced
+  // (mounting it only while filtering would skip the first keystroke's update).
+  // Silent when no filter — the PageHeader subtitle owns the unfiltered total.
+  const statusMessage = !hasFilter
+    ? ''
+    : filteredItems.length === 0
+      ? `No packages match "${trimmedFilter}"`
+      : `Showing ${filteredItems.length} of ${items.length} packages`
 
   return (
     <div className="container-reading py-12">
@@ -78,11 +89,21 @@ const Licenses = () => {
         />
       </div>
 
-      {filteredItems.length === 0 ? (
-        <p role="status" className="py-8 text-center text-sm text-text-muted">
-          No packages match &quot;{filter}&quot;
-        </p>
-      ) : (
+      <p
+        role="status"
+        aria-live="polite"
+        className={
+          !hasFilter
+            ? 'sr-only'
+            : filteredItems.length === 0
+              ? 'py-8 text-center text-sm text-text-muted'
+              : 'mt-4 text-sm text-text-muted'
+        }
+      >
+        {statusMessage}
+      </p>
+
+      {filteredItems.length > 0 && (
         <ul role="list" className="mt-6 list-none p-0">
           {filteredItems.map((item) => (
             // Rows reflow to 2 cols below 640px (name+version / chip+repo). This

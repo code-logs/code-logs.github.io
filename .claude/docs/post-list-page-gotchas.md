@@ -4,7 +4,7 @@ Read this when: editing `pages/posts/[page].tsx` (the `/posts/[page]` search/lis
 
 ## Overview
 
-`/posts/[page]` is the only list route with a client-side search form. This doc covers the search-form accessibility requirement, the shared `Paginator` self-gating invariant, and why the zero-posts empty state is unreachable here. Layout/aside structure lives in [layout-system-gotchas.md](layout-system-gotchas.md); in-list ad placement in [ads-placement-list-pages-gotchas.md](ads-placement-list-pages-gotchas.md).
+`/posts/[page]` is the only list route with a client-side search form. This doc covers the search-form accessibility requirement, the shared `Paginator` self-gating invariant, and why the zero-posts empty state is unreachable here. Layout/aside structure lives in [layout-system-gotchas.md](layout-system-gotchas.md); in-list ad placement in [ads-placement-list-pages-gotchas.md](ads-placement-list-pages-gotchas.md). The `/licenses` page has its own inline filter (not the shared `SearchInput`) with a different result-feedback model — see [licenses-page-gotchas.md](licenses-page-gotchas.md).
 
 ## Pitfalls
 
