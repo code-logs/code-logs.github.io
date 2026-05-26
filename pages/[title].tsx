@@ -130,7 +130,7 @@ const PostDetail: NextPage<PostDetailPageProps> = ({ post, content, readingTime,
         description={META_CONTENTS.POST.DESCRIPTION(post.title, post.description, post.category, post.tags)}
         url={`${blogConfig.baseURL}${PostUtil.buildLinkURLByTitle(post.title)}`}
         imageURL={PathUtil.buildImagePath(post.thumbnailName)}
-        keywords={[...post.tags, post.title, post.description, post.category]}
+        keywords={[...post.tags, post.title, post.category]}
         article={{ publishedAt: post.publishedAt, tags: post.tags }}
       />
 

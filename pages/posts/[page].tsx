@@ -124,7 +124,7 @@ const Posts: NextPage<PostsProps> = (props) => {
           description={META_CONTENTS.POSTS.DESCRIPTION(page)}
           url={`${blogConfig.baseURL}/posts/${page}`}
           imageURL={'/icons/icon-512x512.png'}
-          keywords={posts.map((post) => [...post.tags, post.title, post.description]).flat()}
+          keywords={Array.from(new Set(posts.flatMap((post) => [...post.tags, post.category])))}
           // Supplemental client-side signal; static export blocks search query
           // URLs at robots.txt because this meta appears only after hydration.
           customMeta={query ? <meta name="robots" content="noindex, follow" /> : undefined}
