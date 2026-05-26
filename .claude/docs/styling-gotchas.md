@@ -32,6 +32,12 @@ The project styles itself with Tailwind CSS v4 in CSS-first mode (no `tailwind.c
 - **Why:** The global `:focus-visible { box-shadow: var(--shadow-focus) }` base rule applies to *every* focusable element, so the inner `<input>` gets its own ring on top of the wrapper's `focus-within` ring.
 - **Rule:** Put the ring on the wrapper via `focus-within:shadow-focus` (the `--shadow-focus` token, NOT a hand-rolled `ring-*` utility — and note `ring-color-focus-ring` is not a valid utility name; the token is `--color-focus-ring` → `shadow-focus`). Then suppress the inner control's global ring with `focus-visible:shadow-none`. Pattern lives in `components/search-input/SearchInput.tsx` (issue #154).
 
+### A `z-10` on a decorative child lifts it above the stretched-link overlay, creating a click dead-zone
+
+- **Symptom:** A card uses the stretched-link pattern (a title `<a>` with `after:absolute after:inset-0` covering a `relative` card), yet clicking one inner element — e.g. a "Read post →" CTA — does nothing, even though the rest of the card navigates.
+- **Why:** The stretched-link `::after` overlay is a *positioned* element with `z-index: auto`. Any sibling/descendant given `relative z-10` is lifted into a higher stacking layer than the overlay, so pointer events land on that child instead of the link overlay. The child is not itself a link, so the click is swallowed.
+- **Rule:** Inside a stretched-link card, decorative children MUST NOT carry `relative z-10` (or any positive `z-index`). Keep them unpositioned so the `::after` overlay paints above them and the whole card stays one click target. Hover affordances like `group-hover:translate-x-0.5` are z-index-independent and still work. Only lift a child above the overlay when it is a *genuinely separate* interactive control (its own link/button). Precedent: `FeaturedPostCard.tsx` (CTA, issue #186) and `PostCardGrid.tsx` (no CTA) — both leave inner content unpositioned.
+
 ### `--breakpoint-tablet: 800px` is intentional, not a typo for `md`
 
 - **Symptom:** A new component uses `md:` for its tablet break and looks wrong at 769–800 px.
