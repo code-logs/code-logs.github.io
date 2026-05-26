@@ -16,7 +16,7 @@ const HomeHero = ({ lastUpdated, postCount }: HomeHeroProps) => {
   })
 
   return (
-    <section className="py-12 max-tablet:py-8">
+    <section className="pb-12 max-tablet:pb-8">
       <h1 className="font-mono text-5xl font-medium tracking-tighter text-text-heading max-tablet:text-3xl leading-tight m-0">
         code-logs
         <span className="text-accent">/</span>
