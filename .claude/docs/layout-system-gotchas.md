@@ -62,7 +62,7 @@ The common layout (issue #149) is a flex skeleton in `pages/_app.tsx` — `min-h
 
 - **Symptom:** A new page's top whitespace does not match the rest of the site, OR someone changes `.container-*`/`main` padding in `globals.css` to fix one page's spacing and every page shifts.
 - **Why:** Issue #185 unified the page-entry top rhythm to **`py-12`** (48px) applied on each page's top-level container element — `main` keeps its base `padding-top: var(--spacing-5)` (20px), so the real entry gap is 20 + 48. The value lives in the page, NOT in `globals.css`, precisely because the container/`main` rules have a site-wide blast radius (header padding alignment, footer spacing).
-- **Rule:** Every general page MUST put `py-12` on its top-level container (`container-reading`/`container-content`). NEVER move this into `.container-*` or `main` base rules. `pages/404.tsx` is the ONE exception — it is viewport-centered (`h-full flex ... justify-center py-16 md:py-24`) and is intentionally excluded from the `py-12` rhythm; do not "unify" it.
+- **Rule:** Every general page MUST put `py-12` on its top-level container (`container-reading`/`container-content`, and the post route's `.post-detail-layout` — which itself defines only `padding-inline`, so `py-12` is the sole source of its vertical entry gap). NEVER move this into `.container-*` or `main` base rules. `pages/404.tsx` is the ONE exception — it is viewport-centered (`h-full flex ... justify-center py-16 md:py-24`) and is intentionally excluded from the `py-12` rhythm; do not "unify" it.
 
 ### Parent/back navigation goes through `PageHeader` breadcrumb, NEVER an inline back-link
 
