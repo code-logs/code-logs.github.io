@@ -22,7 +22,8 @@ interface AboutProps {
 
 // Shared chip classes. Static chips (Stack/Interests) and linked Topics chips
 // share the same surface (bg-bg-subtle + ring) as the #144 <Tag> for visual
-// consistency; only the linked variant adds hover + `#` prefix.
+// consistency; the linked variant adds the `#` prefix and the same `clickable`
+// hover lift the <Tag> uses, so hover reads identically in light and dark.
 const chipBase = 'inline-flex px-3 py-1.5 rounded-sm bg-bg-subtle text-text-body text-sm ring-1 ring-border'
 const subLabel = 'mt-8 mb-0 text-base font-semibold text-text-heading'
 
@@ -94,7 +95,7 @@ const About = ({ careerYears, categoryChips }: AboutProps) => {
               <li key={label}>
                 <a
                   href={href}
-                  className={`${chipBase} transition-colors hover:bg-bg-page hover:text-text-heading before:content-['#'] before:text-text-muted before:mr-0.5`}
+                  className={`${chipBase} clickable before:content-['#'] before:text-text-muted before:mr-0.5`}
                 >
                   {label}
                 </a>
