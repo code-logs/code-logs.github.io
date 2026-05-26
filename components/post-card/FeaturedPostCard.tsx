@@ -62,8 +62,9 @@ const FeaturedPostCard = ({ post }: FeaturedPostCardProps) => {
             ))}
           </div>
 
-          {/* CTA */}
-          <span className="relative z-10 inline-flex items-center gap-1 text-sm font-medium text-accent group-hover:translate-x-0.5 transition-transform">
+          {/* CTA — decorative; intentionally NOT lifted above the stretched-link
+              overlay so the whole card (CTA text included) is a single click target. */}
+          <span className="pointer-events-none inline-flex items-center gap-1 text-sm font-medium text-accent group-hover:translate-x-0.5 transition-transform">
             Read post →
           </span>
         </div>
