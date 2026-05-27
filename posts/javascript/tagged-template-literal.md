@@ -1,9 +1,3 @@
-## Table of contents
-
-1. [Template Literal](#template-literal)
-1. [Tagged Template Literal](#tagged-template-literal)
-1. [Tagged Template Literal 사용법](#tagged-template-literal-사용법)
-
 ## Template Literal
 
 Template Literal은 ES6에 포함된 새로운 방식의 문자열 표현 방식이다.

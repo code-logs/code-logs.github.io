@@ -1,26 +1,3 @@
-## Table of contents
-
-1. [GraphQL](#graphql)
-1. [Typescript와 찰떡 궁합](#typescript와-찰떡-궁합)
-1. [Apollo Server](#apollo-server)
-1. [Apollo Server 구성하기](#apollo-server-구성하기)
-   1. [Schema - 객체 형태 정의하기](#schema---객체-형태-정의하기)
-   1. [Schema - Query 정의하기](#schema---query-정의하기)
-   1. [Schema - Mutation 정의하기](#schema---mutation-정의하기)
-   1. [Resolver - 실제 작업이 일어나는 곳](#resolver---실제-작업이-일어나는-곳)
-   1. [사전 작업 - Dummy data](#사전-작업---dummy-data)
-   1. [Query 작성하기](#query-작성하기)
-   1. [Mutation 작성하기](#mutation-작성하기)
-   1. [Apollo Server 실행하기](#apollo-server-실행하기)
-1. [Field resolver를 이용한 테이블 Join](#field-resolver를-이용한-테이블-join)
-1. [TypeGraphQL](#typegraphql)
-   1. [디펜던시 설치](#디펜던시-설치)
-   1. [tsconfig configuration](#tsconfig-configuration)
-   1. [Class 정의](#class-정의)
-   1. [Resolver 정의](#resolver-정의)
-   1. [Schema 생성하기](#schema-생성하기)
-   1. [그 밖의 설정들](#그-밖의-설정들)
-
 ## GraphQL
 
 > GraphQL은 2012년 부터 페이스북에 의해 개발되었으며 2015년에 공식적으로 발표되었다.

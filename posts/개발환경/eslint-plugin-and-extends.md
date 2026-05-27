@@ -1,10 +1,3 @@
-## Table of contents
-
-1. [Plugin](#plugin)
-1. [Sharable config](#sharable-config)
-1. [Plugin with config](#plugin-with-config)
-1. [마무리](#마무리)
-
 ## Plugin
 
 `Plugin`은 `ESLint` rule이 들어 있는 하나의 `Rule set` 이다.

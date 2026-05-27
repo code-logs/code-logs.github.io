@@ -1,15 +1,3 @@
-## Table of contents
-
-1. [Any](#any)
-   1. [Any 타입은 무엇인가?](#any-타입은-무엇인가)
-1. [Unknown](#unknown)
-   1. [Unknown 타입은 무엇인가?](#unknown-타입은-무엇인가)
-   1. [Any 타입과 Unknown 타입의 차이는?](#any-타입과-unknown-타입의-차이는)
-   1. [Unknown 타입 응용하기](#unknown-타입-응용하기)
-1. [Never](#never)
-   1. [Never 타입은 무엇인가?](#never-타입은-무엇인가)
-   1. [Never 타입 응용하기](#never-타입-응용하기)
-
 ## Any
 
 ### Any 타입은 무엇인가?

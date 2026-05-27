@@ -1,15 +1,3 @@
-## Table of contents
-
-1. [CSS의 Position 프로퍼티](#css의-position-프로퍼티)
-   1. [Static](#static)
-   1. [Relative](#relative)
-   1. [Absolute](#absolute)
-   1. [Fixed](#fixed)
-   1. [Sticky](#sticky)
-1. [Absolute를 이용한 고정 헤더](#absolute를-이용한-고정-헤더)
-1. [Fixed를 이용한 고정 헤더](#fixed를-이용한-고정-헤더)
-1. [Sticky를 이용한 고정 헤더](#sticky를-이용한-고정-헤더)
-
 ## CSS의 Position 프로퍼티
 
 CSS의 `Position` 속성은 문서상의 요소를 배치하는 방법을 지정한다. `Position` 속성의 값은 아래와 같다.

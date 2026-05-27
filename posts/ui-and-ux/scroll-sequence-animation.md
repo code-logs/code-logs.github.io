@@ -1,16 +1,3 @@
-## Table of contents
-
-1. [Scroll Sequence Animation](#scroll-sequence-animation)
-1. [How to implement](#how-to-implement)
-
-   1. [DOM 구조](#dom-구조)
-   1. [Canvas element 생성](#canvas-element-생성)
-   1. [Canvas API를 통한 이미지 그리기](#canvas-api를-통한-이미지-그리기)
-   1. [Scroll 이벤트 등록 및 현재 프레임 계산](#scroll-이벤트-등록-및-현재-프레임-계산)
-   1. [이미지 불러오기와 최적화](#이미지-불러오기와-최적화)
-   1. [초기 이미지 그리기](#초기-이미지-그리기)
-   1. [그 밖의 최적화](#그-밖의-최적화)
-
 ## Scroll Sequence Animation
 
 <div align=center>

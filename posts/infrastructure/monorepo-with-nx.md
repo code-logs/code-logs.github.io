@@ -1,19 +1,3 @@
-## Table of contents
-
-1. [Monorepo](#monorepo)
-1. [Nx](#nx)
-1. [Nx 프로젝트 구성하기](#nx-프로젝트-구성하기)
-   1. [새로운 Workspace 생성](#새로운-workspace-생성)
-   1. [NPM Package 생성](#npm-package-생성)
-   1. [Package 내부 script 실행](#package-내부-script-실행)
-   1. [여러 Package 내부 script 실행](#여러-package-내부-script-실행)
-   1. [Package간 참조 설정](#package간-참조-설정)
-   1. [NX Graph](#nx-graph)
-1. [Generator](#generator)
-   1. [Typescript Library Generator](#typescript-library-generator)
-   1. [React Library Generator](#react-library-generator)
-1. [마치며](#마치며)
-
 ## Monorepo
 
 `Monorepo`는 방대한 양의 프로젝트 코드를 단일 Repository에서 관리하는 전략이다. 개인적으로 4년 전쯤 (2022년 기준) 처음 도입해서 사용했는데, 프론트엔드 개발자로서 컴퍼넌트 개발을 많이했고 각 컴퍼넌트들이 분산된 저장소에서 관리됨으로 발생하는 문제점들을 획기적으로 개선하는 경험을 했다.

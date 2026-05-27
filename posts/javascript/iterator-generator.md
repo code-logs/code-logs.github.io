@@ -1,10 +1,3 @@
-## Table of contents
-
-1. [Iterable and Iterator](#iterable-and-iterator)
-   1. [Iterable](#iterable)
-   1. [iterator](#iterator)
-1. [Generator](#generator)
-
 ## Iterable and Iterator
 
 개발을 하다 보면 이런 에러 메시지를 마주치곤 한다.

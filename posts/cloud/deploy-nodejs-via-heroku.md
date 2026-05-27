@@ -1,24 +1,3 @@
-## Table of contents
-
-1. [What is Heroku?](#what-is-heroku)
-1. [Heroku CLI 설치하기](#heroku-cli-설치하기)
-1. [배포의 시작 - Heroku create](#배포의-시작---heroku-create)
-1. [배포하기 - Heroku 원격 저장소로 Push](#배포하기---heroku-원격-저장소에-push)
-1. [앱 실행을 위한 스크립트 정의 - Procfile](#앱-실행을-위한-스크립트-정의---procfile)
-1. [자동배포 - GitHub로 간단하게](#자동배포---github로-간단하게)
-1. [Scaling - Scale up/down & Scale out/in](#scaling---scale-updown--scale-outin)
-   1. [Scale up/down](#scale-updown)
-   1. [Scale out/in](#scale-outin)
-1. [그 밖의 내용](#그-밖의-내용)
-   1. [서비스 로그 보기 - Heroku logs](#서비스-로그-보기---heroku-logs)
-   1. [Local 환경에서 애플리케이션 실행하기](#local-환경에서-애플리케이션-실행하기)
-   1. [서비스 접속하기 - Heroku open](#서비스-접속하기---heroku-open)
-   1. [Heroku 내부가 궁금 할 때 - Heroku run bash](#heroku-내부가-궁금-할-때---heroku-run-bash)
-   1. [명령어와 로그 보기 - DEBUG=\*](#명령어와-로그-보기---debug)
-   1. [Project 커맨드 실행하기 - Heroku run cmd](project-커맨드-실행하기-heroku-run-cmd)
-   1. [Heroku 무료요금 정책](#heroku-무료요금-정책)
-1. [마치며](#마치며)
-
 ## What is Heroku?
 
 `Heroku`는 2007년 6월 개발이 시작된 최초의 클라우드 플랫폼 중 하나다.

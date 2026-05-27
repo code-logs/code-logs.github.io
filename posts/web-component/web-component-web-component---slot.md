@@ -1,10 +1,3 @@
-## Table of contents
-
-1. [Slot](#slot)
-   1. [Slot 사용하기](#slot-사용하기)
-   1. [Styling](#styling)
-1. [Dialog 만들기](#dialog-만들기)
-
 ## Slot
 
 `<slot>` 태그는 웹 컴포넌트 내 특정 영역의 `마크업`을 외부로 부터 주입 받기 위해 사용되는 태그다.

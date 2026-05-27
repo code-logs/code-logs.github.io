@@ -1,13 +1,3 @@
-## Table of contents
-
-1. [CHIPS](#chips)
-1. [나도 모르게 흘러간 내 정보 - Site간 cookie 공유](#나도-모르게-흘러간-내-정보---site간-cookie-공유)
-1. [YouTube가 내 말을 옅듣고 있다?!](#youtube가-내-말을-옅듣고-있다)
-1. [왜 내 정보를 가져가는가?](#왜-내-정보를-가져가는가)
-1. [Cookie는 분리된 상태로 관리되어야 한다](#cookie는-분리된-상태로-관리되어야-한다)
-   1. [Scenario](#scenario)
-1. [별첨 - Chrome 브라우저 cookie 입력 불가](#별첨---chrome-브라우저-cookie-입력-불가)
-
 ## CHIPS
 
 얼마전 Chrome 업데이트를 마치고 (v98.0.4758.109) 개발자 도구의 UI를 통해 새로운 쿠키를 입력 할 수 없었다. 원인이 무엇인지 찾아 보다가 `CHIPS` 보안정책에 대한 이야기를 접하게 됐다.

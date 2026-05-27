@@ -1,37 +1,3 @@
-## Table of contents
-
-1. [Elasticsearch?](#elasticsearch)
-1. [Elasticsearch의 역할](#elasticsearch의-역할)
-1. [Elasticsearch의 특징](#elasticsearch의-특징)
-1. [Clustering](#clustering)
-   1. [Node의 종류](#node의-종류)
-   1. [Master node](#master-node)
-   1. [Data node](#data-node)
-   1. [Split Brain](#split-brain)
-   1. [Node의 데이터 저장](#node의-데이터-저장)
-1. [REST API를 이용한 CRUD](#rest-api를-이용한-crud)
-   1. [입력 (PUT)](#입력-put)
-   1. [조회 (GET)](#조희-get)
-   1. [삭제 (DELETE)](#삭제-delete)
-   1. [수정 (POST)](#수정-post)
-   1. [\_update](#_update)
-   1. [벌크 API](#벌크-api)
-1. [\_search API](#_search-api)
-   1. [URI 검색](#uri-검색)
-1. [Full-text search](#full-text-search)
-   1. [match_all](#match_all)
-   1. [match](#match)
-   1. [match_phrase](#match_phrase)
-   1. [query_string](#query_string)
-   1. [bool query](#bool-query)
-1. [Analyzer](#analyzer)
-   1. [Analyzer의 구조](#analyzer의-구조)
-   1. [Analyzer 적용](#analyzer-적용)
-   1. [사용자 정의 Analyzer](#사용자-정의-analyzer)
-1. [그 밖의 검색](#그-밖의-검색)
-   1. [Exact value query](#exact-value-query)
-   1. [Range query](#range-query)
-
 ## Elasticsearch?
 
 `Elasticsearch`는 전문검색엔진으로 처음 개발 되었지만 현재는 검색엔진을 넘어 보안, 로그분석, 전문분석 등 다양한 영역에서 사용되고 있다.

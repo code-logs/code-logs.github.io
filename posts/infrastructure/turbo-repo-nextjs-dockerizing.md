@@ -1,17 +1,3 @@
-## Table of contents
-
-1. [Package Manager](#package-manager)
-   1. [pnpm-workspace.yaml 파일 생성](#pnpm-workspaceyaml-파일-생성)
-   1. [pnpm-lock.yaml 파일 생성](#pnpm-lockyaml-파일-생성)
-1. [package.json](#packagejson)
-1. [dockerignore](#dockerignore)
-   1. [node_modules](#node_modules)
-   1. [out](#out)
-1. [Dockerfile](#dockerfile)
-   1. [pnpm 스크립트 사용](#pnpm-스크립트-사용)
-1. [next.config.js](#nextconfigjs)
-   1. [experimental.outputFileTracingRoot](#experimentaloutputfiletracingroot)
-
 ## Package Manager
 
 `pnpm`을 패키지 매니저로 사용하도록 설정해야 한다 이미 `pnpm`을 프로젝트의 패키지 매니저로 사용하고 있다면 현재 과정은 생략한다.

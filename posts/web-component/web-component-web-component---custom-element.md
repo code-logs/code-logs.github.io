@@ -1,21 +1,3 @@
-## Table of contents
-
-1. [웹 컴포넌트](#웹-컴포넌트)
-   1. [Why webcomponent?](#why-webcomponent)
-1. [커스텀 엘리먼트](#커스텀-엘리먼트)
-   1. [커스텀 엘리먼트 등록하기](#커스텀-엘리먼트-등록하기)
-   1. [생명주기](#생명주기)
-1. [custom-form](#custom-form)
-   1. [custom-form 등록하기](#custom-form-등록하기)
-   1. [custom-form 내부 메서드 정의하기](#custom-form-내부-메서드-정의하기)
-   1. [custom-form HTML에서 사용하기](#custom-form-HTML에서-사용하기)
-1. [counter-button](#counter-button)
-   1. [counter-button 등록하기](#counter-button-등록하기)
-   1. [counter-button 내부 메서드 정의하기](#counter-button-내부-메서드-정의하기)
-   1. [counter-button Property를 통해 커스텀 엘리먼트 값 변경하기](#counter-button-property를-통해-커스텀-엘리먼트-값-변경하기)
-   1. [counter-button HTML에서 사용하기](#counter-button-html에서-사용하기)
-1. [마치며](#마치며)
-
 ## 웹 컴포넌트
 
 웹 컴포넌트는 존재하는 HTML `태그를 확장`하여 새로운 기능을 추가하고 `캡슐화`를 통해 외부 요소로 부터 독립적인 커스텀 엘리먼트를 제작하기 위한 웹 API의 모음이다.

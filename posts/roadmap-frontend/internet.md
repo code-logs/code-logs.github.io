@@ -1,18 +1,5 @@
 > 본 포스팅 시리즈는 [roadmap.sh](https://roadmap.sh/frontend)의 학습 순서에 따라 정리한 글 입니다.
 
-## Table of contents
-
-1. [Internet](#internet)
-   1. [인터넷의 기본 Parts](#인터넷의-기본-parts)
-1. [Packet](#packet)
-   1. [패킷이란?](#패킷이란)
-   1. [프로토콜 스택과 패킷](#프로토콜-스택과-패킷)
-   1. [패킷은 어떻게 목적지를 찾아갈까?](#패킷은-어떻게-목적지를-찾아갈까)
-1. [Protocol](#protocol)
-   1. [Application Protocol](#application-protocol)
-   1. [Transmission Control Protocol (TCP)](#transmission-control-protocol-tcp)
-   1. [Internet Protocol (IP)](#internet-protocol-ip)
-
 ## Internet
 
 ### 인터넷의 기본 Parts

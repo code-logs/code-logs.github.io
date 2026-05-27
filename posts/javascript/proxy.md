@@ -1,16 +1,3 @@
-## Table of contents
-
-1. [Proxy?](#proxy)
-1. [용법](#용법)
-   1. [Trap의 종류](#trap의-종류)
-1. [Sample](#sample)
-   1. [Get](#get)
-   1. [Set](#set)
-   1. [Apply](#apply)
-   1. [Construct](#construct)
-1. [Revocable proxy](#revocable-proxy)
-1. [마치며](#마치며)
-
 ## Proxy?
 
 프락시라는 말은 오늘 기록하려고 하는 javascript에서뿐 아니라 다양한 분야에서 범용적으로 사용되는 용어인듯하다.
