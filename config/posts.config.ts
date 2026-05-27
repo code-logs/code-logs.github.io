@@ -506,6 +506,20 @@ Shadow DOM의 이해`,
       `유아식`,
       `수유`,
     ],
+    references: [
+      {
+        title: 'AAP - Health Supervision Visit, 12 Months',
+        url: 'https://www.aap.org/en/patient-care/newborn-infant-and-early-childhood-nutrition/newborn-and-infant-health-assessment-and-promotion/health-supervision-visit-12-months/'
+      },
+      {
+        title: 'CDC - Choosing an Infant Formula',
+        url: 'https://www.cdc.gov/infant-toddler-nutrition/formula-feeding/choosing-a-formula.html'
+      },
+      {
+        title: 'CDC - Milestones by 1 Year',
+        url: 'https://www.cdc.gov/act-early/milestones/1-year.html'
+      }
+    ],
   },
 ]
 
