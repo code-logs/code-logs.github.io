@@ -35,6 +35,7 @@ export const CATEGORIES = {
   ['ui-and-ux']: 'ui and ux',
   ['web-component']: 'web component',
   ['개발환경']: '개발환경',
+  ['parenting']: 'parenting',
 }
 
 export const posts: Post[] = [
@@ -488,6 +489,24 @@ Shadow DOM의 이해`,
       }
     ]
   }
+,
+  {
+    title: `돌 아기는 젖병을 끊어야 할까?`,
+    description: `12개월 전후 아기의 젖병 끊기와 컵 전환을 사실 기반으로 정리한 글`,
+    fileName: 'bottle-weaning-at-12-months.md',
+    category: CATEGORIES.parenting,
+    published: true,
+    publishedAt: `2026-05-27`,
+    thumbnailName: `bottle-weaning-at-12-months.png`,
+    tags: [
+      `육아`,
+      `돌아기`,
+      `젖병끊기`,
+      `컵전환`,
+      `유아식`,
+      `수유`,
+    ],
+  },
 ]
 
 export default posts
