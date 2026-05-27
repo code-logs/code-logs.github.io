@@ -58,3 +58,4 @@ The state-ownership split (palette global in `_app`, sheet local in `Header`) fo
 - [layout-system-gotchas.md](layout-system-gotchas.md) — header layout skeleton, sticky bar, background/border ownership, `.container-*` padding.
 - [color-tokens-gotchas.md](color-tokens-gotchas.md) — the `--color-accent` token and the `text-accent` vs `text-link` rule.
 - [build-pipeline-gotchas.md](build-pipeline-gotchas.md) — why `search-index` runs before `next build` and is committed.
+- [playwright-testing-gotchas.md](playwright-testing-gotchas.md) — how MobileSheet is tested via Playwright, why containing-block bugs only appear in tests, and how issue #210 was discovered.
