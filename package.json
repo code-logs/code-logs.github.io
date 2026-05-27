@@ -12,6 +12,7 @@
     "docs": "pnpm run docs:clean && pnpm run search-index && pnpm run build && mv ./out ./docs && touch ./docs/.nojekyll && pnpm run sitemap",
     "start": "next start",
     "lint": "eslint .",
+    "test:e2e": "playwright test",
     "prepare": "husky",
     "search-index": "ts-node bin/generate-search-index.ts",
     "sitemap": "ts-node bin/generate-sitemap.ts",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/marked": "^4.3.2",

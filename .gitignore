@@ -8,6 +8,12 @@
 # testing
 /coverage
 
+# playwright (검증용 도구 — 산출물은 커밋하지 않음, 이슈 #209)
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # next.js
 /.next/
 /out/
