@@ -1,17 +1,5 @@
 > 본 포스팅 시리즈는 [roadmap.sh](https://roadmap.sh/frontend)의 학습 순서에 따라 정리한 글 입니다.
 
-## Table of contents
-
-1. [HTTP는 무엇인가?](#http는-무엇인가)
-1. [HTTP Request](#http-request)
-   1. [HTTP method는 무엇인가?](#http-method는-무엇인가)
-   1. [HTTP 요청 headers는 무엇인가?](#http-요청-headers는-무엇인가)
-   1. [HTTP 요청 body는 무엇인가?](#http-요청-body는-무엇인가)
-1. [HTTP Response](#http-response)
-   1. [HTTP status code는 무엇인가?](#http-status-code는-무엇인가)
-   1. [HTTP 응답 headers는 무엇인가?](#http-응답-headers는-무엇인가)
-   1. [HTTP 응답 body는 무엇인가?](#http-응답-body는-무엇인가)
-
 ## HTTP는 무엇인가?
 
 `HTTP (Hypertext Transfer Protocol)`는 `World Wide Web`의 근간이며 하이퍼텍스트 링크를 사용하는 웹페이지를 불러오는데 사용된다.

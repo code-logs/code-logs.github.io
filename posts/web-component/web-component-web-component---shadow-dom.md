@@ -1,12 +1,3 @@
-## Table of contents
-
-1. [Shadow DOM](#shadow-dom)
-1. [Document tree에 Shadow root 삽입하기](#document-tree에-shadow-root-삽입하기)
-   1. [Open mode shadow root](#open-mode-shadow-root)
-   1. [Closed mode shadow root](#closed-mode-shadow-root)
-   1. [delegatesFocus를 이용한 focus 지정](#delegatesfocus를-이용한-focus-지정)
-1. [Composed 속성을 이용한 Custom Event 전파](#composed-속성을-이용한-custom-event-전파)
-
 ## Shadow DOM
 
 웹 컴포넌트로 제작된 커스텀 엘리먼트는 `Shadow DOM` 영역에 존재하며 외부의 스타일 정의로 부터 독립적으로 동작할 수 있도록 돕고 컴포넌트 내부에서 발생하는 커스텀 이벤트의 버블링이 `Shadow DOM` 바깥의 영역까지 전파되어 발생 할 수 있는 side effect를 방지 할 수 있도록 돕는다.

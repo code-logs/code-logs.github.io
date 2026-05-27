@@ -1,18 +1,3 @@
-## Table of contents
-
-1. [CLI](#cli)
-   1. [Expo CLI](#expo-cli)
-1. [React Native CLI](#react-native-cli)
-1. [Prerequisites](#prerequisites)
-   1. [Node 설치](#node-설치)
-   1. [Watchman 설치](#watchman-설치)
-   1. [XCode 설치](#xcode-설치)
-   1. [XCode Command Line Tools](#xcode-command-line-tools)
-   1. [CocoaPods](#cocoapods)
-   1. [React Native CLI](#react-native-cli)
-1. [Create React Native Application](#create-react-native-application)
-   1. [Application 실행하기](#application-실행하기)
-
 ## CLI
 
 React Native를 통해 Cross-platform 애플리케이션을 개발한다면 `Expo CLI` 또는 `React Native CLI`를 선택적으로 사용 할 수 있다.

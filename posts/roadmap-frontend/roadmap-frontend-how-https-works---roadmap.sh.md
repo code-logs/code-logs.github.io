@@ -1,21 +1,5 @@
 > 본 포스팅 시리즈는 [roadmap.sh](https://roadmap.sh/frontend)의 학습 순서에 따라 정리한 글 입니다.
 
-## Table of contents
-
-1. [HTTPS가 필요한 이유?](#https가-필요한-이유)
-   1. [개인정보 보호](#개인정보-보호)
-   1. [데이터 무결성](#데이터-무결성)
-   1. [신원증명](#신원증명)
-1. [HTTPS의 동작 원리](#https의-동작-원리)
-   1. [대칭키 (symmetric) 암호화 알고리즘](#대칭키-symmetric-암호화-알고리즘)
-   1. [비대칭키 (asymmetric) 암호화 알고리즘](#비대칭키-asymmetric-암호화-알고리즘)
-   1. [The Handshake](#the-handshake)
-   1. [Client Hello](#client-hello)
-   1. [Server Hello](#server-hello)
-   1. [Server key exchange](#server-key-exchange)
-   1. [Client key exchange](#client-key-exchange)
-   1. [Change Cipher spec / Finished](#change-cipher-spec--finished)
-
 ## HTTPS가 필요한 이유?
 
 1. 개인정보 보호
