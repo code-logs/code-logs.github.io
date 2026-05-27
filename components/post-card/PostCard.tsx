@@ -23,7 +23,7 @@ const PostCard = ({ titleLevel = 3, post }: PostCardProps) => (
 
     <a
       href={PostUtil.buildLinkURLByTitle(post.title)}
-      className="[grid-area:title] [&>*]:text-text-heading [&>*]:text-xl [&>*]:font-semibold [&>*]:my-2 hover:[&>*]:text-link"
+      className="[grid-area:title] min-w-0 break-words [&>*]:text-text-heading [&>*]:text-xl [&>*]:font-semibold [&>*]:my-2 hover:[&>*]:text-link"
     >
       {titleLevel === 1 && <h1>{post.title}</h1>}
       {titleLevel === 2 && <h2>{post.title}</h2>}
@@ -32,7 +32,7 @@ const PostCard = ({ titleLevel = 3, post }: PostCardProps) => (
 
     <a
       href={PostUtil.buildLinkURLByTitle(post.title)}
-      className="[grid-area:description]"
+      className="[grid-area:description] min-w-0 break-words"
     >
       <p className="m-0 text-sm leading-relaxed text-text-muted line-clamp-2 whitespace-pre-wrap">
         {post.description}
@@ -53,7 +53,7 @@ const PostCard = ({ titleLevel = 3, post }: PostCardProps) => (
       </div>
     )}
 
-    <section className="[grid-area:tags]">
+    <section className="[grid-area:tags] min-w-0">
       <Tags tags={post.tags} />
     </section>
   </article>

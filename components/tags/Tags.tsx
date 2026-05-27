@@ -9,7 +9,7 @@ const Tags = (props: TagsProps) => {
   return (
     <ul className="list-none m-0 p-0 flex flex-wrap gap-2">
       {props.tags.map((tag, idx) => (
-        <li key={idx}>
+        <li key={idx} className="min-w-0">
           {typeof tag === 'string' ? (
             <Tag tag={tag} />
           ) : (
