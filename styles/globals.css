@@ -404,8 +404,11 @@
   /* Slim sticky header (issue #149): 64px desktop / 56px mobile. The
      semi-transparent bg + backdrop-blur let content scroll under a frosted
      bar. Background/border own a single source of truth here — Header.tsx
-     must NOT also set an opaque bg (it would defeat the blur-through). */
-  header {
+     must NOT also set an opaque bg (it would defeat the blur-through).
+     Scoped to .site-header (not the bare `header` element) so semantic
+     <header> blocks elsewhere — PageHeader, About, PostCard — do NOT inherit
+     the navbar's fixed height / sticky / padding (issue: header selector leak). */
+  .site-header {
     height: var(--header-height);
     position: sticky;
     top: 0;
@@ -425,13 +428,13 @@
   /* No backdrop-filter (older Firefox/Safari): drop the blur and use a near-opaque
      bg so scrolled-under content does not bleed through an unblurred translucent bar. */
   @supports not (backdrop-filter: blur(8px)) {
-    header {
+    .site-header {
       background-color: color-mix(in oklab, var(--color-bg-page) 96%, transparent);
     }
   }
 
   @media (min-width: 1024px) {
-    header {
+    .site-header {
       padding-inline: var(--spacing-page-x-desktop);
     }
   }
@@ -461,7 +464,7 @@
       font-size: 12px;
     }
 
-    header {
+    .site-header {
       height: var(--header-height-mobile);
     }
   }
