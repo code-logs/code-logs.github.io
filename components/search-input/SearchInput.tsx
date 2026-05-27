@@ -28,7 +28,9 @@ const SearchInput = (props: SearchInputProps) => {
         spellCheck={false}
         // Wrapper owns the focus ring via focus-within; suppress the input's own
         // global :focus-visible box-shadow to avoid a doubled ring.
-        className="flex-1 border-none bg-transparent text-text-body outline-none placeholder:text-text-muted focus-visible:shadow-none [&::-webkit-search-cancel-button]:hidden"
+        // text-base (16px) on mobile prevents iOS Safari's focus auto-zoom;
+        // md:text-sm restores the smaller desktop size. Pinch zoom stays intact.
+        className="flex-1 border-none bg-transparent text-base text-text-body outline-none placeholder:text-text-muted focus-visible:shadow-none md:text-sm [&::-webkit-search-cancel-button]:hidden"
         {...rest}
       />
       {hasValue && (
