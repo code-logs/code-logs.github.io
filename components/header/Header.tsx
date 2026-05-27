@@ -23,14 +23,14 @@ export interface HeaderProps {
 // Five-slot header (issue #150). Desktop (≥768): Logo · Nav (centered) · Search ·
 // Theme · Social. Mobile (<768): Logo · Search(icon) · Theme · Hamburger, with the
 // hamburger opening a right slide-in sheet for nav + social. Background/border are
-// owned by the base `header` rule (globals.css) — do NOT add an opaque bg here, it
+// owned by the base `.site-header` rule (globals.css) — do NOT add an opaque bg here, it
 // would defeat the backdrop blur. The mobile sheet state is local: the header owns
 // the menus/socialIcons it needs, so there is nothing to lift.
 const Header = ({ menus, socialIcons, onOpenSearch }: HeaderProps) => {
   const [sheetOpen, setSheetOpen] = useState(false)
 
   return (
-    <header className="flex items-center gap-2 md:gap-4">
+    <header className="site-header flex items-center gap-2 md:gap-4">
       <Logo />
 
       {/* Desktop nav doubles as the flex spacer; on mobile a bare spacer pushes the
