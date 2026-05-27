@@ -488,6 +488,17 @@ Shadow DOM의 이해`,
       }
     ]
   }
+,
+  {
+    title: `Push 노티피케이션 발생 테스트`,
+    description: `Push 노티피케이션이 정상적으로 발생하는지 확인하기 위한 테스트 포스팅`,
+    fileName: 'push-notification-test.md',
+    category: CATEGORIES['개발환경'],
+    published: true,
+    publishedAt: `2026-05-27`,
+    thumbnailName: `push-notification-test.png`,
+    tags: [`push notification`, `notification`, `test`, `개발환경`],
+  },
 ]
 
 export default posts
