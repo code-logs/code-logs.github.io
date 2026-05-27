@@ -10,8 +10,8 @@ Playwright is used as a rendering verification tool (not regression testing) to 
 
 ### Containing-block bugs are invisible in static export
 - **Symptom:** A component looks correct in `pnpm dev` and `pnpm build` output, but a mobile test reveals unintended clipping, backdrop coverage loss, or overflow.
-- **Why:** `position: fixed` containing blocks are shaped by ancestor `backdrop-filter`, `transform`, `filter`, or `will-change` — invisible in screenshots but fatal to overlay positioning. Static HTML doesn't reveal these at inspection time.
-- **Rule:** ALWAYS test mobile overlays (sheets, modals, popovers) with Playwright before merging. Even small CSS changes to ancestor elements (e.g., adding blur to a header) can break all fixed-position children.
+- **Why:** `position: fixed` containing blocks are shaped by ancestor `backdrop-filter`, `transform`, `filter`, or `will-change` — invisible in screenshots but fatal to overlay positioning. Static HTML doesn't reveal these at inspection time. This is exactly how issue #210 surfaced: the header's `backdrop-filter` trapped the mobile sheet's `fixed` overlay in the header box.
+- **Rule:** ALWAYS test mobile overlays (sheets, modals, popovers) with Playwright before merging. Even small CSS changes to ancestor elements (e.g., adding blur to a header) can break all fixed-position children. The fix is usually to render the overlay through a portal to `document.body` (escaping the containing block) rather than removing the ancestor effect — see [header-interaction-gotchas.md](header-interaction-gotchas.md) §"`MobileSheet` MUST render through a portal".
 
 ### iPhone 13 preset defaults to WebKit
 - **Symptom:** `devices['iPhone 13']` works in Playwright docs, but test fails with "Executable doesn't exist" for WebKit.
@@ -36,7 +36,7 @@ Playwright is used as a rendering verification tool (not regression testing) to 
 ### `test.fixme()` is a tool for "right behavior, known bug"
 - **Symptom:** Three test cases verify correct behavior, but the current implementation has a CSS bug preventing them from passing. Should we skip the tests entirely, or leave them to rot?
 - **Why:** `test.fixme()` is exactly the signal needed: "This test documents what *should* happen, the implementation is currently broken, fix the implementation and change `fixme` to `test` later."
-- **Rule:** When a test failure is due to a bug in the component (not the test), mark it `test.fixme()` with a detailed comment explaining the bug and linking to the issue. Update the issue reference if the bug issue number changes.
+- **Rule:** When a test failure is due to a bug in the component (not the test), mark it `test.fixme()` with a detailed comment explaining the bug and linking to the issue. Update the issue reference if the bug issue number changes. When the bug is fixed, flip `test.fixme` back to `test` and replace the "known bug" comment with a one-line note of how it was resolved. (The three #210 cases — Escape-close, backdrop-click-close, no horizontal overflow — were restored this way once the sheet was portaled to `document.body`.)
 
 ## Conventions
 
@@ -78,4 +78,4 @@ Playwright was introduced (issue #209) to solve a specific problem: verifying mo
 - [`header-interaction-gotchas.md`](header-interaction-gotchas.md) — Mobile sheet focus trap / scroll lock / keyboard handling — the component being tested.
 - [`styling-gotchas.md`](styling-gotchas.md) — Tailwind tokens, media queries, dark mode — foundation for layout testing.
 - Issue [#209](https://github.com/code-logs/code-logs.github.io/issues/209) — Initial Playwright e2e testing introduction.
-- Issue [#210](https://github.com/code-logs/code-logs.github.io/issues/210) — Backdrop-filter containing-block bug discovered via Playwright testing.
+- Issue [#210](https://github.com/code-logs/code-logs.github.io/issues/210) — Backdrop-filter containing-block bug discovered via Playwright testing, resolved by portaling the mobile sheet to `document.body` (see [header-interaction-gotchas.md](header-interaction-gotchas.md)).

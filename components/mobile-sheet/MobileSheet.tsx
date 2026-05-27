@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { SocialIcon } from '../header/Header'
 import type { Menu } from '../nav-bar/NavBar'
 
@@ -17,18 +18,39 @@ const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1
 // mounted so the transform can transition both ways; `visibility` flips it out of
 // the tab/a11y tree when closed (the visibility transition stays `visible` for
 // the full slide-out, then hides — keeping the exit animation intact).
+//
+// Rendered via createPortal into document.body (issue #210): the header carries
+// `backdrop-filter: blur(8px)`, which makes it a containing block for its
+// `position: fixed` descendants — so an in-header sheet would clip its `fixed
+// inset-0` overlay to the ~55px header box instead of the viewport. Portaling to
+// body escapes that containing block while keeping the frosted header. The
+// `sheetOpen` state stays in Header (only the render location moves) — see
+// .claude/docs/header-interaction-gotchas.md.
 const MobileSheet = ({ open, onClose, menus, socialIcons }: MobileSheetProps) => {
   const panelRef = useRef<HTMLDivElement>(null)
+  // Portal target (document.body) only exists on the client. Under
+  // `output: 'export'` the first render runs without a DOM, so gate the portal
+  // behind a post-mount flag to avoid a hydration mismatch. The sheet is
+  // interactive-only, so its absence from the initial static HTML is harmless.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   // On open: lock body scroll, focus the first focusable (close button). On close
   // (cleanup): unlock and restore focus to the hamburger that opened it.
+  // The panel only becomes `visibility:visible` on the open render, and a still-
+  // `hidden` element rejects focus(), so defer the focus to the next frame. The
+  // open-state `transition` (above) drops the `visibility` transition so `visible`
+  // applies synchronously — one rAF is enough. Without this, focus never enters
+  // the sheet and Escape never reaches the panel's onKeyDown.
   useEffect(() => {
     if (!open) return
     const previouslyFocused = document.activeElement as HTMLElement | null
     document.body.style.overflow = 'hidden'
-    const first = panelRef.current?.querySelector<HTMLElement>(FOCUSABLE)
-    first?.focus()
+    const raf = requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus()
+    })
     return () => {
+      cancelAnimationFrame(raf)
       document.body.style.overflow = ''
       previouslyFocused?.focus?.()
     }
@@ -58,7 +80,9 @@ const MobileSheet = ({ open, onClose, menus, socialIcons }: MobileSheetProps) =>
     }
   }
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <div className={`fixed inset-0 z-50 md:hidden ${open ? '' : 'pointer-events-none'}`} aria-hidden={!open}>
       {/* Backdrop */}
       <div
@@ -76,7 +100,13 @@ const MobileSheet = ({ open, onClose, menus, socialIcons }: MobileSheetProps) =>
         onKeyDown={onKeyDown}
         style={{
           width: 'min(80vw, 320px)',
-          transition: 'transform var(--duration-slow) var(--ease-out), visibility var(--duration-slow)',
+          // On open, transition transform only — `visibility` must flip to `visible`
+          // synchronously so the panel is focusable on the very next frame (a
+          // still-`hidden` element rejects focus()). On close, keep the `visibility`
+          // transition so the panel stays visible for the full slide-out before hiding.
+          transition: open
+            ? 'transform var(--duration-slow) var(--ease-out)'
+            : 'transform var(--duration-slow) var(--ease-out), visibility var(--duration-slow)',
         }}
         className={`absolute right-0 top-0 flex h-full flex-col gap-2 border-l border-border bg-bg-page p-5
           ${open ? 'visible translate-x-0' : 'invisible translate-x-full'}`}
@@ -120,7 +150,8 @@ const MobileSheet = ({ open, onClose, menus, socialIcons }: MobileSheetProps) =>
           ))}
         </ul>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
