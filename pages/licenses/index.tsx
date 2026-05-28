@@ -85,7 +85,9 @@ const Licenses = () => {
           placeholder="Filter by package name…"
           aria-label="Filter by package name"
           spellCheck={false}
-          className="flex-1 border-none bg-transparent text-text-body outline-none placeholder:text-text-muted focus-visible:shadow-none [&::-webkit-search-cancel-button]:hidden"
+          // Explicit 16px so the reduced mobile root font-size cannot trigger
+          // iOS Safari's focus auto-zoom; md:text-sm restores desktop size.
+          className="flex-1 border-none bg-transparent text-[16px] text-text-body outline-none placeholder:text-text-muted focus-visible:shadow-none md:text-sm [&::-webkit-search-cancel-button]:hidden"
         />
       </div>
 
