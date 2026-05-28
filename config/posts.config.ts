@@ -488,6 +488,44 @@ Shadow DOM의 이해`,
       }
     ]
   }
+,
+  {
+    title: `AI Agent를 디자인 생성 프로세스에 녹이는 방법`,
+    description: `AI agent 기반 디자인 생성을 실제 개발 프로세스에 연결하기 위한 컨텍스트 준비, 디자인 시스템 연동, 구현, 검증 흐름을 정리한다.`,
+    fileName: 'ai-agent-design-generation-workflow.md',
+    category: CATEGORIES['ui-and-ux'],
+    published: true,
+    publishedAt: `2026-05-28`,
+    thumbnailName: `ai-agent-design-generation-workflow.png`,
+    tags: [
+      `AI Agent`,
+      `Design System`,
+      `Figma MCP`,
+      `Code Connect`,
+      `Design Tokens`,
+      `UI`,
+      `UX`,
+      `개발 프로세스`,
+    ],
+    references: [
+      { title: `Figma MCP Server Introduction`, url: `https://developers.figma.com/docs/figma-mcp-server/` },
+      { title: `What the MCP sends vs. what the agent does`, url: `https://developers.figma.com/docs/figma-mcp-server/mcp-vs-agent/` },
+      { title: `Structure your Figma file for better code`, url: `https://developers.figma.com/docs/figma-mcp-server/structure-figma-file/` },
+      { title: `Figma Code Connect Introduction`, url: `https://developers.figma.com/docs/code-connect/` },
+      { title: `Figma MCP Code Connect integration`, url: `https://developers.figma.com/docs/figma-mcp-server/code-connect-integration/` },
+      { title: `Design systems and AI: Why MCP servers are the unlock`, url: `https://www.figma.com/blog/design-systems-ai-mcp/` },
+      { title: `Figma MCP collection overview`, url: `https://help.figma.com/hc/en-us/articles/35280808976151-Figma-MCP-collection-MCP-collection-overview` },
+      { title: `From idea to app: Introducing Stitch, a new way to design UIs`, url: `https://developers.googleblog.com/stitch-a-new-way-to-design-uis/` },
+      { title: `Introducing “vibe design” with Stitch`, url: `https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-ai-ui-design/` },
+      { title: `Design Tokens Format Module 2025.10`, url: `https://www.w3.org/community/reports/design-tokens/CG-FINAL-format-20251028/` },
+      { title: `Visual tests | Storybook docs`, url: `https://storybook.js.org/docs/8/writing-tests/visual-testing` },
+      { title: `Visual comparisons | Playwright`, url: `https://playwright.dev/docs/next/test-snapshots` },
+      { title: `Best practices for Claude Code`, url: `https://code.claude.com/docs/en/best-practices` },
+      { title: `Model Context Protocol GitHub repository`, url: `https://github.com/modelcontextprotocol/modelcontextprotocol` },
+      { title: `About GitHub Copilot cloud agent`, url: `https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent` },
+      { title: `OWASP Top 10 for Large Language Model Applications`, url: `https://owasp.org/www-project-top-10-for-large-language-model-applications/` },
+    ],
+  },
 ]
 
 export default posts
