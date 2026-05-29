@@ -158,9 +158,12 @@ const SearchPalette = ({ open, onClose }: SearchPaletteProps) => {
             aria-expanded={results.length > 0}
             aria-activedescendant={results.length ? `search-result-${activeIndex}` : undefined}
             spellCheck={false}
+            // The panel's overflow-hidden would clip the global :focus-visible
+            // glow ring, so suppress it — the auto-focused input's cursor already
+            // signals focus (standard command-palette behavior).
             // Explicit 16px so the reduced mobile root font-size cannot trigger
             // iOS Safari's focus auto-zoom; md:text-sm restores desktop size.
-            className="flex-1 bg-transparent py-3.5 text-[16px] text-text-body outline-none md:text-sm"
+            className="flex-1 bg-transparent py-3.5 text-[16px] text-text-body outline-none focus-visible:shadow-none md:text-sm"
           />
         </div>
 
