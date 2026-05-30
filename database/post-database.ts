@@ -40,12 +40,22 @@ class PostDatabase extends Database<Post & { order: number }> {
   }
 
   query(condition: string, limit?: number, skip: number = 0) {
-    const normalizedConditions = condition.split(/\s/).map((cond) => cond.toLowerCase())
+    // Case-insensitive full-string substring match (mirrors SearchPalette's
+    // scoreEntry). The query is matched as a whole phrase against each field and
+    // each individual tag — NOT split on whitespace. Splitting OR-matched every
+    // word against the joined tag string, so a multi-word tag like "web
+    // component" returned posts merely mentioning "component", and an
+    // upper-case tag like "Figma MCP" matched nothing because only the query
+    // was lower-cased. Both broke tag-badge navigation (issue #231).
+    const normalized = condition.trim().toLowerCase()
 
     const foundPosts = this.dataset.filter((post) => {
-      return normalizedConditions.some((cond) => {
-        return post.title.indexOf(cond) >= 0 || post.description.indexOf(cond) >= 0 || post.category.indexOf(cond) >= 0 || post.tags.join('').indexOf(cond) >= 0
-      })
+      return (
+        post.title.toLowerCase().includes(normalized) ||
+        post.description.toLowerCase().includes(normalized) ||
+        post.category.toLowerCase().includes(normalized) ||
+        post.tags.some((tag) => tag.toLowerCase().includes(normalized))
+      )
     })
 
     if (limit !== undefined) return foundPosts.slice(skip, skip + limit)

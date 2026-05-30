@@ -41,13 +41,17 @@ const PostCard = ({ titleLevel = 3, post }: PostCardProps) => (
 
     {post.thumbnailName && (
       <div className="[grid-area:thumbnail]">
-        <a href={PostUtil.buildLinkURLByTitle(post.title)}>
+        <a href={PostUtil.buildLinkURLByTitle(post.title)} className="block">
           <img
             src={PathUtil.buildImagePath(post.thumbnailName)}
             alt={post.description}
             width="160"
             height="120"
-            className="w-[160px] h-[120px] max-w-full rounded-md object-cover"
+            // Desktop: fixed 160×120 in the auto-sized side column. On mobile the
+            // thumbnail area spans the full card width (max-tablet reflow), so the
+            // image stretches to fill it; aspect-[4/3] preserves the 160:120 ratio
+            // instead of the fixed 120px height (issue #231).
+            className="w-[160px] h-[120px] max-w-full rounded-md object-cover max-tablet:h-auto max-tablet:w-full max-tablet:aspect-[4/3]"
           />
         </a>
       </div>
