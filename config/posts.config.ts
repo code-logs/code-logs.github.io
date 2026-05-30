@@ -45,7 +45,7 @@ export const posts: Post[] = [
     category: 'seo',
     published: true,
     publishedAt: `2021-10-10`,
-    thumbnailName: `seo-thumbnail.jpg`,
+    thumbnailName: `seo-thumbnail.webp`,
     tags: [`SEO`, `Search Engine Optimization`, `meta tag`, `robots.txt`, `sitemap.xml`, `검색`, `검색엔진`, `검색엔진 최적화`, `메타`, `메타 태그`],
   },
   {
@@ -55,7 +55,7 @@ export const posts: Post[] = [
     category: 'javascript',
     published: true,
     publishedAt: `2021-10-11`,
-    thumbnailName: `tagged-template-literal.png`,
+    thumbnailName: `tagged-template-literal.webp`,
     tags: [`es6`, `javascript`, `tagged template`, `tagged template literal`],
   },
   {
@@ -65,7 +65,7 @@ export const posts: Post[] = [
     category: 'javascript',
     published: true,
     publishedAt: `2021-10-17`,
-    thumbnailName: `iterator-generator.png`,
+    thumbnailName: `iterator-generator.webp`,
     tags: [`es6`, `function*`, `generator`, `iterable`, `iterator`, `javascript`, `yield`],
   },
   {
@@ -75,7 +75,7 @@ export const posts: Post[] = [
     category: 'javascript',
     published: true,
     publishedAt: `2021-10-25`,
-    thumbnailName: `proxy.png`,
+    thumbnailName: `proxy.webp`,
     tags: [`es6`, `javascript`, `proxy`, `trap`, `프록시`],
   },
   {
@@ -85,7 +85,7 @@ export const posts: Post[] = [
     category: 'css',
     published: true,
     publishedAt: `2021-10-26`,
-    thumbnailName: `css-position.png`,
+    thumbnailName: `css-position.webp`,
     tags: [`absolute`, `css`, `fixed`, `header`, `position`, `static`, `sticky`, `style`, `스타일`, `포지션`, `헤더`],
   },
   {
@@ -95,7 +95,7 @@ export const posts: Post[] = [
     category: 'react',
     published: true,
     publishedAt: `2021-10-30`,
-    thumbnailName: `hoc.png`,
+    thumbnailName: `hoc.webp`,
     tags: [`higher order component`, `hoc`, `react`, `고차 컴퍼넌트`, `리액트`],
   },
   {
@@ -105,7 +105,7 @@ export const posts: Post[] = [
     category: 'ui-and-ux',
     published: true,
     publishedAt: `2021-10-31`,
-    thumbnailName: `scroll-sequence.png`,
+    thumbnailName: `scroll-sequence.webp`,
     tags: [`scroll sequence`, `scroll sequence animation`, `ui`, `ux`],
   },
   {
@@ -115,7 +115,7 @@ export const posts: Post[] = [
     category: 'typescript',
     published: true,
     publishedAt: `2021-11-15`,
-    thumbnailName: `ts-any-unknown-never.png`,
+    thumbnailName: `ts-any-unknown-never.webp`,
     tags: [`any`, `never`, `typescript`, `unknown`, `타입스크립트`],
   },
   {
@@ -125,7 +125,7 @@ export const posts: Post[] = [
     category: 'elasticsearch',
     published: true,
     publishedAt: `2021-11-16`,
-    thumbnailName: `elasticsearch-full-text-search.png`,
+    thumbnailName: `elasticsearch-full-text-search.webp`,
     tags: [`elasticsearch`, `full-text search`, `searching engine`, `엘라스틱서치`, `전문검색`],
   },
   {
@@ -135,7 +135,7 @@ export const posts: Post[] = [
     category: 'infrastructure',
     published: true,
     publishedAt: `2022-02-12`,
-    thumbnailName: `monorepo-with-nx.png`,
+    thumbnailName: `monorepo-with-nx.webp`,
     tags: [`build`, `build system`, `monorepo`, `nx`, `모노리포`, `빌드`, `빌드 시스템`],
 
     series: {
@@ -150,7 +150,7 @@ export const posts: Post[] = [
     category: 'infrastructure',
     published: true,
     publishedAt: `2022-02-26`,
-    thumbnailName: `yarn-berry-monorepo.png`,
+    thumbnailName: `yarn-berry-monorepo.webp`,
     tags: [`berry`, `monorepo`, `workspace`, `workspaces`, `yarn`, `yarn berry`, `zero-install`, `모노리포`],
     references: [
       {
@@ -170,7 +170,7 @@ export const posts: Post[] = [
     category: '개발환경',
     published: true,
     publishedAt: `2022-02-27`,
-    thumbnailName: `eslint-plugin-and-extends.png`,
+    thumbnailName: `eslint-plugin-and-extends.webp`,
     tags: [`eslint`, `eslint extends`, `eslint plugin`, `extends`, `lint`, `plugin`, `개발환경`],
     references: [
       {
@@ -186,7 +186,7 @@ export const posts: Post[] = [
     category: 'css',
     published: true,
     publishedAt: `2022-02-28`,
-    thumbnailName: `focus-on-button.png`,
+    thumbnailName: `focus-on-button.webp`,
     tags: [`CSS`, `browser`, `chrome`, `focus`, `focus-visible`, `focus-within`, `safari`, `브라우저`, `사파리`, `크롬`],
     references: [
       {
@@ -202,7 +202,7 @@ export const posts: Post[] = [
     category: 'cloud',
     published: true,
     publishedAt: `2022-03-04`,
-    thumbnailName: `deploy-node-js-via-heroku.png`,
+    thumbnailName: `deploy-node-js-via-heroku.webp`,
     tags: [`cloud`, `cloud service`, `deploy`, `heroku`, `node.js`, `paas`, `배포`],
     references: [
       {
@@ -223,7 +223,7 @@ export const posts: Post[] = [
     category: 'security',
     published: true,
     publishedAt: `2022-03-06`,
-    thumbnailName: `chips.png`,
+    thumbnailName: `chips.webp`,
     tags: [`CHIPS`, `browser`, `chrome`, `cookie`, `policy`, `security`],
     references: [
       {
@@ -239,7 +239,7 @@ export const posts: Post[] = [
     category: 'nodejs',
     published: true,
     publishedAt: `2022-03-10`,
-    thumbnailName: `graphql-apollo-typegraphql.png`,
+    thumbnailName: `graphql-apollo-typegraphql.webp`,
     tags: [`api`, `api server`, `apollo`, `apollo-server`, `graphql`, `node.js`, `typegraphql`, `typescript`],
     references: [
       {
@@ -271,7 +271,7 @@ export const posts: Post[] = [
     category: 'react-native',
     published: true,
     publishedAt: `2022-03-26`,
-    thumbnailName: `react-native-dev-env.png`,
+    thumbnailName: `react-native-dev-env.webp`,
     tags: [`RN`, `cross platform`, `ios`, `macos`, `react native`, `react native cli`, `개발환경`, `개발환경 구성하기`, `리액트 네이티브`],
     references: [
       {
@@ -292,7 +292,7 @@ Roadmap.sh frontend 학습 순서에 따라 정리하는 포스팅 1`,
     category: 'roadmap-frontend',
     published: true,
     publishedAt: `2022-07-20`,
-    thumbnailName: `8f9addf2ea4c66ed60b8989c8fc537dc`,
+    thumbnailName: `8f9addf2ea4c66ed60b8989c8fc537dc.webp`,
     tags: [`internet`, `network`, `packet`, `routing`, `네트워크`, `라우팅`, `인터넷`, `패킷`],
     references: [
       {
@@ -312,7 +312,7 @@ Roadmap.sh frontend 학습 순서에 따라 정리하는 포스팅 1`,
     category: 'web-component',
     published: true,
     publishedAt: `2022-07-31`,
-    thumbnailName: `1b85d15d3e19b99e3d6350d8b69cc39a`,
+    thumbnailName: `1b85d15d3e19b99e3d6350d8b69cc39a.webp`,
     tags: [`Shadow DOM`, `shadow`],
     references: [
       {
@@ -342,7 +342,7 @@ Roadmap.sh frontend 학습 순서에 따라 정리하는 포스팅 3
     category: 'roadmap-frontend',
     published: true,
     publishedAt: `2022-08-08`,
-    thumbnailName: `f3702044e1663b02ce927069f9e7553f`,
+    thumbnailName: `f3702044e1663b02ce927069f9e7553f.webp`,
     tags: [`https`, `internet`, `protocol`, `roadmap`, `roadmap.sh`, `인터넷`, `프로토콜`],
     references: [
       {
@@ -364,7 +364,7 @@ Roadmap.sh frontend 학습 순서에 따라 정리하는 포스팅 2`,
     category: 'roadmap-frontend',
     published: true,
     publishedAt: `2022-08-08`,
-    thumbnailName: `f6fbea21688b383dae1962023159a9ae`,
+    thumbnailName: `f6fbea21688b383dae1962023159a9ae.webp`,
     tags: [`http`, `internet`, `protocol`, `roadmap`, `roadmap.sh`, `인터넷`],
     references: [
       {
@@ -390,7 +390,7 @@ Roadmap.sh frontend 학습 순서에 따라 정리하는 포스팅 4`,
     category: 'roadmap-frontend',
     published: true,
     publishedAt: `2022-08-08`,
-    thumbnailName: `5e72230d754a480cf5218eeba9dd15fb`,
+    thumbnailName: `5e72230d754a480cf5218eeba9dd15fb.webp`,
     tags: [`internet`, `protocol`, `roadmap`, `roadmap.sh`, `security`, `인터넷`, `프로토콜`],
     references: [
       {
@@ -411,7 +411,7 @@ Shadow DOM의 이해`,
     category: 'web-component',
     published: true,
     publishedAt: `2022-08-10`,
-    thumbnailName: `752fbf06b172dc96f8f10c87b1d91872`,
+    thumbnailName: `752fbf06b172dc96f8f10c87b1d91872.webp`,
     tags: [
       `Shadow DOM`,
       `custom element`,
@@ -451,7 +451,7 @@ Shadow DOM의 이해`,
     category: 'web-component',
     published: true,
     publishedAt: `2022-08-18`,
-    thumbnailName: `c96f4eff2512178b9b4e02d5aad66827`,
+    thumbnailName: `c96f4eff2512178b9b4e02d5aad66827.webp`,
     tags: [`custom dialog`, `custom element`, `dialog`, `slot`, `web component`, `웹 컴포넌트`, `커스텀 엘리먼트`],
     references: [
       {
@@ -496,7 +496,7 @@ Shadow DOM의 이해`,
     category: 'ui-and-ux',
     published: true,
     publishedAt: `2026-05-28`,
-    thumbnailName: `ai-agent-design-generation-workflow.png`,
+    thumbnailName: `ai-agent-design-generation-workflow.webp`,
     tags: [
       `AI Agent`,
       `Design System`,
