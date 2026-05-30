@@ -462,10 +462,11 @@
   @media (max-width: 767px) {
     :root {
       font-size: 12px;
-    }
-
-    .site-header {
-      height: var(--header-height-mobile);
+      /* Collapse --header-height to the mobile value so every sticky offset
+         (AlphabetNav, scroll-margin-top targets, IntersectionObserver rootMargin)
+         stays flush with the actual 56px navbar. Otherwise top:64px on a 56px
+         header leaves an 8px gap where scrolling content peeks through. */
+      --header-height: var(--header-height-mobile);
     }
   }
 
