@@ -15,7 +15,7 @@ const MobileToc = ({ tree, activeId }: MobileTocProps) => {
   return (
     <details className="lg:hidden mb-8 rounded-lg border border-border bg-bg-subtle [&[open]_svg]:rotate-90">
       <summary className="flex cursor-pointer list-none items-center gap-1.5 px-4 py-3 text-sm font-medium text-text-heading">
-        <ChevronRight size={16} aria-hidden className="transition-transform" />
+        <ChevronRight size={16} aria-hidden className="transition-transform -mt-px" />
         Contents
       </summary>
       <nav aria-label="Table of contents" className="px-4 pb-4 text-sm">
