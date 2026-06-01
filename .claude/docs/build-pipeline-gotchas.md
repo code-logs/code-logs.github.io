@@ -67,7 +67,7 @@ Read this when: modifying `next.config.js`, `package.json` scripts, `eslint.conf
 ## CI prerequisites
 - `.github/workflows/deploy.yml` uses Corepack to bootstrap pnpm. The `packageManager` field in `package.json` is the source of truth — bumping the pnpm version there updates CI automatically; no `pnpm/action-setup` needed.
 - `pnpm install --frozen-lockfile` in CI fails if `pnpm-lock.yaml` is out of sync with `package.json`. ALWAYS commit lockfile changes alongside dependency edits.
-- The Node version comes from `.nvmrc` via `actions/setup-node@v4` `node-version-file`. Bumping `.nvmrc` updates CI in lockstep.
+- The Node version comes from `.nvmrc` via `actions/setup-node@v6` `node-version-file`. Bumping `.nvmrc` updates CI in lockstep.
 
 ## Rationale
 - Locking pnpm via `packageManager` + Node via `.nvmrc` + Corepack means contributors don't install pnpm globally — `corepack enable` once per machine is the only setup. This eliminates a class of "works on my machine" lockfile churn.
