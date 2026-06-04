@@ -827,19 +827,6 @@
       color: var(--color-text-muted);
     }
 
-    /* Tables (issue #153): hairline borders only, no zebra striping. */
-    & table {
-      display: block;
-      overflow-x: auto;
-      border-collapse: collapse;
-    }
-
-    & th,
-    & td {
-      padding: var(--spacing-2) var(--spacing-3);
-      border: 1px solid var(--color-divider);
-    }
-
     /* Heading anchor affordance (issue #153): a `#` glyph fades in to the left
        of h2/h3 on hover; the whole heading is the click target that copies the
        anchor URL (wired in pages/[title].tsx). */
@@ -905,4 +892,52 @@
   @media (max-width: 800px) {
     font-size: var(--text-base);
   }
+
+  /* Tables (issue #153 — refined). Lives in this unlayered block so it beats
+     `@tailwindcss/typography`'s `@layer utilities` defaults, which otherwise
+     zero out edge-cell padding (`tbody td:first-child { padding-inline-start: 0 }`)
+     and force `text-align: start` on every cell — wiping markdown `align="..."`. */
+  & table {
+    display: block;          /* enables overflow-x scroll on narrow viewports */
+    width: max-content;      /* size to content; cap with max-width below */
+    max-width: 100%;
+    margin: var(--spacing-6) 0;
+    overflow-x: auto;
+    border-collapse: collapse;
+    border: 1px solid var(--color-border);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  & thead {
+    background-color: var(--color-bg-subtle);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  & thead th {
+    color: var(--color-text-heading);
+    font-weight: 600;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  & th,
+  & td {
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--color-divider);
+    vertical-align: top;
+  }
+
+  & tbody tr:nth-child(even) {
+    background-color: color-mix(in oklab, var(--color-bg-subtle) 50%, transparent);
+  }
+
+  /* Honor markdown alignment markers (`:---:`, `---:`) — `marked` emits them as
+     inline `align="..."` attributes, which prose's `text-align: start` would wipe. */
+  & th[align='center'],
+  & td[align='center'] { text-align: center; }
+  & th[align='right'],
+  & td[align='right']  { text-align: right; }
+  & th[align='left'],
+  & td[align='left']   { text-align: left; }
 }
