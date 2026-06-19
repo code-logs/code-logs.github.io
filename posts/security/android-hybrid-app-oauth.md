@@ -162,12 +162,11 @@ Android 신규 구현에서는 Credential Manager 기반 Sign in with Google을 
 
 ```kotlin
 val rawNonce = generateSecureNonce()
-val hashedNonce = sha256(rawNonce)
 
 val googleIdOption = GetGoogleIdOption.Builder()
     .setFilterByAuthorizedAccounts(false)
     .setServerClientId(BuildConfig.GOOGLE_WEB_CLIENT_ID)
-    .setNonce(hashedNonce)
+    .setNonce(rawNonce)
     .setAutoSelectEnabled(false)
     .build()
 
@@ -196,7 +195,7 @@ authApi.loginWithGoogle(
 )
 ```
 
-nonce 생성과 검증 방식은 서버 계약에 맞춰야 한다. 핵심은 요청마다 예측하기 어려운 값을 만들고 ID token의 nonce가 해당 로그인 요청과 연결되어 있는지 백엔드에서 검증하는 것이다.
+nonce 생성과 검증 방식은 서버 계약에 맞춰야 한다. 위 예제에서는 요청마다 예측하기 어려운 값을 만들고 Credential Manager와 백엔드에 동일한 nonce를 전달한다. 백엔드는 ID token의 nonce claim이 해당 로그인 요청에 저장한 값과 일치하는지 검증한다.
 
 클라이언트가 ID token을 디코딩해 이메일이나 사용자 ID만 백엔드로 보내는 방식은 안전하지 않다. 토큰 검증은 백엔드에서 수행해야 한다.
 
